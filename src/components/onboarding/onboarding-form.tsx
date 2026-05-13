@@ -104,7 +104,7 @@ export function OnboardingForm({ userId }: { userId: string }) {
 
       toast.success('Your personalized plan is ready!')
       await new Promise(resolve => setTimeout(resolve, 500))
-      router.push('/home')
+      router.push('/home?new=true')
     } catch (err) {
       console.error(err)
       toast.error('Something went wrong. Please try again.')

@@ -11,10 +11,17 @@ import { StatCard } from '@/components/ui/stat-card'
 import Link from 'next/link'
 import type { UserProfile, OnboardingData, DailyCheckin } from '@/types'
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ new?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
+
+  const params = await searchParams
+  const isNewUser = params.new === 'true'
 
   const [{ data: profileData }, { data: onboardingData }, { data: recentCheckinsData }] = await Promise.all([
     supabase.from('user_profiles').select('*').eq('id', user.id).single(),
@@ -100,7 +107,39 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="px-4 space-y-5 pb-6">
+      {/* Plan Ready Banner — shown when onboarding just completed or onboarding data exists */}
+      {onboarding && (
+        <div className="px-4 pt-4 space-y-2">
+          <Link
+            href="/workout"
+            className="flex items-center justify-between bg-[#3B82F6]/10 border border-[#3B82F6]/30 rounded-2xl px-4 py-3.5 hover:border-[#3B82F6]/50 transition-all active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-xl">💪</span>
+              <div>
+                <p className="text-sm font-semibold text-white">Your Workout Plan is Ready</p>
+                <p className="text-xs text-gray-500">Tap to view your training program</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0" />
+          </Link>
+          <Link
+            href="/nutrition"
+            className="flex items-center justify-between bg-[#F97316]/10 border border-[#F97316]/30 rounded-2xl px-4 py-3.5 hover:border-[#F97316]/50 transition-all active:scale-[0.98]"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-xl">🥗</span>
+              <div>
+                <p className="text-sm font-semibold text-white">Your Nutrition Plan is Ready</p>
+                <p className="text-xs text-gray-500">Tap to view your meal plan and macros</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0" />
+          </Link>
+        </div>
+      )}
+
+      <div className="px-4 space-y-5 pb-6 pt-5">
         {/* AI Readiness Card */}
         <div
           className="bg-[var(--surface-2)] border rounded-3xl p-5 animate-slide-up"

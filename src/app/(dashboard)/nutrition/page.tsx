@@ -61,11 +61,14 @@ export default function NutritionPage() {
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-[var(--surface-2)] rounded w-1/3" />
-          <div className="grid grid-cols-4 gap-4 mt-6">
-            {[1,2,3,4].map(i => <div key={i} className="h-24 bg-[var(--surface)] border border-[var(--border)] rounded-xl" />)}
+      <div className="min-h-screen bg-black">
+        <div className="px-4 sm:px-6 pt-14 pb-5 border-b border-[var(--border)]">
+          <div className="h-8 bg-[var(--surface-2)] rounded w-1/3 animate-pulse" />
+          <div className="h-4 bg-[var(--surface-2)] rounded w-1/2 mt-2 animate-pulse" />
+        </div>
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1,2,3,4].map(i => <div key={i} className="h-24 bg-[var(--surface)] border border-[var(--border)] rounded-xl animate-pulse" />)}
           </div>
         </div>
       </div>
@@ -74,17 +77,23 @@ export default function NutritionPage() {
 
   if (!plan) {
     return (
-      <div className="p-6 lg:p-8 flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <div className="w-16 h-16 rounded-2xl bg-[var(--gold)]/10 border border-[var(--gold)]/30 flex items-center justify-center mb-4">
-          <Apple className="w-7 h-7 text-[var(--gold)]" />
+      <div className="min-h-screen bg-black">
+        <div className="px-4 sm:px-6 pt-14 pb-5 border-b border-[var(--border)]">
+          <h1 className="text-2xl font-bold text-white">Nutrition Plan</h1>
+          <p className="text-gray-500 text-sm mt-1">Your personalized macros and meal schedule</p>
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">No Nutrition Plan Yet</h2>
-        <p className="text-gray-500 text-sm mb-6 max-w-sm">
-          Generate your personalized nutrition plan tailored to your goals and preferences.
-        </p>
-        <Button variant="gold" size="lg" onClick={generatePlan} loading={generating}>
-          Generate My Nutrition Plan
-        </Button>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--gold)]/10 border border-[var(--gold)]/30 flex items-center justify-center mb-4">
+            <Apple className="w-7 h-7 text-[var(--gold)]" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">No Nutrition Plan Yet</h2>
+          <p className="text-gray-500 text-sm mb-6 max-w-sm">
+            Generate your personalized nutrition plan tailored to your goals and preferences.
+          </p>
+          <Button variant="gold" size="lg" onClick={generatePlan} loading={generating}>
+            {generating ? 'Generating...' : 'Generate My Nutrition Plan'}
+          </Button>
+        </div>
       </div>
     )
   }
@@ -96,25 +105,30 @@ export default function NutritionPage() {
   const fatPct = Math.round((pd.fat_g * 9 / pd.daily_calories) * 100)
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Nutrition Plan</h1>
-          <p className="text-gray-500 text-sm mt-1">Personalized macros and meal timing</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link href="/settings">
-            <Button variant="ghost" size="sm" className="gap-1.5 text-gray-400 hover:text-white">
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              Update Goals
+    <div className="min-h-screen bg-black">
+      {/* Page header */}
+      <div className="px-4 sm:px-6 pt-14 pb-5 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Nutrition Plan</h1>
+            <p className="text-gray-500 text-sm mt-1">Personalized macros and meal timing</p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/settings">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-gray-400 hover:text-white">
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                Update Goals
+              </Button>
+            </Link>
+            <Button variant="outline" size="sm" onClick={generatePlan} loading={generating} className="gap-2">
+              <RefreshCw className="w-3.5 h-3.5" />
+              Regenerate
             </Button>
-          </Link>
-          <Button variant="outline" size="sm" onClick={generatePlan} loading={generating} className="gap-2">
-            <RefreshCw className="w-3.5 h-3.5" />
-            Regenerate
-          </Button>
+          </div>
         </div>
       </div>
+
+    <div className="p-4 sm:p-6 lg:p-8">
 
       {/* Macros summary */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -180,6 +194,7 @@ export default function NutritionPage() {
           <p className="text-sm text-gray-300 leading-relaxed">{pd.notes}</p>
         </Card>
       )}
+    </div>
     </div>
   )
 }

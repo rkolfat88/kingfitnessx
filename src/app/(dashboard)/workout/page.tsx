@@ -70,13 +70,13 @@ export default function WorkoutPage() {
 
   if (loading) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-[var(--surface-2)] rounded w-1/3" />
-          <div className="h-4 bg-[var(--surface-2)] rounded w-1/4" />
-          <div className="space-y-3 mt-6">
-            {[1,2,3].map(i => <div key={i} className="h-24 bg-[var(--surface)] border border-[var(--border)] rounded-xl" />)}
-          </div>
+      <div className="min-h-screen bg-black">
+        <div className="px-4 sm:px-6 pt-14 pb-5 border-b border-[var(--border)]">
+          <div className="h-8 bg-[var(--surface-2)] rounded w-1/3 animate-pulse" />
+          <div className="h-4 bg-[var(--surface-2)] rounded w-1/4 mt-2 animate-pulse" />
+        </div>
+        <div className="p-4 sm:p-6 lg:p-8 space-y-3">
+          {[1,2,3].map(i => <div key={i} className="h-20 bg-[var(--surface)] border border-[var(--border)] rounded-xl animate-pulse" />)}
         </div>
       </div>
     )
@@ -84,17 +84,23 @@ export default function WorkoutPage() {
 
   if (!plan) {
     return (
-      <div className="p-6 lg:p-8 flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <div className="w-16 h-16 rounded-2xl bg-[var(--gold)]/10 border border-[var(--gold)]/30 flex items-center justify-center mb-4">
-          <Dumbbell className="w-7 h-7 text-[var(--gold)]" />
+      <div className="min-h-screen bg-black">
+        <div className="px-4 sm:px-6 pt-14 pb-5 border-b border-[var(--border)]">
+          <h1 className="text-2xl font-bold text-white">Workout Plan</h1>
+          <p className="text-gray-500 text-sm mt-1">Your personalized training program</p>
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">No Workout Plan Yet</h2>
-        <p className="text-gray-500 text-sm mb-6 max-w-sm">
-          Generate your personalized workout plan based on your goals and training profile.
-        </p>
-        <Button variant="gold" size="lg" onClick={generatePlan} loading={generating}>
-          Generate My Workout Plan
-        </Button>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-6">
+          <div className="w-16 h-16 rounded-2xl bg-[var(--gold)]/10 border border-[var(--gold)]/30 flex items-center justify-center mb-4">
+            <Dumbbell className="w-7 h-7 text-[var(--gold)]" />
+          </div>
+          <h2 className="text-xl font-bold text-white mb-2">No Workout Plan Yet</h2>
+          <p className="text-gray-500 text-sm mb-6 max-w-sm">
+            Generate your personalized workout plan based on your goals and training profile.
+          </p>
+          <Button variant="gold" size="lg" onClick={generatePlan} loading={generating}>
+            {generating ? 'Generating...' : 'Generate My Workout Plan'}
+          </Button>
+        </div>
       </div>
     )
   }
@@ -102,28 +108,33 @@ export default function WorkoutPage() {
   const planData = plan.plan_data
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Workout Plan</h1>
-          <div className="flex items-center gap-2 mt-1">
-            <Badge variant="gold">{planData.split}</Badge>
-            <span className="text-gray-500 text-xs">{planData.days_per_week} days/week</span>
+    <div className="min-h-screen bg-black">
+      {/* Page header */}
+      <div className="px-4 sm:px-6 pt-14 pb-5 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Workout Plan</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <Badge variant="gold">{planData.split}</Badge>
+              <span className="text-gray-500 text-xs">{planData.days_per_week} days/week</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/settings">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-gray-400 hover:text-white">
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                Update Goals
+              </Button>
+            </Link>
+            <Button variant="outline" size="sm" onClick={generatePlan} loading={generating} className="gap-2">
+              <RefreshCw className="w-3.5 h-3.5" />
+              Regenerate
+            </Button>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Link href="/settings">
-            <Button variant="ghost" size="sm" className="gap-1.5 text-gray-400 hover:text-white">
-              <SlidersHorizontal className="w-3.5 h-3.5" />
-              Update Goals
-            </Button>
-          </Link>
-          <Button variant="outline" size="sm" onClick={generatePlan} loading={generating} className="gap-2">
-            <RefreshCw className="w-3.5 h-3.5" />
-            Regenerate
-          </Button>
-        </div>
       </div>
+
+    <div className="p-4 sm:p-6 lg:p-8">
 
       <div className="space-y-3 mb-6">
         {planData.sessions.map((session: WorkoutSession) => (
@@ -194,6 +205,7 @@ export default function WorkoutPage() {
           <p className="text-sm text-gray-300 leading-relaxed">{planData.notes}</p>
         </Card>
       )}
+    </div>
     </div>
   )
 }
