@@ -34,6 +34,7 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname
   const isPublicPath = path === '/' || path === '/login' || path === '/signup'
+    || path === '/forgot-password' || path === '/reset-password'
   const isApiRoute = path.startsWith('/api/')
   const isOnboarding = path === '/onboarding'
 
@@ -55,7 +56,7 @@ export async function updateSession(request: NextRequest) {
     // On login/signup while already authenticated
     if (path === '/login' || path === '/signup') {
       return NextResponse.redirect(
-        new URL(completedOnboarding ? '/chat' : '/onboarding', request.url)
+        new URL(completedOnboarding ? '/home' : '/onboarding', request.url)
       )
     }
 

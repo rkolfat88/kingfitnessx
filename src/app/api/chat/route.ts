@@ -51,6 +51,21 @@ export async function POST(request: Request) {
 
     const agentType = await classifyIntent(lastText)
 
+    // Fetch recent check-ins for prompt engineering context
+    const { data: recentCheckins } = await supabase
+      .from('daily_checkins')
+      .select('energy_level, soreness_level, mood, weight_kg')
+      .eq('user_id', user.id)
+      .order('date', { ascending: false })
+      .limit(3)
+
+    // Engineer the prompt for maximum quality (silent — user never sees this)
+    const { engineerPrompt } = await import('@/lib/agents/prompt-engineer')
+    const engineeredMessage = await engineerPrompt(lastText, agentType, {
+      onboarding,
+      recentCheckins: recentCheckins ?? [],
+    })
+
     await supabase.from('conversation_history').insert({
       user_id: user.id,
       role: 'user',
@@ -59,7 +74,17 @@ export async function POST(request: Request) {
     })
 
     const systemPrompt = buildSystemPrompt(onboarding)
-    const modelMessages = await convertToModelMessages(messages.slice(-10))
+
+    // Replace last user message with engineered version for AI, keep original for history
+    const sliced = messages.slice(-10)
+    if (engineeredMessage !== lastText && sliced.length > 0) {
+      const lastIdx = sliced.length - 1
+      sliced[lastIdx] = {
+        ...sliced[lastIdx],
+        parts: [{ type: 'text' as const, text: engineeredMessage }],
+      }
+    }
+    const modelMessages = await convertToModelMessages(sliced)
 
     const result = streamText({
       model: aiModel,

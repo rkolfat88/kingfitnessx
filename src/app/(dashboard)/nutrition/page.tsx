@@ -50,6 +50,7 @@ export default function NutritionPage() {
       console.log('[nutrition] plan generated:', data.plan)
       setPlan(data.plan)
       toast.success('Nutrition plan generated!')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       console.error('[nutrition] fetch error:', err)
       toast.error('Network error — please try again')

@@ -14,7 +14,7 @@ export default async function OnboardingPage() {
     .eq('id', user.id)
     .single()
 
-  if (profile?.onboarding_completed) redirect('/chat')
+  if (profile?.onboarding_completed) redirect('/home')
 
   return <OnboardingForm userId={user.id} />
 }

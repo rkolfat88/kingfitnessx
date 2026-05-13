@@ -5,6 +5,7 @@ import { DefaultChatTransport, isTextUIPart } from 'ai'
 import { useEffect, useRef, useState, useMemo } from 'react'
 import { MessageBubble, TypingIndicator } from './message-bubble'
 import { ChatInput } from './chat-input'
+import type { Message } from '@/types'
 
 const SUGGESTED_PROMPTS = [
   "What should I eat today?",
@@ -17,7 +18,7 @@ export function ChatInterface() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const [input, setInput] = useState('')
 
-  const [injectedMessages, setInjectedMessages] = useState<Array<{ id: string; role: 'assistant'; content: string }>>([])
+  const [injectedMessages, setInjectedMessages] = useState<Array<{ id: string } & Message>>([])
 
   const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), [])
 
@@ -90,13 +91,18 @@ export function ChatInterface() {
         {messages.map((msg) => (
           <MessageBubble
             key={msg.id}
-            role={msg.role as 'user' | 'assistant'}
-            content={getMessageText(msg)}
+            message={{
+              role: msg.role as 'user' | 'assistant',
+              content: getMessageText(msg),
+            }}
           />
         ))}
 
         {injectedMessages.map((msg) => (
-          <MessageBubble key={msg.id} role="assistant" content={msg.content} />
+          <MessageBubble
+            key={msg.id}
+            message={{ role: msg.role, content: msg.content }}
+          />
         ))}
 
         {isLoading && <TypingIndicator />}

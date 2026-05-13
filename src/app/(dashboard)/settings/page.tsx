@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -63,6 +64,7 @@ const DEFAULT_FORM: FormState = {
 
 export default function SettingsPage() {
   const supabase = createClient()
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [regenerating, setRegenerating] = useState(false)
@@ -188,13 +190,16 @@ export default function SettingsPage() {
       const nutritionOk = nutritionRes.status === 'fulfilled' && nutritionRes.value.ok
 
       if (workoutOk && nutritionOk) {
-        toast.success('Workout & nutrition plans regenerated!')
+        toast.success('Plans regenerated — redirecting…')
+        router.push('/workout')
       } else if (workoutOk) {
         toast.success('Workout plan regenerated!')
         toast.error('Nutrition plan failed — try regenerating manually')
+        router.push('/workout')
       } else if (nutritionOk) {
         toast.success('Nutrition plan regenerated!')
         toast.error('Workout plan failed — try regenerating manually')
+        router.push('/nutrition')
       } else {
         toast.error('Plans could not be regenerated — upgrade to King Pro or try again')
       }

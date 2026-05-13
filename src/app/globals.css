@@ -4,59 +4,170 @@
   --color-gold: #C9A84C;
   --color-gold-light: #E8C76A;
   --color-gold-dark: #9B7A2E;
-  --color-surface: #111111;
-  --color-surface-2: #1A1A1A;
-  --color-surface-3: #222222;
-  --color-border: #2A2A2A;
-  --color-border-gold: rgba(201,168,76,0.3);
-
-  --animate-fade-in: fadeIn 0.3s ease-out;
-  --animate-slide-up: slideUp 0.4s ease-out;
-  --animate-pulse-gold: pulseGold 2s infinite;
+  --color-surface: #0F0F0F;
+  --color-surface-2: #161616;
+  --color-surface-3: #1E1E1E;
+  --color-surface-4: #252525;
+  --color-border: #242424;
+  --color-border-gold: rgba(201, 168, 76, 0.25);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
 
   @keyframes fadeIn {
     from { opacity: 0; }
-    to { opacity: 1; }
+    to   { opacity: 1; }
   }
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-16px); }
+    to   { opacity: 1; transform: translateX(0); }
   }
   @keyframes pulseGold {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.4); }
-    50% { box-shadow: 0 0 0 8px rgba(201,168,76,0); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201, 168, 76, 0.3); }
+    50%       { box-shadow: 0 0 0 6px rgba(201, 168, 76, 0); }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position:  200% 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-4px); }
   }
 }
 
+/* ── Raw CSS vars (used by existing components via var(--gold) etc.) ── */
 :root {
-  --gold: #C9A84C;
-  --gold-light: #E8C76A;
-  --gold-dark: #9B7A2E;
-  --black: #0A0A0A;
-  --surface: #111111;
-  --surface-2: #1A1A1A;
-  --surface-3: #222222;
-  --border: #2A2A2A;
-  --border-gold: rgba(201,168,76,0.3);
-  --text-primary: #F5F5F5;
-  --text-secondary: #888888;
-  --text-muted: #555555;
+  --gold:          #C9A84C;
+  --gold-light:    #E8C76A;
+  --gold-dark:     #9B7A2E;
+  --gold-glow:     rgba(201, 168, 76, 0.15);
+  --black:         #080808;
+  --surface:       #0F0F0F;
+  --surface-2:     #161616;
+  --surface-3:     #1E1E1E;
+  --surface-4:     #252525;
+  --border:        #242424;
+  --border-gold:   rgba(201, 168, 76, 0.25);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --text-primary:   #F0F0F0;
+  --text-secondary: #909090;
+  --text-muted:     #505050;
+  --glass:         rgba(255, 255, 255, 0.03);
+  --glass-border:  rgba(255, 255, 255, 0.08);
+  --shadow-gold:   0 0 30px rgba(201, 168, 76, 0.08);
+  --shadow-card:   0 4px 24px rgba(0, 0, 0, 0.4);
 }
 
-* {
+/* ── Reset ── */
+*, *::before, *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* Remove iOS/Android blue flash on tap for every element */
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* Prevent font size inflation on orientation change (iOS) */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   background-color: var(--black);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--surface); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+/* Remove 300ms tap delay on all interactive elements (Android / older iOS) */
+a, button, [role="button"], input, select, textarea, label {
+  touch-action: manipulation;
+}
+
+/* ── Scrollbar — desktop pointer only (hidden on touch screens) ── */
+@media (pointer: fine) {
+  ::-webkit-scrollbar       { width: 3px; height: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface-4); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dark); }
+}
 
 ::selection { background: var(--gold-dark); color: var(--black); }
+
+/* ── Utility classes ── */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glow-gold { box-shadow: var(--shadow-gold); }
+
+/* ── Animation helpers ── */
+.animate-fade-in          { animation: fadeIn 0.4s ease-out; }
+.animate-slide-up         { animation: slideUp 0.4s ease-out; }
+.animate-slide-up-delay-1 { animation: slideUp 0.4s ease-out 0.1s both; }
+.animate-slide-up-delay-2 { animation: slideUp 0.4s ease-out 0.2s both; }
+.animate-slide-up-delay-3 { animation: slideUp 0.4s ease-out 0.3s both; }
+.animate-slide-in-left    { animation: slideInLeft 0.4s ease-out; }
+.animate-pulse-gold       { animation: pulseGold 2s infinite; }
+.animate-float            { animation: float 3s ease-in-out infinite; }
+
+/* ── Shimmer skeleton ── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 25%,
+    var(--surface-3) 50%,
+    var(--surface-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* ── Mobile bottom-nav safe area ── */
+.bottom-nav-padding {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Chat page: full height minus bottom nav + safe area ──
+   Uses 100dvh (dynamic viewport height) which correctly excludes
+   the iOS Safari address bar. Falls back to 100vh for older browsers. */
+.chat-height {
+  height: calc(100vh   - 72px - env(safe-area-inset-bottom, 0px));
+  height: calc(100dvh  - 72px - env(safe-area-inset-bottom, 0px));
+}
+
+/* ── Score ring glow ── */
+.score-ring { filter: drop-shadow(0 0 8px currentColor); }
+
+/* ── Feature card hover border ── */
+.feature-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+.feature-card:hover {
+  border-color: rgba(201, 168, 76, 0.3);
+}
+
+/* ── Smooth momentum scrolling on iOS for scroll containers ── */
+.overflow-y-auto,
+.overflow-y-scroll {
+  -webkit-overflow-scrolling: touch;
+}

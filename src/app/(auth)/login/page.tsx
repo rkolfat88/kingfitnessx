@@ -29,7 +29,7 @@ export default function LoginPage() {
       return
     }
 
-    router.push('/chat')
+    router.push('/home')
     router.refresh()
   }
 
@@ -56,14 +56,21 @@ export default function LoginPage() {
               onChange={e => setEmail(e.target.value)}
               required
             />
-            <Input
-              label="Password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
+            <div className="space-y-1">
+              <Input
+                label="Password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+              <div className="flex justify-end">
+                <Link href="/forgot-password" className="text-xs text-gray-500 hover:text-[var(--gold)] transition-colors">
+                  Forgot password?
+                </Link>
+              </div>
+            </div>
 
             <Button
               type="submit"

@@ -59,6 +59,7 @@ export default function WorkoutPage() {
         setExpandedDay(data.plan.plan_data.sessions[0].day)
       }
       toast.success('Workout plan generated!')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       console.error('[workout] fetch error:', err)
       toast.error('Network error — please try again')
