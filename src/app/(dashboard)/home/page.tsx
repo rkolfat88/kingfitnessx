@@ -23,19 +23,27 @@ export default async function HomePage({
   const params = await searchParams
   const isNewUser = params.new === 'true'
 
-  const [{ data: profileData }, { data: onboardingData }, { data: recentCheckinsData }] = await Promise.all([
+  const [
+    { data: profileData },
+    { data: onboardingData },
+    { data: recentCheckinsData },
+    { data: intelligenceAlerts },
+    { data: performanceScores },
+  ] = await Promise.all([
     supabase.from('user_profiles').select('*').eq('id', user.id).single(),
     supabase.from('onboarding_data').select('*').eq('user_id', user.id).single(),
     supabase.from('daily_checkins').select('*').eq('user_id', user.id).order('date', { ascending: false }).limit(7),
+    supabase.from('intelligence_alerts').select('*').eq('user_id', user.id).eq('is_read', false).order('created_at', { ascending: false }).limit(5),
+    supabase.from('performance_scores').select('*').eq('user_id', user.id).order('score_date', { ascending: false }).limit(1).single(),
   ])
 
-  const profile   = profileData  as UserProfile   | null
-  const onboarding = onboardingData as OnboardingData | null
+  const profile       = profileData      as UserProfile   | null
+  const onboarding    = onboardingData   as OnboardingData | null
   const recentCheckins = (recentCheckinsData ?? []) as DailyCheckin[]
-  const latest = recentCheckins[0] ?? null
+  const latest        = recentCheckins[0] ?? null
 
-  // Score calculations (0–100)
-  const avgEnergy   = recentCheckins.length
+  // Baseline scores from check-in data (fallback if no performance_scores row yet)
+  const avgEnergy = recentCheckins.length
     ? Math.round(recentCheckins.reduce((s, c) => s + (c.energy_level ?? 5), 0) / recentCheckins.length * 10)
     : 70
   const avgRecovery = recentCheckins.length
@@ -46,6 +54,14 @@ export default async function HomePage({
     : 0
   const readinessScore = Math.round((avgEnergy + avgRecovery) / 2)
 
+  // Real performance scores with graceful fallback
+  const scores = performanceScores ?? null
+  const displayReadiness  = scores?.readiness_score  ?? readinessScore
+  const displayRecovery   = scores?.recovery_score   ?? avgRecovery
+  const displayAdherence  = scores?.adherence_score  ?? adherenceScore
+  const displayMomentum   = scores?.momentum_score   ?? Math.round((avgEnergy + avgRecovery) / 2)
+  const displayDiscipline = scores?.discipline_rating ?? 0
+
   const getReadiness = (score: number) => {
     if (score >= 80) return { label: 'Optimal',  color: '#22C55E', advice: 'Perfect day for high intensity training' }
     if (score >= 65) return { label: 'Good',     color: '#C9A84C', advice: 'Moderate intensity recommended' }
@@ -53,24 +69,11 @@ export default async function HomePage({
     return             { label: 'Low',      color: '#EF4444', advice: 'Active recovery recommended today' }
   }
 
-  const readiness  = getReadiness(readinessScore)
+  const readiness  = getReadiness(displayReadiness)
   const hour       = new Date().getHours()
   const greeting   = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
   const firstName  = profile?.full_name?.split(' ')[0] ?? 'King'
   const sorenessHigh = (latest?.soreness_level ?? 0) >= 7
-
-  const feedMessages: Array<{ message: string; type: 'info' | 'success' | 'warning' | 'insight' }> = []
-  if (latest) {
-    if (latest.energy_level >= 8)         feedMessages.push({ message: 'High energy detected — optimal for strength training', type: 'success' })
-    if (sorenessHigh)                     feedMessages.push({ message: 'High soreness detected — recovery protocol activated', type: 'warning' })
-    if (latest.adherence_workout)         feedMessages.push({ message: 'Workout logged — progressive overload on track',       type: 'success' })
-    if (!latest.adherence_nutrition)      feedMessages.push({ message: 'Nutrition tracking missed — consistency drives results', type: 'warning' })
-    if (latest.mood >= 8)                 feedMessages.push({ message: 'Positive mindset — use this momentum today',          type: 'insight' })
-  }
-  if (feedMessages.length === 0) {
-    feedMessages.push({ message: 'Complete your daily check-in for personalized AI insights', type: 'info' })
-    feedMessages.push({ message: 'Your specialist agents are ready — ask anything',            type: 'insight' })
-  }
 
   const goalLabel = onboarding?.goal
     ? onboarding.goal.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
@@ -111,7 +114,7 @@ export default async function HomePage({
       {isNewUser && (
         <div className="px-4 pt-4">
           <div
-            className="rounded-2xl border border-[var(--gold)]/40 bg-[var(--gold)]/8 p-5"
+            className="rounded-2xl border border-[var(--gold)]/40 p-5"
             style={{ background: 'rgba(201,168,76,0.07)' }}
           >
             <p className="text-base font-bold text-white mb-1">👑 Welcome! Your personalized plans are ready.</p>
@@ -146,17 +149,18 @@ export default async function HomePage({
               <h2 className="text-xl font-bold" style={{ color: readiness.color }}>{readiness.label}</h2>
               <p className="text-sm text-gray-400 mt-0.5">{readiness.advice}</p>
             </div>
-            <ScoreRing score={readinessScore} color="auto" size={72} strokeWidth={5} />
+            <ScoreRing score={displayReadiness} color="auto" size={72} strokeWidth={5} />
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-4 gap-2">
             {[
-              { label: 'Energy',    score: avgEnergy },
-              { label: 'Recovery', score: avgRecovery },
-              { label: 'Adherence', score: adherenceScore },
+              { label: 'Recovery',   score: displayRecovery  },
+              { label: 'Adherence',  score: displayAdherence },
+              { label: 'Momentum',   score: displayMomentum  },
+              { label: 'Discipline', score: displayDiscipline },
             ].map(({ label, score }) => (
-              <div key={label} className="bg-black/30 rounded-xl p-2.5 text-center">
-                <p className="text-lg font-bold text-white">{score}</p>
-                <p className="text-xs text-gray-500">{label}</p>
+              <div key={label} className="bg-black/30 rounded-xl p-2 text-center">
+                <p className="text-base font-bold text-white">{score}</p>
+                <p className="text-[10px] text-gray-500">{label}</p>
               </div>
             ))}
           </div>
@@ -201,26 +205,56 @@ export default async function HomePage({
                 unit="kg"
                 color="gold"
               />
-              <StatCard label="Goal"          value={goalLabel}                       color="blue"   />
+              <StatCard label="Goal"          value={goalLabel}                        color="blue"   />
               <StatCard label="Training Days" value={onboarding.days_per_week ?? '--'} unit="/ week" color="green"  />
-              <StatCard label="Experience"    value={expLabel}                        color="orange" />
+              <StatCard label="Experience"    value={expLabel}                         color="orange" />
             </div>
           </div>
         )}
 
-        {/* AI Feed */}
+        {/* AI Intelligence Feed */}
         <div>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">AI Intelligence Feed</p>
-            <div className="flex items-center gap-1">
-              <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] animate-pulse" />
-              <span className="text-xs text-[var(--gold)]">Live</span>
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">AI Intelligence</p>
+            <div className="flex items-center gap-2">
+              {intelligenceAlerts && intelligenceAlerts.length > 0 ? (
+                <span className="text-xs bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20 px-2 py-0.5 rounded-full">
+                  {intelligenceAlerts.length} insight{intelligenceAlerts.length !== 1 ? 's' : ''}
+                </span>
+              ) : (
+                <>
+                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] animate-pulse" />
+                  <span className="text-xs text-[var(--gold)]">Live</span>
+                </>
+              )}
             </div>
           </div>
           <div className="space-y-2">
-            {feedMessages.map((item, i) => (
-              <AIFeedItem key={i} message={item.message} type={item.type} />
-            ))}
+            {intelligenceAlerts && intelligenceAlerts.length > 0 ? (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              intelligenceAlerts.map((alert: any) => (
+                <AIFeedItem
+                  key={alert.id}
+                  message={alert.message}
+                  type={
+                    alert.severity === 'positive' ? 'success' :
+                    alert.severity === 'critical' ? 'warning' :
+                    alert.severity === 'warning'  ? 'warning' : 'info'
+                  }
+                />
+              ))
+            ) : (
+              <>
+                <AIFeedItem
+                  message="Complete your daily check-in to activate AI pattern detection"
+                  type="info"
+                />
+                <AIFeedItem
+                  message="Your coaching agents are analyzing your performance data"
+                  type="insight"
+                />
+              </>
+            )}
           </div>
         </div>
 

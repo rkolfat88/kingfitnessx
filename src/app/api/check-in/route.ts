@@ -3,6 +3,12 @@ import { createClient } from '@/lib/supabase/server'
 import { generateText } from 'ai'
 import { aiModel } from '@/lib/openai'
 import { buildCheckinAnalysisPrompt } from '@/lib/agents/prompts'
+import {
+  calculatePerformanceScores,
+  detectPatterns,
+  saveIntelligenceData,
+} from '@/lib/agents/longitudinal-agent'
+import type { DailyCheckin } from '@/types'
 
 export async function POST(request: Request) {
   try {
@@ -40,6 +46,38 @@ export async function POST(request: Request) {
       .single()
 
     if (error) throw error
+
+    // Run longitudinal analysis — non-blocking, never fails the check-in
+    try {
+      const [{ data: allCheckins }, { data: onboarding }] = await Promise.all([
+        supabase
+          .from('daily_checkins')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('date', { ascending: false })
+          .limit(30),
+        supabase
+          .from('onboarding_data')
+          .select('goal, weight_kg')
+          .eq('user_id', user.id)
+          .single(),
+      ])
+
+      if (allCheckins && allCheckins.length >= 1) {
+        const scores = calculatePerformanceScores(
+          allCheckins as DailyCheckin[],
+          onboarding?.weight_kg ?? null
+        )
+        const alerts = detectPatterns(
+          allCheckins as DailyCheckin[],
+          scores,
+          onboarding?.goal ?? 'general'
+        )
+        await saveIntelligenceData(supabase, user.id, scores, alerts)
+      }
+    } catch (longitudinalError) {
+      console.error('Longitudinal analysis error (non-blocking):', longitudinalError)
+    }
 
     return NextResponse.json({ checkin })
   } catch (error) {

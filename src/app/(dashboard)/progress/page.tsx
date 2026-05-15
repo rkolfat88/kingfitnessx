@@ -3,20 +3,33 @@
 import { useEffect, useState } from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { WeightChart } from '@/components/progress/weight-chart'
+import { ScoreTrendChart } from '@/components/progress/score-trend-chart'
 import { Badge } from '@/components/ui/badge'
 import { TrendingUp, Flame, CheckCircle } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import type { DailyCheckin } from '@/types'
 
+interface ScoreRow {
+  score_date: string
+  recovery_score:    number | null
+  adherence_score:   number | null
+  momentum_score:    number | null
+  discipline_rating: number | null
+}
+
 export default function ProgressPage() {
-  const [checkins, setCheckins] = useState<DailyCheckin[]>([])
-  const [loading, setLoading] = useState(true)
+  const [checkins,     setCheckins]     = useState<DailyCheckin[]>([])
+  const [scoreHistory, setScoreHistory] = useState<ScoreRow[]>([])
+  const [loading,      setLoading]      = useState(true)
 
   useEffect(() => {
-    fetch('/api/check-in')
-      .then(r => r.json())
-      .then(d => { setCheckins(d.checkins || []) })
-      .finally(() => setLoading(false))
+    Promise.all([
+      fetch('/api/check-in').then(r => r.json()),
+      fetch('/api/intelligence').then(r => r.json()),
+    ]).then(([checkinData, intelligenceData]) => {
+      setCheckins(checkinData.checkins || [])
+      setScoreHistory(intelligenceData.scores || [])
+    }).finally(() => setLoading(false))
   }, [])
 
   const last7 = checkins.slice(0, 7)
@@ -34,7 +47,6 @@ export default function ProgressPage() {
     let streak = 0
     const today = new Date()
     for (let i = 0; i < checkins.length; i++) {
-      const checkinDate = new Date(checkins[i].date)
       const expected = new Date(today)
       expected.setDate(expected.getDate() - i)
       const dateStr = expected.toISOString().split('T')[0]
@@ -119,6 +131,31 @@ export default function ProgressPage() {
           </div>
         </Card>
       </div>
+
+      {/* Performance Score Trends */}
+      {scoreHistory.length > 0 && (
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>Performance Score Trends (30 days)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScoreTrendChart scores={scoreHistory} />
+            <div className="flex flex-wrap gap-3 mt-3">
+              {[
+                { label: 'Recovery',   color: '#22C55E' },
+                { label: 'Adherence',  color: '#C9A84C' },
+                { label: 'Momentum',   color: '#3B82F6' },
+                { label: 'Discipline', color: '#F97316' },
+              ].map(({ label, color }) => (
+                <div key={label} className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+                  <span className="text-xs text-gray-500">{label}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Weight chart */}
       <Card className="mb-8">
