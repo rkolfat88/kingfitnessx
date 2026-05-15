@@ -4,6 +4,18 @@ import { stripe } from '@/lib/stripe'
 
 export async function POST() {
   try {
+    // Guard: required env vars
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL
+    const priceId = process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID
+    if (!appUrl) {
+      console.error('Stripe checkout error: NEXT_PUBLIC_APP_URL is not set')
+      return NextResponse.json({ error: 'Server misconfiguration: missing APP_URL' }, { status: 500 })
+    }
+    if (!priceId) {
+      console.error('Stripe checkout error: NEXT_PUBLIC_STRIPE_PRO_PRICE_ID is not set')
+      return NextResponse.json({ error: 'Server misconfiguration: missing price ID' }, { status: 500 })
+    }
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -37,19 +49,20 @@ export async function POST() {
       customer: customerId,
       payment_method_types: ['card'],
       line_items: [{
-        price: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID!,
+        price: priceId,
         quantity: 1,
       }],
       mode: 'subscription',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/chat?upgraded=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/upgrade`,
+      success_url: `${appUrl}/chat?upgraded=true`,
+      cancel_url: `${appUrl}/upgrade`,
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
     })
 
     return NextResponse.json({ url: session.url })
   } catch (error) {
-    console.error('Checkout error:', error)
+    console.error('Stripe checkout error:', error)
+    console.error('Stripe checkout error details:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
     return NextResponse.json(
       { error: 'Failed to create checkout session' },
       { status: 500 }
