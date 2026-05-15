@@ -137,10 +137,10 @@ export default async function HomePage({
         </div>
       )}
 
-      <div className="px-4 space-y-5 pb-6 pt-5">
+      <div className="px-4 space-y-8 pb-6 pt-5">
         {/* AI Readiness Card */}
         <div
-          className="bg-[var(--surface-2)] border rounded-3xl p-5 animate-slide-up"
+          className="bg-[var(--surface-2)] border rounded-3xl p-5 animate-slide-up mb-8"
           style={{ borderColor: readiness.color + '30' }}
         >
           <div className="flex items-center justify-between mb-4">
@@ -167,8 +167,8 @@ export default async function HomePage({
         </div>
 
         {/* Quick Actions */}
-        <div>
-          <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">Quick Actions</p>
+        <div className="mb-8">
+          <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3 pt-4">Quick Actions</p>
           <div className="grid grid-cols-2 gap-2.5">
             {[
               { href: '/chat',      icon: MessageSquare, label: 'Talk to Coach',  color: '#C9A84C', desc: 'Get instant guidance'  },
@@ -196,8 +196,8 @@ export default async function HomePage({
 
         {/* Stats */}
         {onboarding && (
-          <div>
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3">Your Metrics</p>
+          <div className="mb-8">
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3 pt-4">Your Metrics</p>
             <div className="grid grid-cols-2 gap-2.5">
               <StatCard
                 label="Current Weight"
@@ -213,9 +213,9 @@ export default async function HomePage({
         )}
 
         {/* AI Intelligence Feed */}
-        <div>
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">AI Intelligence</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium pt-4">AI Intelligence</p>
             <div className="flex items-center gap-2">
               {intelligenceAlerts && intelligenceAlerts.length > 0 ? (
                 <span className="text-xs bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20 px-2 py-0.5 rounded-full">
@@ -259,9 +259,9 @@ export default async function HomePage({
         </div>
 
         {/* Agent Team */}
-        <div>
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Your Coaching Team</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium pt-4">Your Coaching Team</p>
             <Link href="/chat" className="text-xs text-[var(--gold)] flex items-center gap-1">
               Talk to them <ChevronRight className="w-3 h-3" />
             </Link>
