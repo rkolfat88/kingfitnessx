@@ -146,8 +146,8 @@ export default async function HomePage({
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">AI Readiness</p>
-              <h2 className="text-xl font-bold" style={{ color: readiness.color }}>{readiness.label}</h2>
-              <p className="text-sm text-gray-400 mt-0.5">{readiness.advice}</p>
+              <h2 className="text-3xl font-black" style={{ color: readiness.color }}>{readiness.label}</h2>
+              <p className="text-base text-gray-400 mt-0.5">{readiness.advice}</p>
             </div>
             <ScoreRing score={displayReadiness} color="auto" size={72} strokeWidth={5} />
           </div>
@@ -159,8 +159,8 @@ export default async function HomePage({
               { label: 'Discipline', score: displayDiscipline },
             ].map(({ label, score }) => (
               <div key={label} className="bg-black/30 rounded-xl p-2 text-center">
-                <p className="text-base font-bold text-white">{score}</p>
-                <p className="text-[10px] text-gray-500">{label}</p>
+                <p className="text-2xl font-bold text-white">{score}</p>
+                <p className="text-xs text-gray-500">{label}</p>
               </div>
             ))}
           </div>
@@ -168,7 +168,7 @@ export default async function HomePage({
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3 pt-4 px-4">Quick Actions</p>
+          <p className="text-sm text-gray-500 uppercase tracking-wide font-medium mb-4 pt-4 px-4">Quick Actions</p>
           <div className="grid grid-cols-2 gap-2.5">
             {[
               { href: '/chat',      icon: MessageSquare, label: 'Talk to Coach',  color: '#C9A84C', desc: 'Get instant guidance'  },
@@ -179,7 +179,7 @@ export default async function HomePage({
               <Link
                 key={href}
                 href={href}
-                className="bg-[var(--surface-2)] border border-[var(--border)] hover:border-gray-700 rounded-2xl p-4 transition-all duration-200 active:scale-95"
+                className="bg-[var(--surface-2)] border border-[var(--border)] hover:border-gray-700 rounded-2xl p-4 transition-all duration-200 active:scale-95 min-h-[100px] flex flex-col justify-between"
               >
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center mb-3"
@@ -187,8 +187,8 @@ export default async function HomePage({
                 >
                   <Icon className="w-4 h-4" style={{ color }} />
                 </div>
-                <p className="text-sm font-semibold text-white">{label}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
+                <p className="text-base font-semibold text-white">{label}</p>
+                <p className="text-sm text-gray-500 mt-0.5">{desc}</p>
               </Link>
             ))}
           </div>
@@ -197,7 +197,7 @@ export default async function HomePage({
         {/* Stats */}
         {onboarding && (
           <div className="mb-8">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3 pt-4 px-4">Your Metrics</p>
+            <p className="text-sm text-gray-500 uppercase tracking-wide font-medium mb-4 pt-4 px-4">Your Metrics</p>
             <div className="grid grid-cols-2 gap-2.5">
               <StatCard
                 label="Current Weight"
@@ -214,8 +214,8 @@ export default async function HomePage({
 
         {/* AI Intelligence Feed */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium pt-4 px-4">AI Intelligence</p>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm text-gray-500 uppercase tracking-wide font-medium pt-4 px-4">AI Intelligence</p>
             <div className="flex items-center gap-2">
               {intelligenceAlerts && intelligenceAlerts.length > 0 ? (
                 <span className="text-xs bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20 px-2 py-0.5 rounded-full">
@@ -260,8 +260,8 @@ export default async function HomePage({
 
         {/* Agent Team */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium pt-4 px-4">Your Coaching Team</p>
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm text-gray-500 uppercase tracking-wide font-medium pt-4 px-4">Your Coaching Team</p>
             <Link href="/chat" className="text-xs text-[var(--gold)] flex items-center gap-1">
               Talk to them <ChevronRight className="w-3 h-3" />
             </Link>
