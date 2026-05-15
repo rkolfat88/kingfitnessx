@@ -114,7 +114,7 @@ export default function WorkoutPage() {
   const planData = plan.plan_data
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="bg-black">
       <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
 
         {/* HEADER */}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Apple, RefreshCw, Clock, SlidersHorizontal } from 'lucide-react'
+import { Apple, RefreshCw, SlidersHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 import type { NutritionPlan, Meal } from '@/types'
 
@@ -178,29 +178,26 @@ export default function NutritionPage() {
         </div>
 
         {/* MEALS */}
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-3">Daily Meals</p>
-        <div className="space-y-3">
+        <p className="text-xs uppercase tracking-widest text-[#505050] mb-3">Daily Meals</p>
+        <div>
           {pd.meals.map((meal: Meal, i: number) => (
-            <div key={i} className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
+            <div key={i} className="bg-[#161616] border border-[#242424] rounded-2xl p-4 mb-3">
               {/* Meal header */}
-              <div className="flex items-start justify-between mb-2">
+              <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-semibold text-white">{meal.name}</p>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Clock className="w-3 h-3 text-[#505050]" />
-                    <span className="text-xs text-[#505050]">{meal.time}</span>
-                  </div>
+                  <p className="text-sm font-bold text-white">{meal.name}</p>
+                  <p className="text-xs text-[#909090] mt-0.5">{meal.time}</p>
                 </div>
                 <span className="text-sm font-semibold text-[#C9A84C]">{meal.calories} cal</span>
               </div>
               {/* Macro pills */}
-              <div className="flex gap-2 mb-3">
+              <div className="flex gap-2 mt-2">
                 <span className="text-[10px] font-semibold bg-green-400/10 text-green-400 px-2 py-0.5 rounded-full">P: {meal.protein_g}g</span>
                 <span className="text-[10px] font-semibold bg-blue-400/10 text-blue-400 px-2 py-0.5 rounded-full">C: {meal.carbs_g}g</span>
                 <span className="text-[10px] font-semibold bg-[#C9A84C]/10 text-[#C9A84C] px-2 py-0.5 rounded-full">F: {meal.fat_g}g</span>
               </div>
               {/* Foods */}
-              <div className="space-y-1">
+              <div className="mt-3 space-y-1">
                 {meal.foods.map((food, j) => (
                   <p key={j} className="text-sm text-[#909090] flex items-start gap-2">
                     <span className="text-[#505050] mt-0.5 flex-shrink-0">·</span>

@@ -17,10 +17,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="min-h-screen bg-black">
       <main className="bottom-nav-padding min-h-screen">
         {children}
+        <div className="text-xs text-[#404040] text-center px-4 py-3 border-t border-[#1a1a1a]">
+          ⚠️ King AI Coach provides general fitness information only. Not medical advice. Always consult a qualified healthcare professional before starting any fitness, nutrition, or supplement program.
+        </div>
       </main>
-      <div className="fixed bottom-[72px] left-0 right-0 z-40 text-xs text-gray-600 text-center px-4 py-2 bg-[var(--surface)] border-t border-[var(--border)]">
-        ⚠️ King AI Coach provides general fitness information only. Not medical advice. Always consult a qualified healthcare professional, doctor, or therapist before starting any fitness, nutrition, or supplement program. DYOR.
-      </div>
       <BottomNav profile={profile} userEmail={user.email ?? ''} />
     </div>
   )
