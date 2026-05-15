@@ -214,8 +214,8 @@ export default function SettingsPage() {
   // ─── Loading skeleton ───────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="min-h-screen bg-black px-4 pt-12 pb-24">
-        <div className="max-w-lg mx-auto space-y-4 animate-pulse">
+      <div className="min-h-screen bg-black">
+        <div className="max-w-2xl mx-auto px-4 pt-12 pb-32 space-y-4 animate-pulse">
           <div className="h-7 bg-[var(--surface-2)] rounded w-1/3" />
           {[1, 2, 3].map(i => (
             <div key={i} className="h-40 bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl" />
@@ -243,8 +243,8 @@ export default function SettingsPage() {
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-black px-4 pt-12 pb-24">
-      <div className="max-w-lg mx-auto">
+    <div className="min-h-screen bg-black">
+      <div className="max-w-2xl mx-auto px-4 pt-12 pb-32">
 
         {/* Page heading */}
         <h1 className="text-2xl font-bold text-white mb-1">Settings</h1>
@@ -256,21 +256,21 @@ export default function SettingsPage() {
             👤 Account
           </p>
 
-          <p className="text-xs text-gray-500 mb-1">Full Name</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-0">Full Name</p>
           <Input
             placeholder="Your name"
             value={form.full_name}
             onChange={e => set('full_name', e.target.value)}
           />
 
-          <p className="text-xs text-gray-500 mb-1 mt-3">Email</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Email</p>
           <input
             readOnly
             value={email}
             className="w-full px-4 py-2.5 rounded-lg text-sm bg-[var(--surface-3)] border border-[var(--border)] text-gray-500 cursor-default"
           />
 
-          <p className="text-xs text-gray-500 mb-1 mt-3">Subscription</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Subscription</p>
           <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[var(--surface-3)] border border-[var(--border)]">
             <Crown className={cn('w-4 h-4', tier === 'pro' ? 'text-[var(--gold)]' : 'text-gray-600')} />
             <span className={cn('text-sm font-medium', tier === 'pro' ? 'text-[var(--gold)]' : 'text-gray-500')}>
@@ -290,7 +290,7 @@ export default function SettingsPage() {
             🎯 Goal &amp; Weight
           </p>
 
-          <p className="text-xs text-gray-500 mb-1">Current Weight (kg)</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-0">Current Weight (kg)</p>
           <Input
             type="number"
             placeholder="80"
@@ -298,7 +298,7 @@ export default function SettingsPage() {
             onChange={e => set('weight_kg', e.target.value)}
           />
 
-          <p className="text-xs text-gray-500 mb-1 mt-3">Primary Goal</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Primary Goal</p>
           <div className="grid grid-cols-1 gap-2">
             {goalOptions.map(opt => (
               <button
@@ -327,7 +327,7 @@ export default function SettingsPage() {
             🏋️ Training Setup
           </p>
 
-          <p className="text-xs text-gray-500 mb-1">Activity Level</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-0">Activity Level</p>
           <div className="grid grid-cols-1 gap-2">
             {activityOptions.map(opt => (
               <button
@@ -349,7 +349,7 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          <p className="text-xs text-gray-500 mb-1 mt-3">Training Location</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Training Location</p>
           <div className="grid grid-cols-3 gap-2">
             {(['gym', 'home', 'both'] as TrainingLocation[]).map(loc => (
               <button
@@ -368,7 +368,7 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          <p className="text-xs text-gray-500 mb-1 mt-3">Experience Level</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Experience Level</p>
           <div className="grid grid-cols-3 gap-2">
             {(['beginner', 'intermediate', 'advanced'] as TrainingExperience[]).map(exp => (
               <button
@@ -387,7 +387,7 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          <p className="text-xs text-gray-500 mb-1 mt-3">Training Days Per Week</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Training Days Per Week</p>
           <Input
             type="number"
             placeholder="4"
@@ -404,7 +404,7 @@ export default function SettingsPage() {
             🥗 Nutrition Preferences
           </p>
 
-          <p className="text-xs text-gray-500 mb-2">Allergies / Restrictions</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-2 mt-0">Allergies / Restrictions</p>
           <div className="flex flex-wrap gap-2">
             {allergyOptions.map(a => (
               <Chip key={a} active={form.allergies.includes(a)} onClick={() => toggleArray('allergies', a)}>
@@ -413,7 +413,7 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          <p className="text-xs text-gray-500 mb-2 mt-3">Food Preferences</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-2 mt-4">Food Preferences</p>
           <div className="flex flex-wrap gap-2">
             {foodPrefOptions.map(p => (
               <Chip key={p} active={form.food_preferences.includes(p)} onClick={() => toggleArray('food_preferences', p)}>
@@ -422,7 +422,7 @@ export default function SettingsPage() {
             ))}
           </div>
 
-          <p className="text-xs text-gray-500 mb-1 mt-3">Intermittent Fasting</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1 mt-4">Intermittent Fasting</p>
           <div className="grid grid-cols-3 gap-2">
             {fastingOptions.map(opt => (
               <button
@@ -469,17 +469,19 @@ export default function SettingsPage() {
       </div>
 
       {/* ── Sticky Save Button ── */}
-      <div className="fixed bottom-20 left-0 right-0 px-4">
-        <Button
-          variant="gold"
-          size="lg"
-          className="w-full"
-          onClick={handleSaveOnly}
-          loading={saving}
-          disabled={isBusy}
-        >
-          Save Changes
-        </Button>
+      <div className="fixed bottom-16 left-0 right-0 px-4 z-40">
+        <div className="max-w-2xl mx-auto">
+          <Button
+            variant="gold"
+            size="lg"
+            className="w-full"
+            onClick={handleSaveOnly}
+            loading={saving}
+            disabled={isBusy}
+          >
+            Save Changes
+          </Button>
+        </div>
       </div>
     </div>
   )
