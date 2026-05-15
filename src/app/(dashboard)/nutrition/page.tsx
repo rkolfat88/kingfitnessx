@@ -137,7 +137,7 @@ export default function NutritionPage() {
           </div>
         </div>
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* MACRO SUMMARY CARD */}
         <div className="bg-[#161616] border border-[#C9A84C]/20 rounded-2xl p-4">
@@ -180,7 +180,7 @@ export default function NutritionPage() {
         </div>
 
         {/* MEALS */}
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Daily Meals</p>
         <div className="space-y-4">

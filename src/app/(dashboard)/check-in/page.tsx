@@ -192,7 +192,7 @@ export default function CheckInPage() {
             )}
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-0">
+          <form onSubmit={handleSubmit} className="">
 
             {/* Metrics */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
@@ -204,7 +204,7 @@ export default function CheckInPage() {
               </div>
             </div>
 
-            <div className="h-px bg-[#242424] my-6" />
+            <div style={{height: '32px'}} />
 
             {/* Adherence */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
@@ -215,7 +215,7 @@ export default function CheckInPage() {
               </div>
             </div>
 
-            <div className="h-px bg-[#242424] my-6" />
+            <div style={{height: '32px'}} />
 
             {/* Optional */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">

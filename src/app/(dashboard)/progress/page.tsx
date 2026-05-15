@@ -105,7 +105,7 @@ export default function ProgressPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-lg mx-auto px-4 pt-14 pb-24 space-y-0">
+      <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
 
         {/* HEADER */}
         <div className="py-6">
@@ -113,7 +113,7 @@ export default function ProgressPage() {
           <h1 className="text-3xl font-black text-white mt-0.5">Progress</h1>
         </div>
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* STATS GRID */}
         <div className="grid grid-cols-2 gap-3">
@@ -150,7 +150,7 @@ export default function ProgressPage() {
           </div>
         </div>
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* ADHERENCE */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
@@ -177,7 +177,7 @@ export default function ProgressPage() {
           </div>
         </div>
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* WEIGHT CHART */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
@@ -185,7 +185,7 @@ export default function ProgressPage() {
           <WeightChart checkins={checkins} />
         </div>
 
-        {scoreHistory.length > 0 && <div className="h-px bg-[#242424] my-6" />}
+        {scoreHistory.length > 0 && <div style={{height: '32px'}} />}
 
         {/* SCORE TRENDS */}
         {scoreHistory.length > 0 && (
@@ -208,7 +208,7 @@ export default function ProgressPage() {
           </div>
         )}
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* RECENT CHECK-INS */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">

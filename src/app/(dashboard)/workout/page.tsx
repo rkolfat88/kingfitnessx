@@ -141,7 +141,7 @@ export default function WorkoutPage() {
           </div>
         </div>
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* PLAN OVERVIEW */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
@@ -162,7 +162,7 @@ export default function WorkoutPage() {
           )}
         </div>
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* WORKOUT DAYS */}
         <div className="space-y-4">
