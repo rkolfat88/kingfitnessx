@@ -141,8 +141,10 @@ export default function WorkoutPage() {
           </div>
         </div>
 
+        <div className="h-px bg-[#242424] my-6" />
+
         {/* PLAN OVERVIEW */}
-        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4 mb-6">
+        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-[#C9A84C] bg-[#C9A84C]/10 border border-[#C9A84C]/20 px-2.5 py-1 rounded-full">
@@ -159,6 +161,8 @@ export default function WorkoutPage() {
             <p className="text-xs text-[#505050] mt-3 leading-relaxed line-clamp-2">{planData.notes}</p>
           )}
         </div>
+
+        <div className="h-px bg-[#242424] my-6" />
 
         {/* WORKOUT DAYS */}
         <div className="space-y-4">

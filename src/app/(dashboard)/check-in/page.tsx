@@ -192,7 +192,7 @@ export default function CheckInPage() {
             )}
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-0">
 
             {/* Metrics */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
@@ -204,6 +204,8 @@ export default function CheckInPage() {
               </div>
             </div>
 
+            <div className="h-px bg-[#242424] my-6" />
+
             {/* Adherence */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
               <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Adherence</p>
@@ -212,6 +214,8 @@ export default function CheckInPage() {
                 <Toggle label="Followed nutrition plan"    value={nutritionDone} onChange={setNutritionDone} />
               </div>
             </div>
+
+            <div className="h-px bg-[#242424] my-6" />
 
             {/* Optional */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">

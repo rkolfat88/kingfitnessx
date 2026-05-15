@@ -137,8 +137,10 @@ export default function NutritionPage() {
           </div>
         </div>
 
+        <div className="h-px bg-[#242424] my-6" />
+
         {/* MACRO SUMMARY CARD */}
-        <div className="bg-[#161616] border border-[#C9A84C]/20 rounded-2xl p-4 mb-6">
+        <div className="bg-[#161616] border border-[#C9A84C]/20 rounded-2xl p-4">
           <div className="text-center mb-4">
             <p className="text-3xl font-black text-white">{pd.daily_calories}</p>
             <p className="text-xs text-[#505050] mt-1 uppercase tracking-widest">calories / day</p>
@@ -178,7 +180,9 @@ export default function NutritionPage() {
         </div>
 
         {/* MEALS */}
-        <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mt-6 mb-4">Daily Meals</p>
+        <div className="h-px bg-[#242424] my-6" />
+
+        <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Daily Meals</p>
         <div className="space-y-4">
           {pd.meals.map((meal: Meal, i: number) => (
             <div key={i} className="bg-[#161616] border border-[#242424] rounded-2xl p-4">

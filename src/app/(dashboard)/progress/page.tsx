@@ -105,13 +105,15 @@ export default function ProgressPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-lg mx-auto px-4 pt-14 pb-24 space-y-4">
+      <div className="max-w-lg mx-auto px-4 pt-14 pb-24 space-y-0">
 
         {/* HEADER */}
         <div className="py-6">
           <p className="text-sm text-[#505050] uppercase tracking-widest">Journey</p>
           <h1 className="text-3xl font-black text-white mt-0.5">Progress</h1>
         </div>
+
+        <div className="h-px bg-[#242424] my-6" />
 
         {/* STATS GRID */}
         <div className="grid grid-cols-2 gap-3">
@@ -148,6 +150,8 @@ export default function ProgressPage() {
           </div>
         </div>
 
+        <div className="h-px bg-[#242424] my-6" />
+
         {/* ADHERENCE */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
           <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">7-Day Adherence</p>
@@ -173,11 +177,15 @@ export default function ProgressPage() {
           </div>
         </div>
 
+        <div className="h-px bg-[#242424] my-6" />
+
         {/* WEIGHT CHART */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
           <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Weight Trend (30 days)</p>
           <WeightChart checkins={checkins} />
         </div>
+
+        {scoreHistory.length > 0 && <div className="h-px bg-[#242424] my-6" />}
 
         {/* SCORE TRENDS */}
         {scoreHistory.length > 0 && (
@@ -199,6 +207,8 @@ export default function ProgressPage() {
             </div>
           </div>
         )}
+
+        <div className="h-px bg-[#242424] my-6" />
 
         {/* RECENT CHECK-INS */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
