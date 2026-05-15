@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/stripe'
 
+// GET handler silences Next.js RSC prefetch requests (which always use GET).
+// The actual portal session is created via POST only.
+export async function GET() {
+  return NextResponse.json({ error: 'Method not allowed — use POST' }, { status: 405 })
+}
+
 export async function POST() {
   try {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL
