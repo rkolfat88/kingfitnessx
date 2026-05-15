@@ -74,7 +74,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center text-center px-6 pt-48 pb-40">
+      <section className="flex flex-col items-center justify-center text-center px-6 pt-24 pb-12">
 
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-[var(--gold)]/10 border border-[var(--gold)]/20 rounded-full px-4 py-1.5 text-xs text-[var(--gold)] font-semibold uppercase tracking-widest mb-8">
@@ -120,7 +120,7 @@ export default function LandingPage() {
         </div>
 
         {/* Stats */}
-        <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+        <div className="grid grid-cols-2 gap-4 w-full max-w-xs mx-auto">
           {stats.map(({ value, label }) => (
             <div key={label} className="text-center">
               <div className="text-3xl font-bold text-gradient-gold mb-1">{value}</div>
@@ -132,7 +132,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="w-full px-6 md:px-12 lg:px-20 border-t border-white/5 flex flex-col items-center" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
+      <section className="w-full px-6 md:px-12 lg:px-20 border-t border-white/5 flex flex-col items-center py-16">
         <div className="w-full max-w-5xl">
           <div className="flex flex-col items-center text-center">
             <p className="text-xs text-[var(--gold)] uppercase tracking-widest font-semibold mb-3">⚡ FULL COACHING SYSTEM</p>
@@ -141,11 +141,11 @@ export default function LandingPage() {
               A complete AI coaching platform — no guesswork, no generic plans. Just elite coaching built around you.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16">
+          <div className="grid grid-cols-1 gap-3 mt-8">
             {features.map(({ icon: Icon, title, desc }) => (
               <div
                 key={title}
-                className="bg-surface-2 border border-border rounded-2xl p-8 text-left hover:border-gold/30 transition-all duration-200"
+                className="bg-surface-2 border border-border rounded-2xl p-4 text-left hover:border-gold/30 transition-all duration-200"
               >
                 <div className="flex items-center gap-4 mb-3">
                   <div
@@ -164,7 +164,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing */}
-      <section className="w-full px-6 md:px-12 lg:px-20 border-t border-white/5 flex flex-col items-center" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
+      <section className="w-full px-6 md:px-12 lg:px-20 border-t border-white/5 flex flex-col items-center py-16">
         <div className="w-full max-w-2xl">
           <div className="flex flex-col items-center text-center">
             <p className="text-xs text-[var(--gold)] uppercase tracking-widest font-semibold mb-3">⚡ PRICING</p>
@@ -172,10 +172,10 @@ export default function LandingPage() {
             <p className="text-sm text-gray-400 mt-4">Start free, upgrade when you&apos;re ready</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 w-full">
 
             {/* Free */}
-            <div className="bg-surface-2 border border-border rounded-2xl p-8 flex flex-col">
+            <div className="bg-surface-2 border border-border rounded-2xl p-6 flex flex-col">
               <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Free</p>
               <div className="mb-6">
                 <span className="text-3xl font-bold text-white">$0</span>
@@ -209,7 +209,7 @@ export default function LandingPage() {
 
             {/* King Pro */}
             <div
-              className="bg-surface-2 border-2 border-gold/50 rounded-2xl p-8 relative flex flex-col"
+              className="bg-surface-2 border-2 border-gold/50 rounded-2xl p-6 relative flex flex-col"
               style={{ boxShadow: '0 0 40px rgba(201,168,76,0.07)' }}
             >
               <div
@@ -257,7 +257,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section className="w-full px-6 border-t border-white/5 flex flex-col items-center text-center" style={{ paddingTop: '8rem', paddingBottom: '8rem' }}>
+      <section className="w-full px-6 border-t border-white/5 flex flex-col items-center text-center py-16">
         <div className="w-full max-w-2xl flex flex-col items-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 tracking-tight">
             Ready to Transform?
