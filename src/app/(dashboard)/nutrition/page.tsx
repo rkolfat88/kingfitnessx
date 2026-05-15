@@ -114,7 +114,7 @@ export default function NutritionPage() {
       <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
 
         {/* HEADER */}
-        <div className="flex items-center justify-between py-4">
+        <div className="flex items-center justify-between py-6">
           <div>
             <p className="text-sm text-[#505050] uppercase tracking-widest">Fuel</p>
             <h1 className="text-3xl font-black text-white mt-0.5">Nutrition Plan</h1>
@@ -138,7 +138,7 @@ export default function NutritionPage() {
         </div>
 
         {/* MACRO SUMMARY CARD */}
-        <div className="bg-[#161616] border border-[#C9A84C]/20 rounded-2xl p-4 mb-4">
+        <div className="bg-[#161616] border border-[#C9A84C]/20 rounded-2xl p-4 mb-6">
           <div className="text-center mb-4">
             <p className="text-3xl font-black text-white">{pd.daily_calories}</p>
             <p className="text-xs text-[#505050] mt-1 uppercase tracking-widest">calories / day</p>
@@ -178,10 +178,10 @@ export default function NutritionPage() {
         </div>
 
         {/* MEALS */}
-        <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-3">Daily Meals</p>
-        <div>
+        <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mt-6 mb-4">Daily Meals</p>
+        <div className="space-y-4">
           {pd.meals.map((meal: Meal, i: number) => (
-            <div key={i} className="bg-[#161616] border border-[#242424] rounded-2xl p-4 mb-3">
+            <div key={i} className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
               {/* Meal header */}
               <div className="flex justify-between items-start">
                 <div>

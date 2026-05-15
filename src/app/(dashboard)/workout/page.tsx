@@ -118,7 +118,7 @@ export default function WorkoutPage() {
       <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
 
         {/* HEADER */}
-        <div className="flex items-center justify-between py-4">
+        <div className="flex items-center justify-between py-6">
           <div>
             <p className="text-sm text-[#505050] uppercase tracking-widest">Training</p>
             <h1 className="text-3xl font-black text-white mt-0.5">Workout Plan</h1>
@@ -142,7 +142,7 @@ export default function WorkoutPage() {
         </div>
 
         {/* PLAN OVERVIEW */}
-        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4 mb-4">
+        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4 mb-6">
           <div className="flex items-center justify-between">
             <div>
               <span className="text-xs font-bold text-[#C9A84C] bg-[#C9A84C]/10 border border-[#C9A84C]/20 px-2.5 py-1 rounded-full">
@@ -161,7 +161,7 @@ export default function WorkoutPage() {
         </div>
 
         {/* WORKOUT DAYS */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {planData.sessions.map((session: WorkoutSession) => (
             <div key={session.day} className="bg-[#161616] border border-[#242424] rounded-2xl overflow-hidden">
 

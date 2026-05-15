@@ -108,7 +108,7 @@ export default function ProgressPage() {
       <div className="max-w-lg mx-auto px-4 pt-14 pb-24 space-y-4">
 
         {/* HEADER */}
-        <div className="py-4">
+        <div className="py-6">
           <p className="text-sm text-[#505050] uppercase tracking-widest">Journey</p>
           <h1 className="text-3xl font-black text-white mt-0.5">Progress</h1>
         </div>

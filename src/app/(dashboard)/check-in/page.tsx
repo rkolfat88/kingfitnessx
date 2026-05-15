@@ -120,7 +120,7 @@ export default function CheckInPage() {
       <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
 
         {/* HEADER */}
-        <div className="py-4">
+        <div className="py-6">
           <p className="text-sm text-[#505050] uppercase tracking-widest">Daily</p>
           <h1 className="text-3xl font-black text-white mt-0.5">Check-In</h1>
           <p className="text-xs text-[#505050] mt-1">{formatDate(today)}</p>
@@ -244,7 +244,7 @@ export default function CheckInPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-[#C9A84C] hover:bg-[#D4B05A] text-black font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full mt-4 bg-[#C9A84C] hover:bg-[#D4B05A] text-black font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {submitting
                 ? <><RefreshCw className="w-4 h-4 animate-spin" /> Saving...</>

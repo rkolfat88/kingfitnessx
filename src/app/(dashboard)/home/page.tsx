@@ -81,10 +81,10 @@ export default async function HomePage({
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-lg mx-auto px-4 pt-14 pb-24 space-y-6">
+      <div className="max-w-lg mx-auto px-4 pt-14 pb-24 space-y-8">
 
         {/* GREETING */}
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-4">
           <div>
             <p className="text-[#909090] text-sm">{greeting},</p>
             <h1 className="text-3xl font-black text-white mt-0.5">{firstName} 👑</h1>
@@ -121,7 +121,7 @@ export default async function HomePage({
 
         {/* AI READINESS CARD */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
-          <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-3">AI Readiness</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">AI Readiness</p>
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-3xl font-black" style={{ color: readiness.color }}>{readiness.label}</h2>
@@ -146,7 +146,7 @@ export default async function HomePage({
 
         {/* QUICK ACTIONS */}
         <div>
-          <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-3">Quick Actions</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Quick Actions</p>
           <div className="grid grid-cols-2 gap-3">
             {[
               { href: '/chat',      icon: MessageSquare, label: 'Talk to Coach',  color: '#C9A84C', desc: 'Get instant guidance'  },
@@ -177,7 +177,7 @@ export default async function HomePage({
         {/* YOUR METRICS */}
         {onboarding && (
           <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-3">Your Metrics</p>
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Your Metrics</p>
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
                 <p className="text-xs text-[#505050] uppercase tracking-wide mb-1">Weight</p>
@@ -207,7 +207,7 @@ export default async function HomePage({
 
         {/* AI INTELLIGENCE FEED */}
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold uppercase tracking-widest text-[#505050]">AI Intelligence</p>
             <div className="flex items-center gap-1.5">
               <div className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-pulse" />
@@ -239,7 +239,7 @@ export default async function HomePage({
 
         {/* COACHING TEAM */}
         <div>
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-4">
             <p className="text-sm font-semibold uppercase tracking-widest text-[#505050]">Coaching Team</p>
             <Link href="/chat" className="text-xs text-[#C9A84C] flex items-center gap-1">
               Talk to them <ChevronRight className="w-3 h-3" />

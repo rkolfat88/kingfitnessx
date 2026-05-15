@@ -70,15 +70,15 @@ export function ChatInterface() {
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center pt-6 text-center">
+          <div className="flex flex-col items-center py-4 text-center">
             <div className="w-12 h-12 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-2.5">
               <span className="text-xl">👑</span>
             </div>
             <h2 className="text-base font-bold text-white mb-1">Ask Your Coach</h2>
-            <p className="text-[#505050] text-xs mb-4 max-w-xs">
+            <p className="text-[#505050] text-xs mb-6 max-w-xs">
               Elite AI coaching on training, nutrition, recovery, and mindset.
             </p>
-            <div className="grid grid-cols-2 gap-2 w-full px-4">
+            <div className="grid grid-cols-2 gap-3 w-full px-4">
               {SUGGESTED_PROMPTS.map(prompt => (
                 <button
                   key={prompt}
