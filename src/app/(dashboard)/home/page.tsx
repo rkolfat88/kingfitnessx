@@ -137,7 +137,7 @@ export default async function HomePage({
         </div>
       )}
 
-      <div className="px-4 space-y-8 pb-6 pt-5">
+      <div className="px-4 space-y-8 pb-32 pt-5">
         {/* AI Readiness Card */}
         <div
           className="bg-[var(--surface-2)] border rounded-3xl p-5 animate-slide-up mb-8"
@@ -168,7 +168,7 @@ export default async function HomePage({
 
         {/* Quick Actions */}
         <div className="mb-8">
-          <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3 pt-4">Quick Actions</p>
+          <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3 pt-4 px-4">Quick Actions</p>
           <div className="grid grid-cols-2 gap-2.5">
             {[
               { href: '/chat',      icon: MessageSquare, label: 'Talk to Coach',  color: '#C9A84C', desc: 'Get instant guidance'  },
@@ -197,7 +197,7 @@ export default async function HomePage({
         {/* Stats */}
         {onboarding && (
           <div className="mb-8">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3 pt-4">Your Metrics</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-3 pt-4 px-4">Your Metrics</p>
             <div className="grid grid-cols-2 gap-2.5">
               <StatCard
                 label="Current Weight"
@@ -205,9 +205,9 @@ export default async function HomePage({
                 unit="kg"
                 color="gold"
               />
-              <StatCard label="Goal"          value={goalLabel}                        color="blue"   />
+              <StatCard label="Goal"          value={goalLabel}                        color="gold"   />
               <StatCard label="Training Days" value={onboarding.days_per_week ?? '--'} unit="/ week" color="green"  />
-              <StatCard label="Experience"    value={expLabel}                         color="orange" />
+              <StatCard label="Experience"    value={expLabel}                         color="gold"  />
             </div>
           </div>
         )}
@@ -215,7 +215,7 @@ export default async function HomePage({
         {/* AI Intelligence Feed */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium pt-4">AI Intelligence</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium pt-4 px-4">AI Intelligence</p>
             <div className="flex items-center gap-2">
               {intelligenceAlerts && intelligenceAlerts.length > 0 ? (
                 <span className="text-xs bg-[var(--gold)]/10 text-[var(--gold)] border border-[var(--gold)]/20 px-2 py-0.5 rounded-full">
@@ -261,7 +261,7 @@ export default async function HomePage({
         {/* Agent Team */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium pt-4">Your Coaching Team</p>
+            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium pt-4 px-4">Your Coaching Team</p>
             <Link href="/chat" className="text-xs text-[var(--gold)] flex items-center gap-1">
               Talk to them <ChevronRight className="w-3 h-3" />
             </Link>
@@ -304,7 +304,7 @@ export default async function HomePage({
 
         {/* Discipline Streak */}
         {recentCheckins.length > 0 && (
-          <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-4">
+          <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-4 mb-2">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">Discipline Score</p>
