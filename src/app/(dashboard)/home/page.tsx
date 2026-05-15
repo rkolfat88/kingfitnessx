@@ -107,35 +107,30 @@ export default async function HomePage({
         </div>
       </div>
 
-      {/* Plan Ready Banner — shown when onboarding just completed or onboarding data exists */}
-      {onboarding && (
-        <div className="px-4 pt-4 space-y-2">
-          <Link
-            href="/workout"
-            className="flex items-center justify-between bg-[#3B82F6]/10 border border-[#3B82F6]/30 rounded-2xl px-4 py-3.5 hover:border-[#3B82F6]/50 transition-all active:scale-[0.98]"
+      {/* Welcome banner — only on first arrival after onboarding (?new=true) */}
+      {isNewUser && (
+        <div className="px-4 pt-4">
+          <div
+            className="rounded-2xl border border-[var(--gold)]/40 bg-[var(--gold)]/8 p-5"
+            style={{ background: 'rgba(201,168,76,0.07)' }}
           >
-            <div className="flex items-center gap-3">
-              <span className="text-xl">💪</span>
-              <div>
-                <p className="text-sm font-semibold text-white">Your Workout Plan is Ready</p>
-                <p className="text-xs text-gray-500">Tap to view your training program</p>
-              </div>
+            <p className="text-base font-bold text-white mb-1">👑 Welcome! Your personalized plans are ready.</p>
+            <p className="text-xs text-gray-400 mb-4">Your AI coach has built your workout and nutrition programs from scratch — tailored to you.</p>
+            <div className="flex gap-3">
+              <Link
+                href="/workout"
+                className="flex-1 text-center py-2.5 rounded-xl bg-[var(--gold)] hover:bg-[var(--gold-light)] text-black text-sm font-bold transition-colors"
+              >
+                View Workout
+              </Link>
+              <Link
+                href="/nutrition"
+                className="flex-1 text-center py-2.5 rounded-xl bg-[var(--gold)] hover:bg-[var(--gold-light)] text-black text-sm font-bold transition-colors"
+              >
+                View Nutrition
+              </Link>
             </div>
-            <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0" />
-          </Link>
-          <Link
-            href="/nutrition"
-            className="flex items-center justify-between bg-[#F97316]/10 border border-[#F97316]/30 rounded-2xl px-4 py-3.5 hover:border-[#F97316]/50 transition-all active:scale-[0.98]"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-xl">🥗</span>
-              <div>
-                <p className="text-sm font-semibold text-white">Your Nutrition Plan is Ready</p>
-                <p className="text-xs text-gray-500">Tap to view your meal plan and macros</p>
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-gray-500 flex-shrink-0" />
-          </Link>
+          </div>
         </div>
       )}
 
