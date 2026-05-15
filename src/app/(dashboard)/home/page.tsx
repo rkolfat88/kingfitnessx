@@ -81,7 +81,7 @@ export default async function HomePage({
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-lg mx-auto px-4 pt-14 pb-24 space-y-0">
+      <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
 
         {/* GREETING */}
         <div className="flex items-center justify-between pt-4">
@@ -119,7 +119,7 @@ export default async function HomePage({
           </div>
         )}
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* AI READINESS CARD */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
@@ -146,7 +146,7 @@ export default async function HomePage({
           </div>
         </div>
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* QUICK ACTIONS */}
         <div>
@@ -179,7 +179,7 @@ export default async function HomePage({
         </div>
 
         {/* YOUR METRICS */}
-        {onboarding && <div className="h-px bg-[#242424] my-6" />}
+        {onboarding && <div style={{height: '32px'}} />}
         {onboarding && (
           <div>
             <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Your Metrics</p>
@@ -210,7 +210,7 @@ export default async function HomePage({
           </div>
         )}
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* AI INTELLIGENCE FEED */}
         <div>
@@ -244,7 +244,7 @@ export default async function HomePage({
           </div>
         </div>
 
-        <div className="h-px bg-[#242424] my-6" />
+        <div style={{height: '32px'}} />
 
         {/* COACHING TEAM */}
         <div>
@@ -263,7 +263,7 @@ export default async function HomePage({
         </div>
 
         {/* DISCIPLINE STREAK */}
-        {recentCheckins.length > 0 && <div className="h-px bg-[#242424] my-6" />}
+        {recentCheckins.length > 0 && <div style={{height: '32px'}} />}
         {recentCheckins.length > 0 && (
           <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
             <div className="flex items-center justify-between">
