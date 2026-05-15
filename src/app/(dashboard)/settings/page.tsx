@@ -206,13 +206,13 @@ export default function SettingsPage() {
 
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">Settings</h1>
+          <h1 className="text-3xl font-black text-white">Settings</h1>
           <p className="text-sm text-gray-500 mt-1">Update your profile, goals, and preferences</p>
         </div>
 
         {/* Account */}
         <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-5 mb-4">
-          <p className="text-xs text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Account</p>
+          <p className="text-sm text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Account</p>
           <div className="space-y-3">
             <div>
               <p className="text-xs text-gray-500 mb-1">Full Name</p>
@@ -241,7 +241,7 @@ export default function SettingsPage() {
 
         {/* Goal & Weight */}
         <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-5 mb-4">
-          <p className="text-xs text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Goal & Weight</p>
+          <p className="text-sm text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Goal & Weight</p>
           <div className="space-y-3">
             <div>
               <p className="text-xs text-gray-500 mb-1">Current Weight (kg)</p>
@@ -282,7 +282,7 @@ export default function SettingsPage() {
 
         {/* Training Setup */}
         <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-5 mb-4">
-          <p className="text-xs text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Training Setup</p>
+          <p className="text-sm text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Training Setup</p>
           <div className="space-y-4">
             <div>
               <p className="text-xs text-gray-500 mb-2">Activity Level</p>

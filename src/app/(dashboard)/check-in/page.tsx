@@ -121,8 +121,8 @@ export default function CheckInPage() {
 
         {/* HEADER */}
         <div className="py-4">
-          <p className="text-xs text-[#505050] uppercase tracking-widest">Daily</p>
-          <h1 className="text-2xl font-bold text-white mt-0.5">Check-In</h1>
+          <p className="text-sm text-[#505050] uppercase tracking-widest">Daily</p>
+          <h1 className="text-3xl font-black text-white mt-0.5">Check-In</h1>
           <p className="text-xs text-[#505050] mt-1">{formatDate(today)}</p>
         </div>
 
@@ -132,7 +132,7 @@ export default function CheckInPage() {
             <div className="bg-[#161616] border border-[#C9A84C]/20 rounded-2xl p-4">
               <div className="flex items-center gap-2 mb-4">
                 <CheckCircle className="w-4 h-4 text-[#C9A84C]" />
-                <p className="text-xs font-semibold text-[#C9A84C] uppercase tracking-widest">Today Complete</p>
+                <p className="text-sm font-semibold text-[#C9A84C] uppercase tracking-widest">Today Complete</p>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {[
@@ -172,7 +172,7 @@ export default function CheckInPage() {
               <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-4 h-4 text-[#C9A84C]" />
-                  <p className="text-xs font-semibold text-[#C9A84C] uppercase tracking-widest">Coach Response</p>
+                  <p className="text-sm font-semibold text-[#C9A84C] uppercase tracking-widest">Coach Response</p>
                 </div>
                 <p className="text-sm text-[#909090] leading-relaxed mb-3">{existing.ai_response.message}</p>
                 {existing.ai_response.adjustments.length > 0 && (
@@ -196,7 +196,7 @@ export default function CheckInPage() {
 
             {/* Metrics */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">How are you feeling?</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">How are you feeling?</p>
               <div className="space-y-5">
                 <Slider label="Energy Level"   value={energy}   onChange={setEnergy}   color="#C9A84C" />
                 <Slider label="Soreness Level" value={soreness} onChange={setSoreness} color="#F97316" />
@@ -206,7 +206,7 @@ export default function CheckInPage() {
 
             {/* Adherence */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">Adherence</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Adherence</p>
               <div className="space-y-3">
                 <Toggle label="Completed today's workout"  value={workoutDone}   onChange={setWorkoutDone} />
                 <Toggle label="Followed nutrition plan"    value={nutritionDone} onChange={setNutritionDone} />
@@ -215,7 +215,7 @@ export default function CheckInPage() {
 
             {/* Optional */}
             <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">Optional</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Optional</p>
               <div className="space-y-3">
                 <div>
                   <label className="text-xs text-[#909090] block mb-1.5">Weight (kg)</label>

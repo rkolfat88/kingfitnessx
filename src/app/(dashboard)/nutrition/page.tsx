@@ -79,8 +79,8 @@ export default function NutritionPage() {
       <div className="min-h-screen bg-black">
         <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
           <div className="py-4">
-            <p className="text-xs text-[#505050] uppercase tracking-widest">Fuel</p>
-            <h1 className="text-2xl font-bold text-white mt-0.5">Nutrition Plan</h1>
+            <p className="text-sm text-[#505050] uppercase tracking-widest">Fuel</p>
+            <h1 className="text-3xl font-black text-white mt-0.5">Nutrition Plan</h1>
           </div>
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
             <div className="w-16 h-16 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-4">
@@ -116,8 +116,8 @@ export default function NutritionPage() {
         {/* HEADER */}
         <div className="flex items-center justify-between py-4">
           <div>
-            <p className="text-xs text-[#505050] uppercase tracking-widest">Fuel</p>
-            <h1 className="text-2xl font-bold text-white mt-0.5">Nutrition Plan</h1>
+            <p className="text-sm text-[#505050] uppercase tracking-widest">Fuel</p>
+            <h1 className="text-3xl font-black text-white mt-0.5">Nutrition Plan</h1>
           </div>
           <div className="flex gap-2">
             <Link href="/settings">
@@ -178,14 +178,14 @@ export default function NutritionPage() {
         </div>
 
         {/* MEALS */}
-        <p className="text-xs uppercase tracking-widest text-[#505050] mb-3">Daily Meals</p>
+        <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-3">Daily Meals</p>
         <div>
           {pd.meals.map((meal: Meal, i: number) => (
             <div key={i} className="bg-[#161616] border border-[#242424] rounded-2xl p-4 mb-3">
               {/* Meal header */}
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-bold text-white">{meal.name}</p>
+                  <p className="text-lg font-bold text-white">{meal.name}</p>
                   <p className="text-xs text-[#909090] mt-0.5">{meal.time}</p>
                 </div>
                 <span className="text-sm font-semibold text-[#C9A84C]">{meal.calories} cal</span>
@@ -212,7 +212,7 @@ export default function NutritionPage() {
         {/* NOTES */}
         {pd.notes && (
           <div className="bg-[#161616] border border-[#C9A84C]/20 rounded-2xl p-4 mt-4">
-            <p className="text-xs font-semibold text-[#C9A84C] uppercase tracking-widest mb-2">Coach Notes</p>
+            <p className="text-sm font-semibold text-[#C9A84C] uppercase tracking-widest mb-2">Coach Notes</p>
             <p className="text-sm text-[#909090] leading-relaxed">{pd.notes}</p>
           </div>
         )}

@@ -86,8 +86,8 @@ export default function WorkoutPage() {
       <div className="min-h-screen bg-black">
         <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
           <div className="py-4">
-            <p className="text-xs text-[#505050] uppercase tracking-widest">Training</p>
-            <h1 className="text-2xl font-bold text-white mt-0.5">Workout Plan</h1>
+            <p className="text-sm text-[#505050] uppercase tracking-widest">Training</p>
+            <h1 className="text-3xl font-black text-white mt-0.5">Workout Plan</h1>
           </div>
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
             <div className="w-16 h-16 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-4">
@@ -120,8 +120,8 @@ export default function WorkoutPage() {
         {/* HEADER */}
         <div className="flex items-center justify-between py-4">
           <div>
-            <p className="text-xs text-[#505050] uppercase tracking-widest">Training</p>
-            <h1 className="text-2xl font-bold text-white mt-0.5">Workout Plan</h1>
+            <p className="text-sm text-[#505050] uppercase tracking-widest">Training</p>
+            <h1 className="text-3xl font-black text-white mt-0.5">Workout Plan</h1>
           </div>
           <div className="flex gap-2">
             <Link href="/settings">
@@ -175,7 +175,7 @@ export default function WorkoutPage() {
                     <Dumbbell className="w-4 h-4 text-[#C9A84C]" />
                   </div>
                   <div>
-                    <p className="text-base font-semibold text-white">{session.day}</p>
+                    <p className="text-lg font-semibold text-white">{session.day}</p>
                     <p className="text-xs text-[#909090] mt-0.5">{session.muscle_groups.join(', ')}</p>
                   </div>
                 </div>

@@ -35,7 +35,7 @@ export function AgentCard({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-0.5">
-            <p className="text-base font-semibold text-white">{name}</p>
+            <p className="text-lg font-semibold text-white">{name}</p>
             <div className="flex items-center gap-1.5">
               <div className={cn('w-1.5 h-1.5 rounded-full', s.dot)} />
               <span className="text-xs text-gray-500">{s.text}</span>

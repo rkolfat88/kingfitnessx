@@ -42,7 +42,7 @@ export function BottomNav({ profile, userEmail }: BottomNavProps) {
                 <Icon className={cn('w-5 h-5 relative z-10', isActive && 'text-[var(--gold)]')} />
               </div>
               <span className={cn(
-                'text-[10px] font-medium',
+                'text-xs font-medium',
                 isActive ? 'text-[var(--gold)]' : 'text-gray-600'
               )}>
                 {label}

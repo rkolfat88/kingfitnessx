@@ -13,7 +13,7 @@ export default async function ChatPage() {
             <Crown className="w-4 h-4 text-[#C9A84C]" />
           </div>
           <div>
-            <h1 className="text-base font-bold text-white leading-tight">King AI Coach</h1>
+            <h1 className="text-lg font-bold text-white leading-tight">King AI Coach</h1>
             <p className="text-xs text-[#505050]">Your personal transformation advisor</p>
           </div>
         </div>

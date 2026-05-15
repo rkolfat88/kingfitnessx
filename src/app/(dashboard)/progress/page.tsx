@@ -86,8 +86,8 @@ export default function ProgressPage() {
       <div className="min-h-screen bg-black">
         <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
           <div className="py-4">
-            <p className="text-xs text-[#505050] uppercase tracking-widest">Journey</p>
-            <h1 className="text-2xl font-bold text-white mt-0.5">Progress</h1>
+            <p className="text-sm text-[#505050] uppercase tracking-widest">Journey</p>
+            <h1 className="text-3xl font-black text-white mt-0.5">Progress</h1>
           </div>
           <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
             <div className="w-16 h-16 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-4">
@@ -109,8 +109,8 @@ export default function ProgressPage() {
 
         {/* HEADER */}
         <div className="py-4">
-          <p className="text-xs text-[#505050] uppercase tracking-widest">Journey</p>
-          <h1 className="text-2xl font-bold text-white mt-0.5">Progress</h1>
+          <p className="text-sm text-[#505050] uppercase tracking-widest">Journey</p>
+          <h1 className="text-3xl font-black text-white mt-0.5">Progress</h1>
         </div>
 
         {/* STATS GRID */}
@@ -150,7 +150,7 @@ export default function ProgressPage() {
 
         {/* ADHERENCE */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">7-Day Adherence</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">7-Day Adherence</p>
           <div className="space-y-3">
             <div>
               <div className="flex items-center justify-between mb-1.5">
@@ -175,14 +175,14 @@ export default function ProgressPage() {
 
         {/* WEIGHT CHART */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">Weight Trend (30 days)</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Weight Trend (30 days)</p>
           <WeightChart checkins={checkins} />
         </div>
 
         {/* SCORE TRENDS */}
         {scoreHistory.length > 0 && (
           <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">Performance Scores (30 days)</p>
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Performance Scores (30 days)</p>
             <ScoreTrendChart scores={scoreHistory} />
             <div className="flex flex-wrap gap-3 mt-3">
               {[
@@ -202,7 +202,7 @@ export default function ProgressPage() {
 
         {/* RECENT CHECK-INS */}
         <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">Recent Check-Ins</p>
+          <p className="text-sm font-semibold uppercase tracking-widest text-[#505050] mb-4">Recent Check-Ins</p>
           <div className="space-y-2">
             {last7.map(c => (
               <div key={c.id} className="flex items-center justify-between py-2 border-b border-[#242424] last:border-0">
