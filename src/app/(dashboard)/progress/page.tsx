@@ -1,12 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { WeightChart } from '@/components/progress/weight-chart'
 import { ScoreTrendChart } from '@/components/progress/score-trend-chart'
-import { Badge } from '@/components/ui/badge'
-import { TrendingUp, Flame, CheckCircle } from 'lucide-react'
-import { formatDate } from '@/lib/utils'
+import { TrendingUp, Flame } from 'lucide-react'
 import type { DailyCheckin } from '@/types'
 
 interface ScoreRow {
@@ -61,14 +58,24 @@ export default function ProgressPage() {
 
   const streak = calcStreak()
 
+  const startWeight  = checkins.length ? (checkins[checkins.length - 1].weight_kg ?? null) : null
+  const currentWeight = checkins.length ? (checkins[0].weight_kg ?? null) : null
+  const weightChange  = startWeight && currentWeight ? +(currentWeight - startWeight).toFixed(1) : null
+
   if (loading) {
     return (
-      <div className="p-6 lg:p-8">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-[var(--surface-2)] rounded w-1/3" />
-          <div className="grid grid-cols-3 gap-4 mt-6">
-            {[1,2,3].map(i => <div key={i} className="h-24 bg-[var(--surface)] border border-[var(--border)] rounded-xl" />)}
+      <div className="min-h-screen bg-black">
+        <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
+          <div className="py-4">
+            <div className="h-3 bg-[#242424] rounded w-16 animate-pulse mb-2" />
+            <div className="h-7 bg-[#242424] rounded w-40 animate-pulse" />
           </div>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="h-24 bg-[#161616] border border-[#242424] rounded-2xl animate-pulse" />
+            ))}
+          </div>
+          <div className="h-48 bg-[#161616] border border-[#242424] rounded-2xl animate-pulse" />
         </div>
       </div>
     )
@@ -76,69 +83,106 @@ export default function ProgressPage() {
 
   if (checkins.length === 0) {
     return (
-      <div className="p-6 lg:p-8 flex flex-col items-center justify-center min-h-[60vh] text-center">
-        <div className="w-16 h-16 rounded-2xl bg-[var(--gold)]/10 border border-[var(--gold)]/30 flex items-center justify-center mb-4">
-          <TrendingUp className="w-7 h-7 text-[var(--gold)]" />
+      <div className="min-h-screen bg-black">
+        <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
+          <div className="py-4">
+            <p className="text-xs text-[#505050] uppercase tracking-widest">Journey</p>
+            <h1 className="text-2xl font-bold text-white mt-0.5">Progress</h1>
+          </div>
+          <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+            <div className="w-16 h-16 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-4">
+              <TrendingUp className="w-7 h-7 text-[#C9A84C]" />
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">No Data Yet</h2>
+            <p className="text-[#909090] text-sm max-w-sm">
+              Complete your first daily check-in to start tracking your transformation progress.
+            </p>
+          </div>
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">No Data Yet</h2>
-        <p className="text-gray-500 text-sm max-w-sm">
-          Complete your first daily check-in to start tracking your transformation progress.
-        </p>
       </div>
     )
   }
 
   return (
-    <div className="p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Progress</h1>
-        <p className="text-gray-500 text-sm mt-1">Track your transformation journey</p>
-      </div>
+    <div className="min-h-screen bg-black">
+      <div className="max-w-lg mx-auto px-4 pt-14 pb-24 space-y-4">
 
-      {/* Stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <Card className="border-[var(--gold)]/30 bg-[var(--gold)]/5">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[var(--gold)]/10 flex items-center justify-center">
-              <Flame className="w-5 h-5 text-[var(--gold)]" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-[var(--gold)]">{streak}</p>
-              <p className="text-xs text-gray-500">Day Streak</p>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-green-900/20 flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-green-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-white">{workoutAdherence}%</p>
-              <p className="text-xs text-gray-500">Workout Adherence (7d)</p>
-            </div>
-          </div>
-        </Card>
-        <Card>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-900/20 flex items-center justify-center">
-              <CheckCircle className="w-5 h-5 text-blue-400" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-white">{nutritionAdherence}%</p>
-              <p className="text-xs text-gray-500">Nutrition Adherence (7d)</p>
-            </div>
-          </div>
-        </Card>
-      </div>
+        {/* HEADER */}
+        <div className="py-4">
+          <p className="text-xs text-[#505050] uppercase tracking-widest">Journey</p>
+          <h1 className="text-2xl font-bold text-white mt-0.5">Progress</h1>
+        </div>
 
-      {/* Performance Score Trends */}
-      {scoreHistory.length > 0 && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Performance Score Trends (30 days)</CardTitle>
-          </CardHeader>
-          <CardContent>
+        {/* STATS GRID */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
+            <p className="text-xs text-[#505050] uppercase tracking-wide mb-1">Start Weight</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-xl font-bold text-white">{startWeight ?? '—'}</span>
+              {startWeight && <span className="text-sm text-[#909090]">kg</span>}
+            </div>
+          </div>
+          <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
+            <p className="text-xs text-[#505050] uppercase tracking-wide mb-1">Current Weight</p>
+            <div className="flex items-baseline gap-1">
+              <span className="text-xl font-bold text-white">{currentWeight ?? '—'}</span>
+              {currentWeight && <span className="text-sm text-[#909090]">kg</span>}
+            </div>
+          </div>
+          <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
+            <p className="text-xs text-[#505050] uppercase tracking-wide mb-1">Change</p>
+            <div className="flex items-baseline gap-1">
+              <span className={`text-xl font-bold ${weightChange === null ? 'text-white' : weightChange <= 0 ? 'text-green-400' : 'text-[#F97316]'}`}>
+                {weightChange !== null ? `${weightChange > 0 ? '+' : ''}${weightChange}` : '—'}
+              </span>
+              {weightChange !== null && <span className="text-sm text-[#909090]">kg</span>}
+            </div>
+          </div>
+          <div className="bg-[#161616] border border-[#C9A84C]/20 rounded-2xl p-4">
+            <p className="text-xs text-[#505050] uppercase tracking-wide mb-1">Streak</p>
+            <div className="flex items-center gap-2">
+              <Flame className="w-4 h-4 text-orange-400" />
+              <span className="text-xl font-bold text-white">{streak}</span>
+              <span className="text-sm text-[#909090]">days</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ADHERENCE */}
+        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">7-Day Adherence</p>
+          <div className="space-y-3">
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs text-[#909090]">Workout</span>
+                <span className="text-xs font-semibold text-green-400">{workoutAdherence}%</span>
+              </div>
+              <div className="w-full h-1.5 bg-[#242424] rounded-full">
+                <div className="h-1.5 bg-green-400 rounded-full transition-all" style={{ width: `${workoutAdherence}%` }} />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xs text-[#909090]">Nutrition</span>
+                <span className="text-xs font-semibold text-blue-400">{nutritionAdherence}%</span>
+              </div>
+              <div className="w-full h-1.5 bg-[#242424] rounded-full">
+                <div className="h-1.5 bg-blue-400 rounded-full transition-all" style={{ width: `${nutritionAdherence}%` }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* WEIGHT CHART */}
+        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">Weight Trend (30 days)</p>
+          <WeightChart checkins={checkins} />
+        </div>
+
+        {/* SCORE TRENDS */}
+        {scoreHistory.length > 0 && (
+          <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">Performance Scores (30 days)</p>
             <ScoreTrendChart scores={scoreHistory} />
             <div className="flex flex-wrap gap-3 mt-3">
               {[
@@ -149,76 +193,45 @@ export default function ProgressPage() {
               ].map(({ label, color }) => (
                 <div key={label} className="flex items-center gap-1.5">
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-                  <span className="text-xs text-gray-500">{label}</span>
+                  <span className="text-xs text-[#505050]">{label}</span>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Weight chart */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Weight Trend (30 days)</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <WeightChart checkins={checkins} />
-        </CardContent>
-      </Card>
-
-      {/* Recent check-ins table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Check-Ins</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-xs text-gray-600 border-b border-[var(--border)]">
-                  <th className="text-left pb-3">Date</th>
-                  <th className="text-center pb-3">Energy</th>
-                  <th className="text-center pb-3">Mood</th>
-                  <th className="text-center pb-3">Weight</th>
-                  <th className="text-center pb-3">Workout</th>
-                  <th className="text-center pb-3">Nutrition</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--border)]">
-                {last7.map(c => (
-                  <tr key={c.id} className="text-gray-300">
-                    <td className="py-3 text-xs text-gray-400">{formatDate(c.date)}</td>
-                    <td className="py-3 text-center">
-                      <span className={`font-medium ${c.energy_level >= 7 ? 'text-green-400' : c.energy_level >= 4 ? 'text-yellow-400' : 'text-red-400'}`}>
-                        {c.energy_level}
-                      </span>
-                    </td>
-                    <td className="py-3 text-center">
-                      <span className={`font-medium ${c.mood >= 7 ? 'text-green-400' : c.mood >= 4 ? 'text-yellow-400' : 'text-red-400'}`}>
-                        {c.mood}
-                      </span>
-                    </td>
-                    <td className="py-3 text-center text-xs">
-                      {c.weight_kg ? `${c.weight_kg}kg` : '—'}
-                    </td>
-                    <td className="py-3 text-center">
-                      {c.adherence_workout
-                        ? <span className="text-green-400 text-xs">✓</span>
-                        : <span className="text-red-400 text-xs">✗</span>}
-                    </td>
-                    <td className="py-3 text-center">
-                      {c.adherence_nutrition
-                        ? <span className="text-green-400 text-xs">✓</span>
-                        : <span className="text-red-400 text-xs">✗</span>}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
-        </CardContent>
-      </Card>
+        )}
+
+        {/* RECENT CHECK-INS */}
+        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-4">
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#505050] mb-4">Recent Check-Ins</p>
+          <div className="space-y-2">
+            {last7.map(c => (
+              <div key={c.id} className="flex items-center justify-between py-2 border-b border-[#242424] last:border-0">
+                <span className="text-xs text-[#505050] w-20 flex-shrink-0">{c.date}</span>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] text-[#505050]">E</span>
+                    <span className={`text-xs font-semibold ${(c.energy_level ?? 0) >= 7 ? 'text-green-400' : (c.energy_level ?? 0) >= 4 ? 'text-[#C9A84C]' : 'text-red-400'}`}>{c.energy_level}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] text-[#505050]">M</span>
+                    <span className={`text-xs font-semibold ${(c.mood ?? 0) >= 7 ? 'text-green-400' : (c.mood ?? 0) >= 4 ? 'text-[#C9A84C]' : 'text-red-400'}`}>{c.mood}</span>
+                  </div>
+                  {c.weight_kg && (
+                    <span className="text-xs text-[#909090]">{c.weight_kg}kg</span>
+                  )}
+                  <span className={`text-xs ${c.adherence_workout ? 'text-green-400' : 'text-[#505050]'}`}>
+                    {c.adherence_workout ? '✓W' : '✗W'}
+                  </span>
+                  <span className={`text-xs ${c.adherence_nutrition ? 'text-green-400' : 'text-[#505050]'}`}>
+                    {c.adherence_nutrition ? '✓N' : '✗N'}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
     </div>
   )
 }
