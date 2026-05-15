@@ -61,10 +61,13 @@ export async function POST() {
 
     return NextResponse.json({ url: session.url })
   } catch (error) {
-    console.error('Stripe checkout error:', error)
+    const stripeMessage = (error as { message?: string })?.message ?? 'Unknown error'
+    const stripeType    = (error as { type?: string })?.type ?? ''
+    const stripeCode    = (error as { code?: string })?.code ?? ''
+    console.error('Stripe checkout error:', stripeType, stripeCode, stripeMessage)
     console.error('Stripe checkout error details:', JSON.stringify(error, Object.getOwnPropertyNames(error)))
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { error: 'Failed to create checkout session', detail: stripeMessage, type: stripeType, code: stripeCode },
       { status: 500 }
     )
   }

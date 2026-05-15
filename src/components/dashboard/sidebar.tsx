@@ -69,23 +69,22 @@ export function Sidebar({ profile, userEmail }: SidebarProps) {
       {/* Upgrade banner / Pro badge */}
       {profile?.subscription_tier === 'pro' ? (
         <div className="px-4 pb-3">
-          <Link
-            href="/api/stripe/portal"
-            onClick={async (e) => {
-              e.preventDefault()
+          <button
+            type="button"
+            onClick={async () => {
               const res = await fetch('/api/stripe/portal', { method: 'POST' })
               const data = await res.json()
               if (data.url) window.location.href = data.url
             }}
-            className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[var(--gold)]/10 border border-[var(--gold)]/20 hover:bg-[var(--gold)]/20 transition-all cursor-pointer"
+            className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg bg-[var(--gold)]/10 border border-[var(--gold)]/20 hover:bg-[var(--gold)]/20 transition-all cursor-pointer"
           >
             <Crown className="w-4 h-4 text-[var(--gold)] flex-shrink-0" />
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 text-left">
               <p className="text-xs font-semibold text-[var(--gold)]">King Pro</p>
               <p className="text-xs text-gray-500">Manage subscription</p>
             </div>
             <Settings className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" />
-          </Link>
+          </button>
         </div>
       ) : (
         <div className="px-4 pb-3">
