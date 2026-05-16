@@ -9,6 +9,8 @@ export interface PerformanceScores {
   discipline_rating: number
   fat_loss_velocity: number
   readiness_score: number
+  training_readiness: number
+  recovery_risk: number
 }
 
 export interface IntelligenceAlert {
@@ -35,6 +37,8 @@ export function calculatePerformanceScores(
       discipline_rating: 0,
       fat_loss_velocity: 0,
       readiness_score: 50,
+      training_readiness: 50,
+      recovery_risk: 50,
     }
   }
 
@@ -80,14 +84,30 @@ export function calculatePerformanceScores(
     adherence_score * 0.3
   )
 
+  // Training Readiness
+  const training_readiness = Math.round(
+    avgEnergy * 6 +
+    (workoutAdherence * 100) * 0.2 +
+    recovery_score * 0.2
+  )
+
+  // Recovery Risk (high = dangerous)
+  const highSorenessDays = recent.filter(c => (c.soreness_level || 0) >= 7).length
+  const recovery_risk = Math.round(
+    (highSorenessDays / recent.length) * 60 +
+    (avgSoreness / 10) * 40
+  )
+
   return {
-    recovery_score:   Math.min(100, Math.max(0, recovery_score)),
-    adherence_score:  Math.min(100, Math.max(0, adherence_score)),
-    momentum_score:   Math.min(100, Math.max(0, momentum_score)),
-    stress_load:      Math.min(100, Math.max(0, stress_load)),
+    recovery_score:    Math.min(100, Math.max(0, recovery_score)),
+    adherence_score:   Math.min(100, Math.max(0, adherence_score)),
+    momentum_score:    Math.min(100, Math.max(0, momentum_score)),
+    stress_load:       Math.min(100, Math.max(0, stress_load)),
     discipline_rating: Math.min(100, Math.max(0, discipline_rating)),
     fat_loss_velocity,
-    readiness_score:  Math.min(100, Math.max(0, readiness_score)),
+    readiness_score:   Math.min(100, Math.max(0, readiness_score)),
+    training_readiness: Math.min(100, Math.max(0, training_readiness)),
+    recovery_risk:     Math.min(100, Math.max(0, recovery_risk)),
   }
 }
 

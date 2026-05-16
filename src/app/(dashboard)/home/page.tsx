@@ -57,7 +57,18 @@ export default async function HomePage({
   const displayRecovery   = scores?.recovery_score   ?? avgRecovery
   const displayAdherence  = scores?.adherence_score  ?? adherenceScore
   const displayMomentum   = scores?.momentum_score   ?? Math.round((avgEnergy + avgRecovery) / 2)
-  const displayDiscipline = scores?.discipline_rating ?? 0
+  const displayDiscipline        = scores?.discipline_rating    ?? 0
+  const displayTrainingReadiness = scores?.training_readiness   ?? readinessScore
+  const displayStressLoad        = scores?.stress_load          ?? 50
+  const displayFatLossVelocity   = scores?.fat_loss_velocity    ?? 0
+  const displayRecoveryRisk      = scores?.recovery_risk        ?? 50
+
+  function getScoreColor(score: number): string {
+    if (score >= 75) return '#22C55E'
+    if (score >= 50) return '#C9A84C'
+    if (score >= 25) return '#F97316'
+    return '#EF4444'
+  }
 
   const getReadiness = (score: number) => {
     if (score >= 80) return { label: 'Optimal',  color: '#22C55E', advice: 'Perfect day for high intensity training' }
@@ -133,17 +144,38 @@ export default async function HomePage({
           </div>
           <div className="grid grid-cols-4 gap-2 mt-4">
             {[
-              { label: 'Recovery',   score: displayRecovery   },
-              { label: 'Adherence',  score: displayAdherence  },
-              { label: 'Momentum',   score: displayMomentum   },
-              { label: 'Discipline', score: displayDiscipline },
-            ].map(({ label, score }) => (
-              <div key={label} className="bg-black/40 rounded-xl p-2 text-center">
-                <p className="text-2xl font-bold text-white">{score}</p>
+              { label: 'Recovery',   value: String(displayRecovery),          color: getScoreColor(displayRecovery) },
+              { label: 'Readiness',  value: String(displayTrainingReadiness), color: getScoreColor(displayTrainingReadiness) },
+              { label: 'Adherence',  value: String(displayAdherence),         color: getScoreColor(displayAdherence) },
+              { label: 'Stress',     value: String(displayStressLoad),        color: getScoreColor(100 - displayStressLoad) },
+              { label: 'Momentum',   value: String(displayMomentum),          color: getScoreColor(displayMomentum) },
+              { label: 'Discipline', value: String(displayDiscipline),        color: getScoreColor(displayDiscipline) },
+              {
+                label: 'Fat Loss',
+                value: displayFatLossVelocity !== 0
+                  ? `${displayFatLossVelocity < 0 ? '↓' : '↑'}${Math.abs(displayFatLossVelocity).toFixed(1)}`
+                  : '—',
+                color: displayFatLossVelocity < 0 ? '#22C55E' : displayFatLossVelocity > 0 ? '#C9A84C' : '#909090',
+              },
+              {
+                label: 'Risk',
+                value: String(displayRecoveryRisk),
+                color: displayRecoveryRisk <= 30 ? '#22C55E' : displayRecoveryRisk <= 60 ? '#C9A84C' : '#EF4444',
+              },
+            ].map(({ label, value, color }) => (
+              <div key={label} className="bg-black/40 rounded-xl p-2.5 text-center">
+                <p className="text-xl font-bold" style={{ color }}>{value}</p>
                 <p className="text-[10px] text-[#505050] mt-0.5">{label}</p>
               </div>
             ))}
           </div>
+          <div style={{height: '12px'}} />
+          <a
+            href="/scores"
+            className="flex items-center justify-center gap-2 text-xs text-[#C9A84C] py-2"
+          >
+            View detailed scores →
+          </a>
         </div>
 
         <div style={{height: '32px'}} />

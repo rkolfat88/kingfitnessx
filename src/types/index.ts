@@ -130,6 +130,17 @@ export interface ProgressLog {
   notes: string | null
 }
 
+export interface ExpandedScores {
+  recovery_score: number
+  training_readiness: number
+  adherence_score: number
+  stress_load: number
+  momentum_score: number
+  discipline_rating: number
+  fat_loss_velocity: number
+  recovery_risk: number
+}
+
 export interface Message {
   role: 'user' | 'assistant'
   content: string
