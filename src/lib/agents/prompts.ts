@@ -68,8 +68,8 @@ Respond ONLY with valid JSON matching this exact structure:
 Include 4-6 exercises per session. Use progressive overload principles. ${onboarding.training_location === 'home' ? 'Use bodyweight and minimal equipment exercises only.' : 'Use full gym equipment.'}`
 }
 
-export function buildNutritionPrompt(onboarding: OnboardingData, tdee: number): string {
-  return `You are an elite sports nutritionist. Generate a complete, personalized nutrition plan.
+export function buildNutritionPrompt(onboarding: OnboardingData, tdee: number, directives?: string[]): string {
+  const prompt = `You are an elite sports nutritionist. Generate a complete, personalized nutrition plan.
 
 USER DATA:
 - Goal: ${onboarding.goal}
@@ -102,6 +102,11 @@ Respond ONLY with valid JSON matching this exact structure:
 }
 
 Create ${onboarding.fasting_preference === '16:8' ? '2-3 meals within an 8-hour window' : '4-5 meals spread throughout the day'}. All foods must respect dietary restrictions.`
+
+  if (directives && directives.length > 0) {
+    return prompt + '\n\nACTIVE COACHING DIRECTIVES:\n' + directives.join('\n')
+  }
+  return prompt
 }
 
 export function buildCheckinAnalysisPrompt(checkin: {

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { generateNutritionPlan } from '@/lib/agents/nutrition-agent'
-import type { OnboardingData } from '@/types'
+import { verifyAndClampTargets } from '@/lib/coaching-rules/engine'
+import type { OnboardingData, DailyCheckin } from '@/types'
 
 const DEFAULT_ONBOARDING: Omit<OnboardingData, 'id' | 'user_id' | 'created_at'> = {
   goal: 'muscle_gain',
@@ -51,9 +52,23 @@ export async function POST() {
       ...DEFAULT_ONBOARDING,
     }) as OnboardingData
 
+    const { data: recentCheckins } = await supabase
+      .from('daily_checkins')
+      .select('energy_level, soreness_level, mood, weight_kg, adherence_workout, adherence_nutrition')
+      .eq('user_id', user.id)
+      .order('date', { ascending: false })
+      .limit(7)
+
+    const { coachingDirectives, clampedMacros } = recentCheckins && recentCheckins.length > 0
+      ? verifyAndClampTargets(effectiveOnboarding, recentCheckins as DailyCheckin[])
+      : verifyAndClampTargets(effectiveOnboarding, [])
+
     await supabase.from('nutrition_plans').update({ is_active: false }).eq('user_id', user.id)
 
-    const planData = await generateNutritionPlan(effectiveOnboarding as OnboardingData)
+    const planData = await generateNutritionPlan(effectiveOnboarding, {
+      directives: coachingDirectives,
+      clampedMacros,
+    })
 
     const { data: plan, error } = await supabase
       .from('nutrition_plans')

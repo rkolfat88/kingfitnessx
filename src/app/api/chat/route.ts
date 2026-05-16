@@ -3,6 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import { buildSystemPrompt } from '@/lib/agents/prompts'
 import { classifyIntent } from '@/lib/agents/orchestrator'
 import { aiModel } from '@/lib/openai'
+import { verifyAndClampTargets } from '@/lib/coaching-rules/engine'
+import type { DailyCheckin } from '@/types'
 
 export const runtime = 'nodejs'
 
@@ -51,13 +53,13 @@ export async function POST(request: Request) {
 
     const agentType = await classifyIntent(lastText)
 
-    // Fetch recent check-ins for prompt engineering context
+    // Fetch recent check-ins for prompt engineering context and coaching rules
     const { data: recentCheckins } = await supabase
       .from('daily_checkins')
-      .select('energy_level, soreness_level, mood, weight_kg')
+      .select('energy_level, soreness_level, mood, weight_kg, adherence_workout, adherence_nutrition')
       .eq('user_id', user.id)
       .order('date', { ascending: false })
-      .limit(3)
+      .limit(7)
 
     // Engineer the prompt for maximum quality (silent — user never sees this)
     const { engineerPrompt } = await import('@/lib/agents/prompt-engineer')
@@ -73,7 +75,16 @@ export async function POST(request: Request) {
       agent_type: agentType,
     })
 
-    const systemPrompt = buildSystemPrompt(onboarding)
+    let systemPrompt = buildSystemPrompt(onboarding)
+
+    if (onboarding && recentCheckins && recentCheckins.length > 0) {
+      const { coachingDirectives, clampedMacros } = verifyAndClampTargets(
+        onboarding,
+        recentCheckins as DailyCheckin[]
+      )
+      systemPrompt += '\n\nACTIVE COACHING DIRECTIVES:\n' + coachingDirectives.join('\n')
+      systemPrompt += `\n\nVERIFIED MACRO TARGETS: ${clampedMacros.daily_calories} kcal | P: ${clampedMacros.protein_g}g | C: ${clampedMacros.carbs_g}g | F: ${clampedMacros.fat_g}g`
+    }
 
     // Replace last user message with engineered version for AI, keep original for history
     const sliced = messages.slice(-10)
