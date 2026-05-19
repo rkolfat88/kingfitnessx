@@ -1,11 +1,19 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// TODO: Re-enable auth before production launch
+const BYPASS_AUTH = true
+
 export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
 
   if (!supabaseUrl.startsWith('http')) {
+    return NextResponse.next({ request })
+  }
+
+  // Auth bypass for testing — skip all redirect logic
+  if (BYPASS_AUTH) {
     return NextResponse.next({ request })
   }
 

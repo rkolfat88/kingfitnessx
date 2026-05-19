@@ -10,36 +10,36 @@ export const runtime = 'nodejs'
 
 export async function POST(request: Request) {
   try {
+    // TODO: Re-enable auth before production launch
+    const TEST_USER_ID = 'test-user-123'
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    if (!user) {
-      return new Response('Unauthorized', { status: 401 })
-    }
+    // if (!user) return new Response('Unauthorized', { status: 401 })
+    const userId = user?.id ?? TEST_USER_ID
 
-    // Enforce daily message limit for free users
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('subscription_tier')
-      .eq('id', user.id)
-      .single()
-
-    if ((profile?.subscription_tier ?? 'free') !== 'pro') {
-      const today = new Date().toISOString().split('T')[0]
-      const { count } = await supabase
-        .from('conversation_history')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('role', 'user')
-        .gte('created_at', `${today}T00:00:00`)
-
-      if ((count ?? 0) >= 3) {
-        return new Response(JSON.stringify({
-          error: 'limit_reached',
-          message: 'You have used your 3 free messages today. Upgrade to King Pro for unlimited coaching.',
-        }), { status: 429, headers: { 'Content-Type': 'application/json' } })
-      }
-    }
+    // Enforce daily message limit for free users (bypassed for testing)
+    // const { data: profile } = await supabase
+    //   .from('user_profiles')
+    //   .select('subscription_tier')
+    //   .eq('id', userId)
+    //   .single()
+    //
+    // if ((profile?.subscription_tier ?? 'free') !== 'pro') {
+    //   const today = new Date().toISOString().split('T')[0]
+    //   const { count } = await supabase
+    //     .from('conversation_history')
+    //     .select('*', { count: 'exact', head: true })
+    //     .eq('user_id', userId)
+    //     .eq('role', 'user')
+    //     .gte('created_at', `${today}T00:00:00`)
+    //   if ((count ?? 0) >= 3) {
+    //     return new Response(JSON.stringify({
+    //       error: 'limit_reached',
+    //       message: 'You have used your 3 free messages today. Upgrade to King Pro for unlimited coaching.',
+    //     }), { status: 429, headers: { 'Content-Type': 'application/json' } })
+    //   }
+    // }
 
     const { messages } = await request.json() as { messages: UIMessage[] }
     const lastMessage = messages[messages.length - 1]
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
       .join('') ?? ''
 
     const { data: onboarding } = await supabase
-      .from('onboarding_data').select('*').eq('user_id', user.id).single()
+      .from('onboarding_data').select('*').eq('user_id', userId).single()
 
     const agentType = await classifyIntent(lastText)
 
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     const { data: recentCheckins } = await supabase
       .from('daily_checkins')
       .select('energy_level, soreness_level, mood, weight_kg, adherence_workout, adherence_nutrition')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('date', { ascending: false })
       .limit(7)
 
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     })
 
     await supabase.from('conversation_history').insert({
-      user_id: user.id,
+      user_id: userId,
       role: 'user',
       content: lastText,
       agent_type: agentType,
@@ -110,7 +110,7 @@ export async function POST(request: Request) {
       messages: modelMessages,
       onFinish: async ({ text }) => {
         await supabase.from('conversation_history').insert({
-          user_id: user.id,
+          user_id: userId,
           role: 'assistant',
           content: text,
           agent_type: agentType,
