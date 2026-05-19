@@ -1,7 +1,14 @@
-import { type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
+import { type NextRequest, NextResponse } from 'next/server'
+
+// TODO: Re-enable auth before production launch
+const BYPASS_AUTH = true
 
 export async function proxy(request: NextRequest) {
+  if (BYPASS_AUTH) {
+    return NextResponse.next()
+  }
+
+  const { updateSession } = await import('@/lib/supabase/middleware')
   return await updateSession(request)
 }
 
