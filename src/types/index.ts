@@ -147,3 +147,53 @@ export interface Message {
   agent_type?: AgentType
   created_at?: string
 }
+
+export interface NutritionCardData {
+  calories: number
+  protein_g: number
+  carbs_g: number
+  fat_g: number
+  meals: Array<{
+    name: string
+    time: string
+    calories: number
+    foods: string[]
+  }>
+  protocol?: string
+  notes?: string
+}
+
+export interface WorkoutCardData {
+  focus: string
+  total_sets: number
+  duration_minutes: number
+  exercises: Array<{
+    name: string
+    sets: number
+    reps: string
+    rpe?: number
+    rest_seconds?: number
+    notes?: string
+  }>
+}
+
+export interface ScoreCardData {
+  scores: Array<{
+    label: string
+    value: number
+    color: string
+  }>
+  summary: string
+}
+
+export interface DirectiveCardData {
+  directives: string[]
+  severity: 'info' | 'warning' | 'critical'
+  action: string
+}
+
+export interface AgentResponsePayload {
+  textFallback: string
+  displayType: 'TEXT' | 'NUTRITION_CARD' | 'WORKOUT_CARD' | 'SCORE_CARD' | 'CHECKIN_CARD' | 'DIRECTIVE_CARD'
+  data?: NutritionCardData | WorkoutCardData | ScoreCardData | DirectiveCardData | null
+}

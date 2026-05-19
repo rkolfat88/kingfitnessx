@@ -1,6 +1,11 @@
-import { cn } from '@/lib/utils'
+'use client'
+
 import { Crown, User } from 'lucide-react'
-import type { Message } from '@/types'
+import type { Message, AgentResponsePayload, NutritionCardData, WorkoutCardData, ScoreCardData, DirectiveCardData } from '@/types'
+import { NutritionCard } from './nutrition-card'
+import { WorkoutCard }   from './workout-card'
+import { ScoreCard }     from './score-card'
+import { DirectiveCard } from './directive-card'
 
 const agentConfig: Record<string, { color: string; label: string }> = {
   workout:        { color: '#3B82F6', label: '💪 Workout Agent'        },
@@ -11,12 +16,27 @@ const agentConfig: Record<string, { color: string; label: string }> = {
   general:        { color: '#C9A84C', label: '👑 King AI Coach'        },
 }
 
+// ── Structured-response parser ────────────────────────────────────────────────
+function parseStructuredResponse(content: string): AgentResponsePayload | null {
+  try {
+    const parsed = JSON.parse(content)
+    if (parsed && typeof parsed.displayType === 'string') {
+      return parsed as AgentResponsePayload
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
 export function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user'
   const agent  = message.agent_type
     ? (agentConfig[message.agent_type] ?? agentConfig.general)
     : agentConfig.general
 
+  // ── User bubble (unchanged) ──────────────────────────────────────────────
   if (isUser) {
     return (
       <div className="flex justify-end items-end gap-2 animate-slide-up mb-3">
@@ -30,6 +50,59 @@ export function MessageBubble({ message }: { message: Message }) {
     )
   }
 
+  // ── Try structured render ────────────────────────────────────────────────
+  const structured = parseStructuredResponse(message.content)
+
+  if (structured) {
+    let card: React.ReactNode = null
+
+    switch (structured.displayType) {
+      case 'NUTRITION_CARD':
+        if (structured.data) {
+          card = <NutritionCard data={structured.data as NutritionCardData} />
+        }
+        break
+      case 'WORKOUT_CARD':
+        if (structured.data) {
+          card = <WorkoutCard data={structured.data as WorkoutCardData} />
+        }
+        break
+      case 'SCORE_CARD':
+        if (structured.data) {
+          card = <ScoreCard data={structured.data as ScoreCardData} />
+        }
+        break
+      case 'DIRECTIVE_CARD':
+        if (structured.data) {
+          card = <DirectiveCard data={structured.data as DirectiveCardData} />
+        }
+        break
+      default:
+        break
+    }
+
+    if (card) {
+      return (
+        <div className="flex items-end gap-2 animate-slide-up mb-3">
+          <div
+            className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{ backgroundColor: `${agent.color}15`, border: `1px solid ${agent.color}30` }}
+          >
+            <Crown className="w-3.5 h-3.5" style={{ color: agent.color }} />
+          </div>
+          <div className="flex-1 min-w-0 space-y-1">
+            <p className="text-xs font-medium ml-1" style={{ color: agent.color }}>{agent.label}</p>
+            {card}
+          </div>
+        </div>
+      )
+    }
+  }
+
+  // ── Standard text bubble ─────────────────────────────────────────────────
+  // Use textFallback if available (structured TEXT type), otherwise raw content
+  const displayText = structured?.textFallback ?? message.content
+
   return (
     <div className="flex items-end gap-2 animate-slide-up mb-3">
       <div
@@ -41,13 +114,14 @@ export function MessageBubble({ message }: { message: Message }) {
       <div className="max-w-[85%] space-y-1">
         <p className="text-xs font-medium ml-1" style={{ color: agent.color }}>{agent.label}</p>
         <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl rounded-bl-sm px-4 py-3">
-          <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          <p className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">{displayText}</p>
         </div>
       </div>
     </div>
   )
 }
 
+// ── Typing indicator (unchanged) ──────────────────────────────────────────────
 export function TypingIndicator() {
   return (
     <div className="flex items-end gap-2 mb-3">

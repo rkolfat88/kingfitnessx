@@ -139,6 +139,34 @@ Respond ONLY with valid JSON:
 If soreness > 7, suggest recovery. If energy < 4, address fatigue. If adherence is low, give accountability coaching. Keep it real and direct.`
 }
 
+/**
+ * Returns JSON format instructions for agents that support structured card output.
+ * Only workout and nutrition agents emit structured JSON — all others return plain text.
+ */
+export function getStructuredFormatInstruction(agentType: string): string {
+  if (agentType === 'nutrition') {
+    return `
+
+RESPONSE FORMAT RULES:
+When the user asks about their current nutrition plan, macros, or what to eat, respond ONLY with a JSON object matching this exact shape:
+{"textFallback": "plain text version of the response", "displayType": "NUTRITION_CARD", "data": {"calories": 2200, "protein_g": 180, "carbs_g": 220, "fat_g": 70, "meals": [{"name": "Breakfast", "time": "8:00 AM", "calories": 550, "foods": ["200g Greek yogurt", "50g oats", "1 banana"]}], "protocol": "16:8 IF", "notes": "optional coaching note"}}
+
+For all other responses (general questions, advice, motivation), respond with plain text only. Do NOT wrap non-plan responses in JSON.`
+  }
+
+  if (agentType === 'workout') {
+    return `
+
+RESPONSE FORMAT RULES:
+When the user asks about their workout, exercises, or training plan, respond ONLY with a JSON object matching this exact shape:
+{"textFallback": "plain text version of the response", "displayType": "WORKOUT_CARD", "data": {"focus": "Chest & Triceps", "total_sets": 20, "duration_minutes": 60, "exercises": [{"name": "Bench Press", "sets": 4, "reps": "6-8", "rpe": 8, "rest_seconds": 120, "notes": "Control the eccentric"}]}}
+
+For all other responses (general questions, advice, motivation), respond with plain text only. Do NOT wrap non-plan responses in JSON.`
+  }
+
+  return ''
+}
+
 export function classifyIntentPrompt(message: string): string {
   return `Classify this fitness coaching message into one category.
 

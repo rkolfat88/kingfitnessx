@@ -1,6 +1,6 @@
 import { streamText, convertToModelMessages, UIMessage } from 'ai'
 import { createClient } from '@/lib/supabase/server'
-import { buildSystemPrompt } from '@/lib/agents/prompts'
+import { buildSystemPrompt, getStructuredFormatInstruction } from '@/lib/agents/prompts'
 import { classifyIntent } from '@/lib/agents/orchestrator'
 import { aiModel } from '@/lib/openai'
 import { verifyAndClampTargets } from '@/lib/coaching-rules/engine'
@@ -76,6 +76,12 @@ export async function POST(request: Request) {
     })
 
     let systemPrompt = buildSystemPrompt(onboarding)
+
+    // Append structured-output format rules for workout / nutrition agents
+    const formatInstruction = getStructuredFormatInstruction(agentType)
+    if (formatInstruction) {
+      systemPrompt += formatInstruction
+    }
 
     if (onboarding && recentCheckins && recentCheckins.length > 0) {
       const { coachingDirectives, clampedMacros } = verifyAndClampTargets(
