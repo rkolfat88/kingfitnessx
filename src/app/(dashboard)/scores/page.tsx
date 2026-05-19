@@ -4,14 +4,14 @@ import { redirect } from 'next/navigation'
 export default async function ScoresPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  // if (!user) redirect('/login')  // TODO: Re-enable auth
 
-  const { data: scores } = await supabase
+  const { data: scores } = user ? await supabase
     .from('performance_scores')
     .select('*')
     .eq('user_id', user.id)
     .order('score_date', { ascending: false })
-    .limit(30)
+    .limit(30) : { data: null }
 
   const latest = scores?.[0]
 
