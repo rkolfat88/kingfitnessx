@@ -34,6 +34,8 @@ const DEFAULT_FORM: FormState = {
   fasting_preference:  'none',
 }
 
+const inputCls = 'w-full px-4 py-2.5 bg-[#111111] border border-[#242424] rounded-xl text-white text-sm focus:outline-none focus:border-[#C9A84C]/50 transition-colors'
+
 export default function SettingsPage() {
   const supabase = createClient()
   const router   = useRouter()
@@ -132,7 +134,7 @@ export default function SettingsPage() {
       }, { onConflict: 'user_id' }),
     ])
 
-    if (profileRes.error)   throw profileRes.error
+    if (profileRes.error)    throw profileRes.error
     if (onboardingRes.error) throw onboardingRes.error
   }
 
@@ -189,10 +191,10 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black">
-        <div className="max-w-2xl mx-auto px-4 pt-12 pb-32 space-y-4 animate-pulse">
-          <div className="h-7 bg-[var(--surface-2)] rounded w-1/3" />
+        <div className="max-w-lg mx-auto px-4 pt-14 pb-32 space-y-4 animate-pulse">
+          <div className="h-8 bg-[#161616] rounded w-1/3" />
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-40 bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl" />
+            <div key={i} className="h-40 bg-[#161616] border border-[#242424] rounded-2xl" />
           ))}
         </div>
       </div>
@@ -202,58 +204,61 @@ export default function SettingsPage() {
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-lg mx-auto px-4 pt-12 pb-32">
+      <div className="max-w-lg mx-auto px-4 pt-14 pb-32">
 
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-black text-white">Settings</h1>
-          <p className="text-sm text-gray-500 mt-1">Update your profile, goals, and preferences</p>
+          <p className="text-sm text-[#505050] uppercase tracking-widest">Profile</p>
+          <h1 className="text-3xl font-black text-white mt-0.5">Settings</h1>
+          <p className="text-sm text-[#505050] mt-1">Update your profile, goals, and preferences</p>
         </div>
 
-        {/* Account */}
-        <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-5 mb-4">
-          <p className="text-sm text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Account</p>
+        {/* ── ACCOUNT ─────────────────────────────────────────── */}
+        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-5 mb-4">
+          <p className="text-sm text-[#C9A84C] uppercase tracking-widest font-semibold mb-4">Account</p>
           <div className="space-y-3">
             <div>
-              <p className="text-xs text-gray-500 mb-1">Full Name</p>
+              <p className="text-xs text-[#505050] mb-1.5">Full Name</p>
               <input
                 value={form.full_name}
                 onChange={e => set('full_name', e.target.value)}
-                className="w-full px-4 py-2.5 bg-[var(--surface-3)] border border-[var(--border)] rounded-xl text-white text-sm focus:outline-none focus:border-[var(--gold)]/50"
+                placeholder="Your name"
+                className={inputCls}
               />
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-1">Email</p>
-              <div className="w-full px-4 py-2.5 bg-[var(--surface-3)] border border-[var(--border)] rounded-xl text-gray-500 text-sm">
-                {email}
+              <p className="text-xs text-[#505050] mb-1.5">Email</p>
+              <div className="w-full px-4 py-2.5 bg-[#111111] border border-[#242424] rounded-xl text-[#505050] text-sm">
+                {email || '—'}
               </div>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-1">Subscription</p>
-              <div className="flex items-center gap-2 px-4 py-2.5 bg-[var(--surface-3)] border border-[var(--gold)]/20 rounded-xl">
-                <span className="text-[var(--gold)] text-sm font-semibold">
-                  {tier === 'pro' ? '👑 King Pro' : 'Free'}
+              <p className="text-xs text-[#505050] mb-1.5">Subscription</p>
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-[#111111] border border-[#C9A84C]/20 rounded-xl">
+                <span className="text-[#C9A84C] text-sm font-semibold">
+                  {tier === 'pro' ? '👑 King Pro' : 'Free Plan'}
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Goal & Weight */}
-        <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-5 mb-4">
-          <p className="text-sm text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Goal & Weight</p>
-          <div className="space-y-3">
+        {/* ── GOAL & WEIGHT ────────────────────────────────────── */}
+        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-5 mb-4">
+          <p className="text-sm text-[#C9A84C] uppercase tracking-widest font-semibold mb-4">Goal &amp; Weight</p>
+          <div className="space-y-4">
             <div>
-              <p className="text-xs text-gray-500 mb-1">Current Weight (kg)</p>
+              <p className="text-xs text-[#505050] mb-1.5">Current Weight (kg)</p>
               <input
                 type="number"
                 value={form.weight_kg}
                 onChange={e => set('weight_kg', e.target.value)}
-                className="w-full px-4 py-2.5 bg-[var(--surface-3)] border border-[var(--border)] rounded-xl text-white text-sm focus:outline-none focus:border-[var(--gold)]/50"
+                placeholder="e.g. 80"
+                className={inputCls}
               />
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-3">Primary Goal</p>
+              <p className="text-xs text-[#505050] mb-2">Primary Goal</p>
               <div className="grid grid-cols-1 gap-2">
                 {[
                   { value: 'fat_loss',    label: 'Fat Loss',      desc: 'Burn fat, get lean & defined'  },
@@ -267,8 +272,8 @@ export default function SettingsPage() {
                     className={cn(
                       'w-full text-left px-4 py-3 rounded-xl border transition-all',
                       form.goal === g.value
-                        ? 'border-[var(--gold)]/50 bg-[var(--gold)]/10 text-[var(--gold)]'
-                        : 'border-[var(--border)] bg-[var(--surface-3)] text-gray-400 hover:border-gray-600'
+                        ? 'border-[#C9A84C]/50 bg-[#C9A84C]/10 text-[#C9A84C]'
+                        : 'border-[#242424] bg-[#111111] text-[#505050] hover:border-[#404040] hover:text-[#909090]'
                     )}
                   >
                     <p className="text-sm font-medium">{g.label}</p>
@@ -280,18 +285,20 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Training Setup */}
-        <div className="bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-5 mb-4">
-          <p className="text-sm text-[var(--gold)] uppercase tracking-widest font-semibold mb-4">Training Setup</p>
+        {/* ── TRAINING SETUP ───────────────────────────────────── */}
+        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-5 mb-4">
+          <p className="text-sm text-[#C9A84C] uppercase tracking-widest font-semibold mb-4">Training Setup</p>
           <div className="space-y-4">
+
+            {/* Activity Level */}
             <div>
-              <p className="text-xs text-gray-500 mb-2">Activity Level</p>
+              <p className="text-xs text-[#505050] mb-2">Activity Level</p>
               <div className="grid grid-cols-1 gap-2">
                 {[
                   { value: 'sedentary',         label: 'Sedentary',         desc: 'Little to no exercise' },
-                  { value: 'lightly_active',    label: 'Lightly Active',    desc: '1-3 days/week'         },
-                  { value: 'moderately_active', label: 'Moderately Active', desc: '3-5 days/week'         },
-                  { value: 'very_active',       label: 'Very Active',       desc: '6-7 days/week'         },
+                  { value: 'lightly_active',    label: 'Lightly Active',    desc: '1–3 days/week'         },
+                  { value: 'moderately_active', label: 'Moderately Active', desc: '3–5 days/week'         },
+                  { value: 'very_active',       label: 'Very Active',       desc: '6–7 days/week'         },
                 ].map(a => (
                   <button
                     key={a.value}
@@ -299,8 +306,8 @@ export default function SettingsPage() {
                     className={cn(
                       'w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all',
                       form.activity_level === a.value
-                        ? 'border-[var(--gold)]/50 bg-[var(--gold)]/10 text-[var(--gold)]'
-                        : 'border-[var(--border)] bg-[var(--surface-3)] text-gray-400 hover:border-gray-600'
+                        ? 'border-[#C9A84C]/50 bg-[#C9A84C]/10 text-[#C9A84C]'
+                        : 'border-[#242424] bg-[#111111] text-[#505050] hover:border-[#404040] hover:text-[#909090]'
                     )}
                   >
                     <span className="text-sm font-medium">{a.label}</span>
@@ -309,8 +316,10 @@ export default function SettingsPage() {
                 ))}
               </div>
             </div>
+
+            {/* Training Location */}
             <div>
-              <p className="text-xs text-gray-500 mb-2">Training Location</p>
+              <p className="text-xs text-[#505050] mb-2">Training Location</p>
               <div className="grid grid-cols-3 gap-2">
                 {(['gym', 'home', 'both'] as TrainingLocation[]).map(loc => (
                   <button
@@ -319,8 +328,8 @@ export default function SettingsPage() {
                     className={cn(
                       'py-2.5 rounded-xl border text-sm font-medium transition-all capitalize',
                       form.training_location === loc
-                        ? 'border-[var(--gold)]/50 bg-[var(--gold)]/10 text-[var(--gold)]'
-                        : 'border-[var(--border)] bg-[var(--surface-3)] text-gray-400'
+                        ? 'border-[#C9A84C]/50 bg-[#C9A84C]/10 text-[#C9A84C]'
+                        : 'border-[#242424] bg-[#111111] text-[#505050] hover:border-[#404040] hover:text-[#909090]'
                     )}
                   >
                     {loc}
@@ -328,8 +337,10 @@ export default function SettingsPage() {
                 ))}
               </div>
             </div>
+
+            {/* Experience Level */}
             <div>
-              <p className="text-xs text-gray-500 mb-2">Experience Level</p>
+              <p className="text-xs text-[#505050] mb-2">Experience Level</p>
               <div className="grid grid-cols-3 gap-2">
                 {(['beginner', 'intermediate', 'advanced'] as TrainingExperience[]).map(exp => (
                   <button
@@ -338,8 +349,8 @@ export default function SettingsPage() {
                     className={cn(
                       'py-2.5 rounded-xl border text-sm font-medium transition-all capitalize',
                       form.training_experience === exp
-                        ? 'border-[var(--gold)]/50 bg-[var(--gold)]/10 text-[var(--gold)]'
-                        : 'border-[var(--border)] bg-[var(--surface-3)] text-gray-400'
+                        ? 'border-[#C9A84C]/50 bg-[#C9A84C]/10 text-[#C9A84C]'
+                        : 'border-[#242424] bg-[#111111] text-[#505050] hover:border-[#404040] hover:text-[#909090]'
                     )}
                   >
                     {exp}
@@ -347,8 +358,10 @@ export default function SettingsPage() {
                 ))}
               </div>
             </div>
+
+            {/* Training Days */}
             <div>
-              <p className="text-xs text-gray-500 mb-2">Training Days Per Week</p>
+              <p className="text-xs text-[#505050] mb-2">Training Days Per Week</p>
               <div className="grid grid-cols-5 gap-2">
                 {[2, 3, 4, 5, 6].map(d => (
                   <button
@@ -357,8 +370,8 @@ export default function SettingsPage() {
                     className={cn(
                       'py-2.5 rounded-xl border text-sm font-bold transition-all',
                       Number(form.days_per_week) === d
-                        ? 'border-[var(--gold)]/50 bg-[var(--gold)]/10 text-[var(--gold)]'
-                        : 'border-[var(--border)] bg-[var(--surface-3)] text-gray-400'
+                        ? 'border-[#C9A84C]/50 bg-[#C9A84C]/10 text-[#C9A84C]'
+                        : 'border-[#242424] bg-[#111111] text-[#505050] hover:border-[#404040] hover:text-[#909090]'
                     )}
                   >
                     {d}
@@ -366,6 +379,7 @@ export default function SettingsPage() {
                 ))}
               </div>
             </div>
+
           </div>
         </div>
 
@@ -378,18 +392,20 @@ export default function SettingsPage() {
 
       </div>
 
-      {/* Fixed Save Button */}
-      <div className="fixed bottom-16 left-0 right-0 px-4 z-40 pb-2">
-        <div className="max-w-lg mx-auto">
+      {/* ── FIXED SAVE BUTTON ────────────────────────────────────── */}
+      <div className="fixed bottom-16 left-0 right-0 px-4 z-40">
+        <div className="max-w-lg mx-auto pb-2">
           <button
             onClick={handleSaveOnly}
-            disabled={saving}
-            className="w-full bg-[var(--gold)] hover:bg-[var(--gold-light)] text-black font-bold py-4 rounded-2xl transition-all disabled:opacity-50"
+            disabled={saving || regenerating}
+            className="w-full bg-[#C9A84C] hover:bg-[#E8C76A] text-black font-bold py-4 rounded-2xl transition-all disabled:opacity-50"
+            style={{ boxShadow: (saving || regenerating) ? 'none' : '0 0 24px rgba(201,168,76,0.2)' }}
           >
-            {saving ? 'Saving...' : 'Save Changes'}
+            {saving ? 'Saving…' : 'Save Changes'}
           </button>
         </div>
       </div>
+
     </div>
   )
 }
