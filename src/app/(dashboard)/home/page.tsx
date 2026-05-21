@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+// import { redirect } from 'next/navigation'  // TODO: Re-enable auth before production launch
 import {
   Crown, Zap, Moon, Dumbbell, Apple,
   MessageSquare, Activity, Flame, ChevronRight,

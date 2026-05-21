@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+// import { redirect } from 'next/navigation'  // TODO: Re-enable auth before production launch
 
 export default async function ScoresPage() {
   const supabase = await createClient()
