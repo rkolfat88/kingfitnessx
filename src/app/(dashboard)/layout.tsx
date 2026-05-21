@@ -1,30 +1,17 @@
-// import { redirect } from 'next/navigation'  // TODO: Re-enable auth before production launch
+import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { BottomNav } from '@/components/dashboard/bottom-nav'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  // TODO: Re-enable auth before production launch
-  let user = null
-  let profile = null
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
 
-  try {
-    const supabase = await createClient()
-    const { data: authData } = await supabase.auth.getUser()
-    user = authData.user
-
-    // if (!user) redirect('/login')  // bypassed for testing
-
-    if (user) {
-      const { data } = await supabase
-        .from('user_profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-      profile = data
-    }
-  } catch {
-    // Allow render without session during testing
-  }
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
 
   return (
     <div className="min-h-screen bg-black">
@@ -34,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           ⚠️ King AI Coach provides general fitness information only. Not medical advice. Always consult a qualified healthcare professional before starting any fitness, nutrition, or supplement program.
         </div>
       </main>
-      <BottomNav profile={profile} userEmail={user?.email ?? ''} />
+      <BottomNav profile={profile} userEmail={user.email ?? ''} />
     </div>
   )
 }

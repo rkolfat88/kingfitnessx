@@ -21,44 +21,41 @@ const DEFAULT_ONBOARDING: Omit<OnboardingData, 'id' | 'user_id' | 'created_at'> 
 
 export async function POST() {
   try {
-    // TODO: Re-enable auth before production launch
-    const TEST_USER_ID = 'test-user-123'
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    const userId = user?.id ?? TEST_USER_ID
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    // Pro check bypassed for testing
-    // const { data: profile } = await supabase
-    //   .from('user_profiles')
-    //   .select('subscription_tier')
-    //   .eq('id', userId)
-    //   .single()
-    // if ((profile?.subscription_tier ?? 'free') !== 'pro') {
-    //   return NextResponse.json({
-    //     error: 'upgrade_required',
-    //     message: 'Upgrade to King Pro to generate personalized nutrition plans.',
-    //   }, { status: 403 })
-    // }
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('subscription_tier')
+      .eq('id', user.id)
+      .single()
+
+    if ((profile?.subscription_tier ?? 'free') !== 'pro') {
+      return NextResponse.json({
+        error: 'upgrade_required',
+        message: 'Upgrade to King Pro to generate personalized nutrition plans.',
+      }, { status: 403 })
+    }
 
     const { data: onboarding } = await supabase
       .from('onboarding_data')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .single()
 
     // Use defaults if onboarding not completed yet
     const effectiveOnboarding = (onboarding ?? {
       id: '',
-      user_id: userId,
+      user_id: user.id,
       ...DEFAULT_ONBOARDING,
     }) as OnboardingData
 
     const { data: recentCheckins } = await supabase
       .from('daily_checkins')
       .select('energy_level, soreness_level, mood, weight_kg, adherence_workout, adherence_nutrition')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .order('date', { ascending: false })
       .limit(7)
 
@@ -66,7 +63,7 @@ export async function POST() {
       ? verifyAndClampTargets(effectiveOnboarding, recentCheckins as DailyCheckin[])
       : verifyAndClampTargets(effectiveOnboarding, [])
 
-    await supabase.from('nutrition_plans').update({ is_active: false }).eq('user_id', userId)
+    await supabase.from('nutrition_plans').update({ is_active: false }).eq('user_id', user.id)
 
     const planData = await generateNutritionPlan(effectiveOnboarding, {
       directives: coachingDirectives,
@@ -75,7 +72,7 @@ export async function POST() {
 
     const { data: plan, error } = await supabase
       .from('nutrition_plans')
-      .insert({ user_id: userId, plan_data: planData, is_active: true })
+      .insert({ user_id: user.id, plan_data: planData, is_active: true })
       .select()
       .single()
 
@@ -90,18 +87,15 @@ export async function POST() {
 
 export async function GET() {
   try {
-    // TODO: Re-enable auth before production launch
-    const TEST_USER_ID = 'test-user-123'
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    const userId = user?.id ?? TEST_USER_ID
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { data: plan } = await supabase
       .from('nutrition_plans')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .eq('is_active', true)
       .single()
 

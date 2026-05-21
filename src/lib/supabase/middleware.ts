@@ -1,19 +1,11 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-// TODO: Re-enable auth before production launch
-const BYPASS_AUTH = true
-
 export async function updateSession(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? ''
 
   if (!supabaseUrl.startsWith('http')) {
-    return NextResponse.next({ request })
-  }
-
-  // Auth bypass for testing — skip all redirect logic
-  if (BYPASS_AUTH) {
     return NextResponse.next({ request })
   }
 
@@ -47,7 +39,7 @@ export async function updateSession(request: NextRequest) {
   const isOnboarding = path === '/onboarding'
 
   // Not logged in — send to login for any protected route
-  if (!user && !isPublicPath) {
+  if (!user && !isPublicPath && !isApiRoute) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
@@ -61,7 +53,7 @@ export async function updateSession(request: NextRequest) {
 
     const completedOnboarding = profile?.onboarding_completed ?? false
 
-    // On login/signup while already authenticated
+    // On login/signup while already authenticated — redirect to correct page
     if (path === '/login' || path === '/signup') {
       return NextResponse.redirect(
         new URL(completedOnboarding ? '/home' : '/onboarding', request.url)

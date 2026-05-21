@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-// import { redirect } from 'next/navigation'  // TODO: Re-enable auth before production launch
+import { redirect } from 'next/navigation'
 import {
   Crown, Zap, Moon, Dumbbell, Apple,
   MessageSquare, Activity, Flame, ChevronRight,
@@ -17,7 +17,7 @@ export default async function HomePage({
 }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  // if (!user) redirect('/login')  // TODO: Re-enable auth
+  if (!user) redirect('/login')
 
   const params = await searchParams
   const isNewUser = params.new === 'true'

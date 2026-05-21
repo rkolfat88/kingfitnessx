@@ -12,13 +12,10 @@ import type { DailyCheckin } from '@/types'
 
 export async function POST(request: Request) {
   try {
-    // TODO: Re-enable auth before production launch
-    const TEST_USER_ID = 'test-user-123'
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    const userId = user?.id ?? TEST_USER_ID
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await request.json()
     const today = new Date().toISOString().split('T')[0]
@@ -40,7 +37,7 @@ export async function POST(request: Request) {
     const { data: checkin, error } = await supabase
       .from('daily_checkins')
       .upsert({
-        user_id: userId,
+        user_id: user.id,
         date: today,
         ...body,
         ai_response: aiData,
@@ -56,13 +53,13 @@ export async function POST(request: Request) {
         supabase
           .from('daily_checkins')
           .select('*')
-          .eq('user_id', userId)
+          .eq('user_id', user.id)
           .order('date', { ascending: false })
           .limit(30),
         supabase
           .from('onboarding_data')
           .select('goal, weight_kg')
-          .eq('user_id', userId)
+          .eq('user_id', user.id)
           .single(),
       ])
 
@@ -76,7 +73,7 @@ export async function POST(request: Request) {
           scores,
           onboarding?.goal ?? 'general'
         )
-        await saveIntelligenceData(supabase, userId, scores, alerts)
+        await saveIntelligenceData(supabase, user.id, scores, alerts)
       }
     } catch (longitudinalError) {
       console.error('Longitudinal analysis error (non-blocking):', longitudinalError)
@@ -91,18 +88,15 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    // TODO: Re-enable auth before production launch
-    const TEST_USER_ID = 'test-user-123'
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    // if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    const userId = user?.id ?? TEST_USER_ID
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const { data: checkins } = await supabase
       .from('daily_checkins')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .order('date', { ascending: false })
       .limit(30)
 

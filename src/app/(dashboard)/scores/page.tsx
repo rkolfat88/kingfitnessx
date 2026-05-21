@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
-// import { redirect } from 'next/navigation'  // TODO: Re-enable auth before production launch
+import { redirect } from 'next/navigation'
 
 export default async function ScoresPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  // if (!user) redirect('/login')  // TODO: Re-enable auth
+  if (!user) redirect('/login')
 
   const { data: scores } = user ? await supabase
     .from('performance_scores')
