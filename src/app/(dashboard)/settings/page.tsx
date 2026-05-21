@@ -194,7 +194,7 @@ export default function SettingsPage() {
         <div className="max-w-lg mx-auto px-4 pt-14 pb-32 space-y-4 animate-pulse">
           <div className="h-8 bg-[#161616] rounded w-1/3" />
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-40 bg-[#161616] border border-[#242424] rounded-2xl" />
+            <div key={i} className="h-40 bg-[#1a1a1a] border-2 border-[#C9A84C]/20 rounded-2xl" />
           ))}
         </div>
       </div>
@@ -214,7 +214,7 @@ export default function SettingsPage() {
         </div>
 
         {/* ── ACCOUNT ─────────────────────────────────────────── */}
-        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-5 mb-4">
+        <div className="bg-[#1a1a1a] border-2 border-[#C9A84C]/20 rounded-2xl p-5 mb-4">
           <p className="text-sm text-[#C9A84C] uppercase tracking-widest font-semibold mb-4">Account</p>
           <div className="space-y-3">
             <div>
@@ -244,7 +244,7 @@ export default function SettingsPage() {
         </div>
 
         {/* ── GOAL & WEIGHT ────────────────────────────────────── */}
-        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-5 mb-4">
+        <div className="bg-[#1a1a1a] border-2 border-[#C9A84C]/20 rounded-2xl p-5 mb-4">
           <p className="text-sm text-[#C9A84C] uppercase tracking-widest font-semibold mb-4">Goal &amp; Weight</p>
           <div className="space-y-4">
             <div>
@@ -286,7 +286,7 @@ export default function SettingsPage() {
         </div>
 
         {/* ── TRAINING SETUP ───────────────────────────────────── */}
-        <div className="bg-[#161616] border border-[#242424] rounded-2xl p-5 mb-4">
+        <div className="bg-[#1a1a1a] border-2 border-[#C9A84C]/20 rounded-2xl p-5 mb-4">
           <p className="text-sm text-[#C9A84C] uppercase tracking-widest font-semibold mb-4">Training Setup</p>
           <div className="space-y-4">
 
