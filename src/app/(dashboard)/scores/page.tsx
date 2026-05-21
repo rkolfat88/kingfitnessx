@@ -90,7 +90,7 @@ export default async function ScoresPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-lg mx-auto px-4 pt-14 pb-24">
+      <div className="max-w-lg mx-auto px-5 pt-14 pb-24">
 
         <div className="py-4">
           <p className="text-sm font-semibold uppercase tracking-widest text-[#505050]">Performance</p>

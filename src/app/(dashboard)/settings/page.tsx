@@ -393,7 +393,7 @@ export default function SettingsPage() {
       </div>
 
       {/* ── FIXED SAVE BUTTON ────────────────────────────────────── */}
-      <div className="fixed bottom-16 left-0 right-0 px-4 z-40">
+      <div className="fixed bottom-20 left-0 right-0 px-5 z-40">
         <div className="max-w-lg mx-auto pb-2">
           <button
             onClick={handleSaveOnly}

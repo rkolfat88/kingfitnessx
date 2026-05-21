@@ -24,7 +24,7 @@ export function AgentCard({
   return (
     <button
       onClick={onClick}
-      className="w-full text-left bg-[var(--surface-2)] border border-[var(--border)] rounded-2xl p-4 hover:border-[var(--gold)]/30 hover:bg-[var(--surface-3)] transition-all duration-200 cursor-pointer"
+      className="w-full text-left bg-[#1a1a1a] border-2 border-[#C9A84C]/20 rounded-2xl p-5 hover:border-[#C9A84C]/40 hover:bg-[#222222] transition-all duration-200 cursor-pointer"
     >
       <div className="flex items-start gap-3">
         <div

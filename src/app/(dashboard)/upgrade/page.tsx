@@ -65,7 +65,7 @@ function UpgradeContent() {
 
         {/* Pricing card */}
         <div
-          className="bg-[#161616] border-2 border-[#C9A84C]/40 rounded-2xl p-6 mb-4 relative"
+          className="bg-[#1a1a1a] border-2 border-[#C9A84C]/40 rounded-2xl p-6 mb-6 relative"
           style={{ boxShadow: '0 0 40px rgba(201,168,76,0.07)' }}
         >
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#C9A84C] text-black text-[10px] font-bold px-3 py-1 rounded-full tracking-widest uppercase">
