@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700;1,800&family=Space+Grotesk:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --color-gold-base: #C9A84C;
+  --color-gold-light: #E8C76A;
+  --color-gold-dark: #A48430;
+  --color-dark-bg: #080808;
+  --color-card-bg: #1A1A1A;
+}
+
+/* Custom glow effects and scrollbars */
+.gold-glow {
+  text-shadow: 0 0 10px rgba(232, 199, 106, 0.4);
+}
+
+.gold-glow-border {
+  box-shadow: 0 0 15px rgba(201, 168, 76, 0.15);
+}
+
+.gold-glow-ring {
+  filter: drop-shadow(0 0 8px rgba(232, 199, 106, 0.25));
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #080808;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a2a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a3a;
+}
+
+/* Hidden scrollbar utility */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce-short {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out both;
+}
+
+.animate-bounce-short {
+  animation: bounce-short 0.6s ease-in-out;
+}
