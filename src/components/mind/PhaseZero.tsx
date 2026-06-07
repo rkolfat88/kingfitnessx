@@ -172,6 +172,13 @@ export default function PhaseZero({ mindProfile, onComplete }: PhaseZeroProps) {
         })
       });
 
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error('Mind API error:', errText);
+        setLoading(false);
+        return;
+      }
+
       const data = await res.json();
       setAiResponse(data.reply);
 

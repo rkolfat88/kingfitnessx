@@ -19,13 +19,13 @@ export default function MindScreen() {
       .from('mind_profiles')
       .select('*')
       .eq('user_id', user!.id)
-      .single();
+      .maybeSingle();
 
     if (!data) {
       // Create new mind profile
       const { data: newProfile } = await supabase
         .from('mind_profiles')
-        .insert({ user_id: user!.id })
+        .upsert({ user_id: user!.id }, { onConflict: 'user_id' })
         .select()
         .single();
       setMindProfile(newProfile);
