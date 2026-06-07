@@ -86,6 +86,7 @@ export default function MindScreen() {
       <PhaseZero
         mindProfile={mindProfile}
         onComplete={loadMindProfile}
+        onSectionComplete={loadMindProfile}
       />
     );
   }

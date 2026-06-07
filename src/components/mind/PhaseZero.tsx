@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 interface PhaseZeroProps {
   mindProfile: any;
   onComplete: () => void;
+  onSectionComplete?: () => void;
 }
 
 const DAYS = [
@@ -165,7 +166,7 @@ function getMindCoachResponse(day: number, answers: Record<string, any>): string
   return respFn ? respFn(answers) : "Good work today. Keep going.";
 }
 
-export default function PhaseZero({ mindProfile, onComplete }: PhaseZeroProps) {
+export default function PhaseZero({ mindProfile, onComplete, onSectionComplete }: PhaseZeroProps) {
   const { user } = useAuth();
   const currentDay = (mindProfile?.phase_zero_day ?? 0) + 1;
   const dayData = DAYS[Math.min(currentDay - 1, 6)];
@@ -208,19 +209,18 @@ export default function PhaseZero({ mindProfile, onComplete }: PhaseZeroProps) {
     }
 
     try {
-      // Save progress
-      await supabase.from('phase_zero_progress').upsert({
+      const { error: progressError } = await supabase.from('phase_zero_progress').upsert({
         user_id: user.id,
         day_number: currentDay,
         completed: true,
         responses: finalAnswers,
         completed_at: new Date().toISOString(),
       }, { onConflict: 'user_id,day_number' });
+      if (progressError) console.error('progress error:', progressError);
 
       const response = getMindCoachResponse(currentDay, finalAnswers);
       setAiResponse(response);
 
-      // Update identity statement if day 2
       if (currentDay === 2 && answers.future_identity) {
         await supabase.from('mind_profiles').update({
           identity_statement: answers.future_identity,
@@ -228,16 +228,25 @@ export default function PhaseZero({ mindProfile, onComplete }: PhaseZeroProps) {
         }).eq('user_id', user.id);
       }
 
-      // Advance phase zero day
       const isLastDay = currentDay === 7;
-      await supabase.from('mind_profiles').update({
-        phase_zero_day: currentDay,
-        phase_zero_completed: isLastDay,
-        updated_at: new Date().toISOString(),
-      }).eq('user_id', user.id);
+      const { error: profileError } = await supabase
+        .from('mind_profiles')
+        .upsert({
+          user_id: user.id,
+          phase_zero_day: currentDay,
+          phase_zero_completed: isLastDay,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'user_id' });
+      if (profileError) console.error('profile error:', profileError);
+
+      setAnswers({});
+      setSelectedMulti([]);
+      setAiResponse('');
 
       if (isLastDay) {
-        setTimeout(onComplete, 3000);
+        setTimeout(onComplete, 2000);
+      } else {
+        onSectionComplete?.();
       }
     } catch (err) {
       console.error(err);
