@@ -124,8 +124,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
           protocol,
           allergies: [],
           onboarding_completed: true,
-          completed_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id' });
 
       if (err) throw err;
