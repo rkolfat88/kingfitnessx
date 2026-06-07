@@ -11,22 +11,17 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthScreen } from './components/AuthScreen';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
-import { ScreenId, Message, WearableStats, Exercise, Meal } from './types';
-import {
-  INITIAL_WEARABLES,
-  INITIAL_MESSAGES,
-  INITIAL_EXERCISES,
-  INITIAL_MEALS,
-} from './mockData';
+import { ScreenId, Message, WearableStats } from './types';
+import { INITIAL_WEARABLES, INITIAL_MESSAGES } from './mockData';
 
 import MindScreen from './screens/MindScreen';
+import TrainScreen from './screens/TrainScreen';
+import FuelScreen from './screens/FuelScreen';
 import { Dashboard } from './components/Dashboard';
 import { FormAnalysis } from './components/FormAnalysis';
 import { CoachChat } from './components/CoachChat';
 import { Onboarding } from './components/Onboarding';
 import { Timeline } from './components/Timeline';
-import { ActiveWorkout } from './components/ActiveWorkout';
-import { Nutrition } from './components/Nutrition';
 import { Progress } from './components/Progress';
 import { Paywall } from './components/Paywall';
 import { Settings as SettingsComponent } from './components/Settings';
@@ -44,30 +39,12 @@ function AppContent() {
   // Mind is the first tab and entry point for new users
   const [activeScreen, setActiveScreen] = useState<ScreenId>('mind');
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
-  const [exercises, setExercises] = useState<Exercise[]>(INITIAL_EXERCISES);
   const [wearables, setWearables] = useState<WearableStats>(INITIAL_WEARABLES);
   const [streak, setStreak] = useState(12);
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
 
   const handleNavigate = (screen: ScreenId) => setActiveScreen(screen);
-
-  const handleSetToggle = (exerciseId: string, setIndex: number) => {
-    setExercises(prev =>
-      prev.map(ex => {
-        if (ex.id !== exerciseId) return ex;
-        const updatedSets = ex.sets.map((set, idx) =>
-          idx !== setIndex ? set : { ...set, completed: !set.completed }
-        );
-        const firstUncompleted = updatedSets.findIndex(s => !s.completed);
-        return {
-          ...ex,
-          sets: updatedSets,
-          currentSetIndex: firstUncompleted === -1 ? updatedSets.length - 1 : firstUncompleted,
-        };
-      })
-    );
-  };
 
   const handleSendMessage = (text: string) => {
     const userMsg: Message = {
@@ -132,11 +109,9 @@ function AppContent() {
     { id: 'coach-chat' as ScreenId,     icon: MessageSquare,  label: 'Coach'   },
   ];
 
-  // Mind screen gets full-screen treatment — no app header, no padded wrapper.
-  // PhaseZero and MindGym both have their own pt-12 headers and manage their
-  // own scroll. The bottom nav (z-40) shows above them; PhaseZero's CTA
-  // button is z-50 so it floats above the nav during onboarding.
-  const isMindScreen = activeScreen === 'mind';
+  // Full-screen routes manage their own layout (pt-12 header, px-5, pb-24).
+  // No app wordmark header or outer padding wrapper for these.
+  const isFullScreenRoute = activeScreen === 'mind' || activeScreen === 'active-workout' || activeScreen === 'nutrition';
 
   return (
     <div className="min-h-screen bg-[#080808] text-[#F0F0F0] font-sans antialiased">
@@ -149,8 +124,8 @@ function AppContent() {
       {/* Mobile-first centered layout */}
       <div className="max-w-[430px] mx-auto min-h-screen flex flex-col relative">
 
-        {/* App wordmark header — hidden on Mind (the Mind screen has its own header) */}
-        {!isMindScreen && (
+        {/* App wordmark header — hidden on full-screen routes */}
+        {!isFullScreenRoute && (
           <div className="shrink-0 text-center py-3 border-b border-[#C9A84C]/10 select-none bg-[#080808]/95 sticky top-0 z-30 backdrop-blur-sm">
             <p className="text-[8px] tracking-[0.35em] text-[#C9A84C] font-extrabold uppercase font-mono leading-none">
               ULTIMATE AI PERSONAL TRAINER
@@ -162,10 +137,12 @@ function AppContent() {
         )}
 
         {/* Screen content */}
-        {isMindScreen ? (
-          /* Mind screen: no outer padding, no pt-5, fills flex-1 */
+        {isFullScreenRoute ? (
+          /* Full-screen routes: no outer padding, fills flex-1 */
           <div className="flex-1 overflow-y-auto">
-            <MindScreen />
+            {activeScreen === 'mind' && <MindScreen />}
+            {activeScreen === 'active-workout' && <TrainScreen />}
+            {activeScreen === 'nutrition' && <FuelScreen />}
           </div>
         ) : (
           /* All other screens: standard padded scroll container */
@@ -187,20 +164,6 @@ function AppContent() {
             )}
             {activeScreen === 'timeline' && (
               <Timeline onSelectDayWorkout={() => setActiveScreen('active-workout')} />
-            )}
-            {activeScreen === 'active-workout' && (
-              <ActiveWorkout
-                exercises={exercises}
-                onSetToggle={handleSetToggle}
-                onNavigate={handleNavigate}
-              />
-            )}
-            {activeScreen === 'nutrition' && (
-              <Nutrition
-                initialMeals={INITIAL_MEALS}
-                onNavigate={handleNavigate}
-                onSendPresetMessage={handleSendPresetMessage}
-              />
             )}
             {activeScreen === 'progress' && <Progress />}
             {activeScreen === 'paywall' && (
