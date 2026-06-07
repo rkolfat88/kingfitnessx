@@ -4,10 +4,12 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import PhaseZero from '../components/mind/PhaseZero';
 import MindGym from '../components/mind/MindGym';
+import OnboardingScreen from './OnboardingScreen';
 
 export default function MindScreen() {
   const { user } = useAuth();
   const [mindProfile, setMindProfile] = useState<any>(null);
+  const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,17 +23,24 @@ export default function MindScreen() {
       .eq('user_id', user!.id)
       .maybeSingle();
 
+    let profile = data;
     if (!data) {
-      // Create new mind profile
       const { data: newProfile } = await supabase
         .from('mind_profiles')
         .upsert({ user_id: user!.id }, { onConflict: 'user_id' })
         .select()
         .maybeSingle();
-      setMindProfile(newProfile);
-    } else {
-      setMindProfile(data);
+      profile = newProfile;
     }
+    setMindProfile(profile);
+
+    const { data: onboardingData } = await supabase
+      .from('onboarding_data')
+      .select('onboarding_completed')
+      .eq('user_id', user!.id)
+      .maybeSingle();
+
+    setOnboardingComplete(onboardingData?.onboarding_completed ?? false);
     setLoading(false);
   };
 
@@ -51,6 +60,14 @@ export default function MindScreen() {
       <PhaseZero
         mindProfile={mindProfile}
         onComplete={loadMindProfile}
+      />
+    );
+  }
+
+  if (!onboardingComplete) {
+    return (
+      <OnboardingScreen
+        onComplete={() => setOnboardingComplete(true)}
       />
     );
   }
