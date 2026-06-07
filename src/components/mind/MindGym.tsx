@@ -8,6 +8,14 @@ interface MindGymProps {
   onRefresh: () => void;
 }
 
+function getDailyPrimer(motivationLevel: number, identityStatement: string): string {
+  if (motivationLevel <= 2) return `Floor Mode. Today's only task: show up for 2 minutes. Not to train — to prove to your nervous system that starting is still safe. "${identityStatement || 'the person you are becoming'}" shows up even on the worst days. Especially on those days.`;
+  if (motivationLevel <= 4) return `Low energy is not failure — it's information. We scale back today. Shorter session, lower intensity, same commitment. The goal today is not performance. It's continuity. One more vote for "${identityStatement || 'who you are becoming'}".`;
+  if (motivationLevel <= 6) return `Steady state. This is where most transformations are actually built — not in the peak days, but in the consistent middle ones. Show up, do the work, go home. "${identityStatement || 'The person you are becoming'}" doesn't need to be inspired. Just present.`;
+  if (motivationLevel <= 8) return `Good energy today. Use it. Push the session. This is the day to add weight, go harder, stay longer. Your nervous system is primed. "${identityStatement || 'The person you are becoming'}" takes full advantage of days like this.`;
+  return `Peak state. This is the day for the hard thing — the weight you've been avoiding, the extra set, the thing that scares you slightly. "${identityStatement || 'The person you are becoming'}" remembers this day. Make it count.`;
+}
+
 export default function MindGym({ mindProfile, onRefresh }: MindGymProps) {
   const { user } = useAuth();
   const [todayCheckin, setTodayCheckin] = useState<any>(null);
@@ -62,35 +70,18 @@ export default function MindGym({ mindProfile, onRefresh }: MindGymProps) {
     setLoading(true);
 
     try {
-      const res = await fetch('http://localhost:3001/api/mind', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: `Daily check-in. Motivation today: ${motivationLevel}/10. Give me my mental primer for today — specific to my motivation level. One reframe, one cue, and one piece of evidence from what you know about how I think.`,
-          context: {
-            phaseZeroDay: 7,
-            psychologicalStage: mindProfile?.psychological_stage,
-            motivationLevel,
-            identityStatement: mindProfile?.identity_statement,
-            floorMode: motivationLevel <= 3,
-            quitSignals: JSON.stringify(mindProfile?.quit_signals),
-          }
-        })
-      });
+      const response = getDailyPrimer(motivationLevel, mindProfile?.identity_statement || '');
+      setAiPrimer(response);
 
-      const data = await res.json();
-      setAiPrimer(data.reply);
-
-      // Save check-in
+      // Still save the check-in to Supabase (no API needed)
       const today = new Date().toISOString().split('T')[0];
       await supabase.from('mind_checkins').upsert({
         user_id: user.id,
         checkin_date: today,
         motivation_level: motivationLevel,
         identity_vote: motivationLevel >= 3,
-        ai_response: data.reply,
+        ai_response: response,
       }, { onConflict: 'user_id,checkin_date' });
-
       setSubmitted(true);
     } catch (err) {
       console.error(err);

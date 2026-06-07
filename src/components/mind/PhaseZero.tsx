@@ -104,6 +104,67 @@ const DAYS = [
   },
 ];
 
+function getMindCoachResponse(day: number, answers: Record<string, any>): string {
+  const responses: Record<number, (a: Record<string, any>) => string> = {
+    1: (a) => {
+      const quitCount = a.quit_count || '';
+      const belief = a.belief || '';
+      if (belief.includes('given up')) return "The fact that you answered honestly already separates you from most people who open this app. You haven't given up — you're here. That's the only evidence that matters right now. Tomorrow we build on it.";
+      if (quitCount.includes('lost count')) return "Every restart taught you something, even when it felt like failure. The pattern ends not with more willpower — but with a different system. That's what we're building. One that works for who you actually are.";
+      if (quitCount.includes('first time')) return "Starting with no prior quits is an advantage — no bad patterns to unlearn. You get to build this right from the beginning. Tomorrow we decide who you're becoming.";
+      return "Honesty is the foundation everything else gets built on. Most people lie to fitness apps and wonder why the app doesn't work. You just gave us the truth. Now we can actually help.";
+    },
+    2: (a) => {
+      const identity = a.future_identity || '';
+      const evidence = a.identity_evidence || '';
+      if (identity && evidence) return `"${identity}" — that's not a goal. That's a person. And the evidence you gave proves you already know how to do hard things. Every action from here is a vote for that person. We'll remind you of this on the days you forget.`;
+      if (identity) return `"${identity}" — write that somewhere you'll see it. Not on your phone. Somewhere physical. That's who casts every vote from now on.`;
+      return "Identity is the engine that makes habits run automatically. You just installed yours. The next 5 days are about casting votes for the person you just described.";
+    },
+    3: (a) => {
+      const action = a.two_min_action || '';
+      if (action.includes('push-ups') || action.includes('squats')) return "You just proved to your nervous system that starting doesn't hurt. That's the entire lesson. Your body didn't resist. It never does — only the mind does. And today the mind lost.";
+      if (action.includes('shoes')) return "Putting on your shoes is not a small thing. It's a signal to your entire nervous system that movement is happening. You'll be surprised how often that's the hardest part.";
+      return "The two-minute doorway works because it makes saying no harder than saying yes. You just walked through it. Tomorrow we talk about what's actually standing between you and showing up.";
+    },
+    4: (a) => {
+      const fears = a.fears || [];
+      const biggest = a.biggest_fear || '';
+      if (biggest.includes('stupid') || (Array.isArray(fears) && fears.includes('Looking stupid or inexperienced at the gym'))) return "Everyone at the gym is focused on themselves — not you. The people who look most confident were beginners six months ago. Fear of looking stupid has kept more people weak than any injury ever has. We're dismantling that today.";
+      if (biggest.includes('injured') || biggest.includes('injury')) return "Injury fear is smart fear — it kept you alive. But it becomes a problem when it stops all movement. We'll build your program around this: gradual load, movement quality first, never ego over safety.";
+      if (biggest.includes('failing publicly')) return "You told people before and it didn't work out. That memory is loud. This time, the only person who needs to know is you — until the results speak for themselves.";
+      if (biggest.includes('too far gone')) return "Nobody is too far gone. That thought is your fear talking, not your biology. The human body responds to training at any age, any starting point. The research on this is unambiguous.";
+      return "You named your fears. That's more self-awareness than most people bring to a decade of gym memberships. Named fears are manageable fears. Tomorrow we find your real training window.";
+    },
+    5: (a) => {
+      const window = a.real_window || '';
+      const morning = a.energy_morning || '';
+      const evening = a.energy_evening || '';
+      if (window) return `"${window}" — that's your window. Not the aspirational one. The real one. Your entire program gets scheduled around that. An honest 20 minutes beats a perfect 60 minutes you never do.`;
+      if (morning.includes('morning person')) return "Morning training has the highest consistency rate of any time window. Your body is already primed. We'll build around this.";
+      if (evening.includes('evenings are my best time')) return "Evening trainers often show the most strength. Your nervous system is warmed up from the day. We'll work with your natural rhythm.";
+      return "Your energy map is now locked in. No more scheduling workouts at times your body has nothing to give. That single change eliminates one of the biggest sources of missed sessions.";
+    },
+    6: (a) => {
+      const comeback = a.comeback_word || '';
+      const pattern = a.miss_pattern || '';
+      if (comeback) return `"${comeback}" — that's now your comeback protocol. It's already here waiting for you the day after you miss. The streak isn't broken by one miss. It's broken by the decision not to come back. You just made that decision in advance.`;
+      if (pattern.includes('Monday')) return "The 'restart Monday' trap has ended more fitness journeys than any injury. From now on: if you miss Tuesday, you train Wednesday. Not Monday. The streak resets immediately, not at the start of the week.";
+      return "The failure plan is the most important thing we've built this week. Every other app celebrates your streak. We planned for the broken one — because that's where transformations are actually won or lost.";
+    },
+    7: (a) => {
+      const readiness = a.readiness || '';
+      const action = a.first_action || '';
+      if (readiness.includes('Ready')) return `This is your first vote. Not for a result — for the identity you built on Day 2. ${action ? `"${action}" — that's the declaration. Not the workout. The person.` : 'Whatever you do today, you do it as the person you decided to become.'}`;
+      if (readiness.includes('Nervous')) return `Nervous and willing is the best starting point there is. It means you care. ${action ? `"${action}" — nervous people who show up anyway become the people others call disciplined.` : 'Show up nervous. That\'s what courage looks like.'}`;
+      return `Seven days ago you answered honestly. Today you cast your first vote. ${action ? `"${action}" is the beginning of the evidence.` : 'Whatever you do today counts.'} Phase Zero is complete. The real work starts now — and you're already different from the person who opened this app a week ago.`;
+    },
+  };
+
+  const respFn = responses[day];
+  return respFn ? respFn(answers) : "Good work today. Keep going.";
+}
+
 export default function PhaseZero({ mindProfile, onComplete }: PhaseZeroProps) {
   const { user } = useAuth();
   const currentDay = (mindProfile?.phase_zero_day ?? 0) + 1;
@@ -156,31 +217,8 @@ export default function PhaseZero({ mindProfile, onComplete }: PhaseZeroProps) {
         completed_at: new Date().toISOString(),
       }, { onConflict: 'user_id,day_number' });
 
-      // Get AI response
-      const contextMsg = `Phase Zero Day ${currentDay}: ${dayData.title}. User answers: ${JSON.stringify(finalAnswers)}. Give a specific, warm, 2-3 sentence response that acknowledges what they shared and prepares them for tomorrow.`;
-
-      const res = await fetch('http://localhost:3001/api/mind', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: contextMsg,
-          context: {
-            phaseZeroDay: currentDay,
-            psychologicalStage: mindProfile?.psychological_stage,
-            identityStatement: answers.future_identity || mindProfile?.identity_statement,
-          }
-        })
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error('Mind API error:', errText);
-        setLoading(false);
-        return;
-      }
-
-      const data = await res.json();
-      setAiResponse(data.reply);
+      const response = getMindCoachResponse(currentDay, finalAnswers);
+      setAiResponse(response);
 
       // Update identity statement if day 2
       if (currentDay === 2 && answers.future_identity) {

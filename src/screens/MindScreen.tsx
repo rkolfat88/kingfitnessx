@@ -27,7 +27,7 @@ export default function MindScreen() {
         .from('mind_profiles')
         .upsert({ user_id: user!.id }, { onConflict: 'user_id' })
         .select()
-        .single();
+        .maybeSingle();
       setMindProfile(newProfile);
     } else {
       setMindProfile(data);
