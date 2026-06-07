@@ -155,9 +155,9 @@ function getMindCoachResponse(day: number, answers: Record<string, any>): string
     7: (a) => {
       const readiness = a.readiness || '';
       const action = a.first_action || '';
-      if (readiness.includes('Ready')) return `This is your first vote. Not for a result — for the identity you built on Day 2. ${action ? `"${action}" — that's the declaration. Not the workout. The person.` : 'Whatever you do today, you do it as the person you decided to become.'}`;
+      if (readiness.includes('Ready')) return `This is your first vote. Not for a result — for the identity you built in Section 2. ${action ? `"${action}" — that's the declaration. Not the workout. The person.` : 'Whatever you do today, you do it as the person you decided to become.'}`;
       if (readiness.includes('Nervous')) return `Nervous and willing is the best starting point there is. It means you care. ${action ? `"${action}" — nervous people who show up anyway become the people others call disciplined.` : 'Show up nervous. That\'s what courage looks like.'}`;
-      return `Seven days ago you answered honestly. Today you cast your first vote. ${action ? `"${action}" is the beginning of the evidence.` : 'Whatever you do today counts.'} Phase Zero is complete. The real work starts now — and you're already different from the person who opened this app a week ago.`;
+      return `Seven sections ago you answered honestly. Today you cast your first vote. ${action ? `"${action}" is the beginning of the evidence.` : 'Whatever you do today counts.'} Phase Zero is complete. The real work starts now — and you're already different from the person who opened this app.`;
     },
   };
 
@@ -255,7 +255,7 @@ export default function PhaseZero({ mindProfile, onComplete }: PhaseZeroProps) {
             <Brain className="w-5 h-5 text-[#C9A84C]" />
             <span className="text-xs font-semibold uppercase tracking-widest text-[#C9A84C]">Phase Zero</span>
           </div>
-          <span className="text-xs text-[#8899BB]">Day {currentDay} of 7</span>
+          <span className="text-xs text-[#8899BB]">Section {currentDay} of 7</span>
         </div>
 
         {/* Progress bar */}
@@ -361,9 +361,9 @@ export default function PhaseZero({ mindProfile, onComplete }: PhaseZeroProps) {
           {loading ? (
             <span>Processing...</span>
           ) : currentDay === 7 ? (
-            <><span>Complete Phase Zero</span><span className="text-lg">🔥</span></>
+            <><span>Build My Mind Profile</span><span className="text-lg">🧠</span></>
           ) : (
-            <><span>Continue to Day {currentDay + 1}</span><ChevronRight className="w-5 h-5" /></>
+            <><span>Next Section</span><ChevronRight className="w-5 h-5" /></>
           )}
         </button>
       </div>
