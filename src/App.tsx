@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {
-  Home,
-  Calendar,
+  Brain,
   Dumbbell,
   Utensils,
+  Activity,
   MessageSquare,
 } from 'lucide-react';
 
@@ -19,6 +19,7 @@ import {
   INITIAL_MEALS,
 } from './mockData';
 
+import MindScreen from './screens/MindScreen';
 import { Dashboard } from './components/Dashboard';
 import { FormAnalysis } from './components/FormAnalysis';
 import { CoachChat } from './components/CoachChat';
@@ -40,7 +41,8 @@ export default function App() {
 
 function AppContent() {
   const { user, loading } = useAuth();
-  const [activeScreen, setActiveScreen] = useState<ScreenId>('dashboard');
+  // Mind is the first tab and entry point for new users
+  const [activeScreen, setActiveScreen] = useState<ScreenId>('mind');
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [exercises, setExercises] = useState<Exercise[]>(INITIAL_EXERCISES);
   const [wearables, setWearables] = useState<WearableStats>(INITIAL_WEARABLES);
@@ -77,7 +79,6 @@ function AppContent() {
     setMessages(prev => [...prev, userMsg]);
     setIsThinking(true);
 
-    // Coaching responses based on wearable context
     let responseText = 'Solid work. Based on your recovery metrics today, focus on high movement efficiency with controlled tempo.';
     const lc = text.toLowerCase();
     if (lc.includes('back') || lc.includes('tight') || lc.includes('sore') || lc.includes('hurt')) {
@@ -122,14 +123,20 @@ function AppContent() {
 
   if (!user) return <AuthScreen />;
 
-  // Bottom nav items
+  // Bottom nav: Mind · Train · Fuel · Recover · Coach
   const navItems = [
-    { id: 'dashboard' as ScreenId, icon: Home, label: 'Home' },
-    { id: 'timeline' as ScreenId, icon: Calendar, label: 'Plan' },
-    { id: 'active-workout' as ScreenId, icon: Dumbbell, label: 'Train' },
-    { id: 'nutrition' as ScreenId, icon: Utensils, label: 'Macros' },
-    { id: 'coach-chat' as ScreenId, icon: MessageSquare, label: 'Coach' },
+    { id: 'mind' as ScreenId,           icon: Brain,          label: 'Mind'    },
+    { id: 'active-workout' as ScreenId, icon: Dumbbell,       label: 'Train'   },
+    { id: 'nutrition' as ScreenId,      icon: Utensils,       label: 'Fuel'    },
+    { id: 'progress' as ScreenId,       icon: Activity,       label: 'Recover' },
+    { id: 'coach-chat' as ScreenId,     icon: MessageSquare,  label: 'Coach'   },
   ];
+
+  // Mind screen gets full-screen treatment — no app header, no padded wrapper.
+  // PhaseZero and MindGym both have their own pt-12 headers and manage their
+  // own scroll. The bottom nav (z-40) shows above them; PhaseZero's CTA
+  // button is z-50 so it floats above the nav during onboarding.
+  const isMindScreen = activeScreen === 'mind';
 
   return (
     <div className="min-h-screen bg-[#080808] text-[#F0F0F0] font-sans antialiased">
@@ -142,71 +149,81 @@ function AppContent() {
       {/* Mobile-first centered layout */}
       <div className="max-w-[430px] mx-auto min-h-screen flex flex-col relative">
 
-        {/* App header — compact wordmark */}
-        <div className="shrink-0 text-center py-3 border-b border-[#C9A84C]/10 select-none bg-[#080808]/95 sticky top-0 z-30 backdrop-blur-sm">
-          <p className="text-[8px] tracking-[0.35em] text-[#C9A84C] font-extrabold uppercase font-mono leading-none">
-            ULTIMATE AI PERSONAL TRAINER
-          </p>
-          <h1 className="text-lg font-extrabold italic text-white tracking-widest mt-0.5 leading-none font-display">
-            KING <span className="text-[#C9A84C]">AI</span> COACH
-          </h1>
-        </div>
+        {/* App wordmark header — hidden on Mind (the Mind screen has its own header) */}
+        {!isMindScreen && (
+          <div className="shrink-0 text-center py-3 border-b border-[#C9A84C]/10 select-none bg-[#080808]/95 sticky top-0 z-30 backdrop-blur-sm">
+            <p className="text-[8px] tracking-[0.35em] text-[#C9A84C] font-extrabold uppercase font-mono leading-none">
+              ULTIMATE AI PERSONAL TRAINER
+            </p>
+            <h1 className="text-lg font-extrabold italic text-white tracking-widest mt-0.5 leading-none font-display">
+              KING <span className="text-[#C9A84C]">AI</span> COACH
+            </h1>
+          </div>
+        )}
 
-        {/* Scrollable screen content */}
-        <div className="flex-1 overflow-y-auto px-5 pt-5 pb-28">
-          {activeScreen === 'dashboard' && (
-            <Dashboard wearables={wearables} streak={streak} onNavigate={handleNavigate} />
-          )}
-          {activeScreen === 'form-analysis' && <FormAnalysis />}
-          {activeScreen === 'coach-chat' && (
-            <CoachChat messages={messages} onSendMessage={handleSendMessage} isThinking={isThinking} />
-          )}
-          {activeScreen === 'onboarding' && (
-            <Onboarding
-              onComplete={() => {
-                setIsUnlocked(true);
-                setActiveScreen('dashboard');
-              }}
-            />
-          )}
-          {activeScreen === 'timeline' && (
-            <Timeline onSelectDayWorkout={() => setActiveScreen('active-workout')} />
-          )}
-          {activeScreen === 'active-workout' && (
-            <ActiveWorkout
-              exercises={exercises}
-              onSetToggle={handleSetToggle}
-              onNavigate={handleNavigate}
-            />
-          )}
-          {activeScreen === 'nutrition' && (
-            <Nutrition
-              initialMeals={INITIAL_MEALS}
-              onNavigate={handleNavigate}
-              onSendPresetMessage={handleSendPresetMessage}
-            />
-          )}
-          {activeScreen === 'progress' && <Progress />}
-          {activeScreen === 'paywall' && (
-            <Paywall
-              isUnlocked={isUnlocked}
-              onUnlockPremium={() => {
-                setIsUnlocked(true);
-                setActiveScreen('dashboard');
-              }}
-            />
-          )}
-          {activeScreen === 'settings' && (
-            <SettingsComponent
-              wearables={wearables}
-              streak={streak}
-              isUnlocked={isUnlocked}
-              onUpdateWearables={handleUpdateWearables}
-              onUpdateStreak={handleUpdateStreak}
-              onToggleUnlocked={handleToggleUnlocked}
-            />
-          )}
-        </div>
+        {/* Screen content */}
+        {isMindScreen ? (
+          /* Mind screen: no outer padding, no pt-5, fills flex-1 */
+          <div className="flex-1 overflow-y-auto">
+            <MindScreen />
+          </div>
+        ) : (
+          /* All other screens: standard padded scroll container */
+          <div className="flex-1 overflow-y-auto px-5 pt-5 pb-28">
+            {activeScreen === 'dashboard' && (
+              <Dashboard wearables={wearables} streak={streak} onNavigate={handleNavigate} />
+            )}
+            {activeScreen === 'form-analysis' && <FormAnalysis />}
+            {activeScreen === 'coach-chat' && (
+              <CoachChat messages={messages} onSendMessage={handleSendMessage} isThinking={isThinking} />
+            )}
+            {activeScreen === 'onboarding' && (
+              <Onboarding
+                onComplete={() => {
+                  setIsUnlocked(true);
+                  setActiveScreen('mind');
+                }}
+              />
+            )}
+            {activeScreen === 'timeline' && (
+              <Timeline onSelectDayWorkout={() => setActiveScreen('active-workout')} />
+            )}
+            {activeScreen === 'active-workout' && (
+              <ActiveWorkout
+                exercises={exercises}
+                onSetToggle={handleSetToggle}
+                onNavigate={handleNavigate}
+              />
+            )}
+            {activeScreen === 'nutrition' && (
+              <Nutrition
+                initialMeals={INITIAL_MEALS}
+                onNavigate={handleNavigate}
+                onSendPresetMessage={handleSendPresetMessage}
+              />
+            )}
+            {activeScreen === 'progress' && <Progress />}
+            {activeScreen === 'paywall' && (
+              <Paywall
+                isUnlocked={isUnlocked}
+                onUnlockPremium={() => {
+                  setIsUnlocked(true);
+                  setActiveScreen('mind');
+                }}
+              />
+            )}
+            {activeScreen === 'settings' && (
+              <SettingsComponent
+                wearables={wearables}
+                streak={streak}
+                isUnlocked={isUnlocked}
+                onUpdateWearables={handleUpdateWearables}
+                onUpdateStreak={handleUpdateStreak}
+                onToggleUnlocked={handleToggleUnlocked}
+              />
+            )}
+          </div>
+        )}
 
         {/* Fixed bottom navigation */}
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-[64px] bg-[#0A0A0A]/95 border-t border-[#C9A84C]/10 px-6 flex items-center justify-between z-40 backdrop-blur-sm">

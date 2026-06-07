@@ -1,4 +1,5 @@
 export type ScreenId =
+  | 'mind'
   | 'dashboard'
   | 'form-analysis'
   | 'coach-chat'
