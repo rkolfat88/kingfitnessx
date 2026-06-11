@@ -32,17 +32,23 @@ const INJURY_SUBS: Record<string, Record<string, string>> = {
   back: { 'Deadlift': 'Trap Bar Deadlift', 'Barbell Row': 'Chest-Supported Row', 'Romanian Deadlift': 'Leg Curl' },
 };
 
-function repsForGoal(goal: string): { reps: string; rpe: number; rest: number } {
-  if (goal === 'muscle_gain') return { reps: '8-12', rpe: 8, rest: 90 };
-  if (goal === 'fat_loss') return { reps: '12-15', rpe: 7, rest: 60 };
-  if (goal === 'recomp') return { reps: '8-12', rpe: 8, rest: 75 };
-  return { reps: '10-12', rpe: 7, rest: 75 };
+function repsForGoal(goal: string): { reps: string; rpe: number; rest: number; velocityNote: string } {
+  if (goal === 'muscle_gain') return { reps: '8-12', rpe: 8, rest: 90, velocityNote: 'Controlled 2-3s eccentric, explosive concentric' };
+  if (goal === 'fat_loss') return { reps: '12-15', rpe: 7, rest: 60, velocityNote: 'Circuit-style, minimal rest, maintain form' };
+  if (goal === 'recomp') return { reps: '8-12', rpe: 8, rest: 75, velocityNote: 'Moderate tempo, focus on mind-muscle connection' };
+  return { reps: '10-12', rpe: 7, rest: 75, velocityNote: 'Controlled tempo' };
 }
 
 function setsForExperience(experience: string): number {
   if (experience === 'beginner') return 3;
   if (experience === 'intermediate') return 4;
   return 4;
+}
+
+function weeklyVolumeTarget(experience: string): string {
+  if (experience === 'beginner') return '8-10';
+  if (experience === 'intermediate') return '12-16';
+  return '14-18';
 }
 
 function buildDay(
@@ -53,7 +59,7 @@ function buildDay(
 ): TrainingDay {
   const equipment = profile.equipment === 'both' ? 'gym' : profile.equipment;
   const exercisePool = EXERCISE_LIBRARY[pattern]?.[equipment] || EXERCISE_LIBRARY[pattern]?.['gym'] || [];
-  const { reps, rpe, rest } = repsForGoal(profile.goal);
+  const { reps, rpe, rest, velocityNote } = repsForGoal(profile.goal);
   const sets = setsForExperience(profile.experience);
 
   // Beginners get fewer exercises
@@ -86,6 +92,7 @@ function buildDay(
     focus,
     duration_min: profile.experience === 'beginner' ? 45 : 60,
     exercises,
+    notes: velocityNote,
   };
 }
 
@@ -105,6 +112,8 @@ export function buildTrainingPlan(profile: ClientProfile): EngineOutput<Training
   const { reps, rpe } = repsForGoal(profile.goal);
   reasoning.push(`Goal ${profile.goal} → ${reps} reps @ RPE ${rpe}`);
   reasoning.push(`Experience ${profile.experience} → ${setsForExperience(profile.experience)} sets per exercise`);
+  const weeklyVol = weeklyVolumeTarget(profile.experience);
+  reasoning.push(`Volume set to ${weeklyVol} sets/muscle/week — at the diminishing-returns knee for your experience level`);
 
   if (profile.injuries.length > 0) {
     reasoning.push(`Injuries (${profile.injuries.join(', ')}) → exercises substituted for safe alternatives`);
@@ -134,6 +143,15 @@ export function buildTrainingPlan(profile: ClientProfile): EngineOutput<Training
       const pattern = isUpper ? (i % 4 === 0 ? 'push' : 'pull') : 'legs';
       days.push(buildDay(dayLabels[i], isUpper ? 'Upper Body' : 'Lower Body', pattern, profile));
     }
+  }
+
+  if (profile.age >= 35) {
+    const powerNote = 'Explosive intent on all concentric phases. Power declines 2x faster than strength after 35 — move the weight with intent.';
+    for (const day of days) {
+      day.notes = day.notes ? `${day.notes}. ${powerNote}` : powerNote;
+    }
+    flags.push('power_emphasis_35_plus');
+    reasoning.push('Age 35+ → explosive concentric intent added to preserve fast-twitch fiber recruitment');
   }
 
   return {

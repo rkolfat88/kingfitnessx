@@ -50,15 +50,34 @@ export function calculateMacros(profile: ClientProfile): EngineOutput<MacroTarge
     reasoning.push(`Maintenance goal: TDEE → ${Math.round(calories)} cal`);
   }
 
-  // PROTEIN LOCKED at 2.2g per kg lean mass
-  let protein_g = Math.round(leanMass * 2.2);
-  reasoning.push(`Protein LOCKED at 2.2g × ${leanMass.toFixed(1)}kg lean mass = ${protein_g}g [non-negotiable]`);
-
-  // GLP-1 users get even higher protein for muscle preservation
-  if (profile.protocol === 'glp1') {
+  // Age-based protein targets
+  let protein_g: number;
+  if (profile.age < 35) {
+    protein_g = Math.round(leanMass * 2.0);
+    reasoning.push(`Protein: 2.0g × ${leanMass.toFixed(1)}kg lean mass = ${protein_g}g [under 35]`);
+  } else if (profile.age <= 50) {
+    protein_g = Math.round(leanMass * 2.2);
+    reasoning.push(`Protein: 2.2g × ${leanMass.toFixed(1)}kg lean mass = ${protein_g}g [35–50]`);
+  } else {
     protein_g = Math.round(leanMass * 2.4);
-    reasoning.push(`GLP-1 protocol: protein raised to 2.4g/kg = ${protein_g}g (muscle preservation priority)`);
+    reasoning.push(`Protein: 2.4g × ${leanMass.toFixed(1)}kg lean mass = ${protein_g}g [50+, anabolic resistance]`);
+  }
+
+  // GLP-1 minimum: 2.4g/kg regardless of age
+  if (profile.protocol === 'glp1') {
+    const glp1Min = Math.round(leanMass * 2.4);
+    protein_g = Math.max(protein_g, glp1Min);
+    reasoning.push(`GLP-1 protocol: protein minimum 2.4g/kg = ${protein_g}g (muscle preservation priority)`);
+    reasoning.push('Protein-first plates. Distribute across 2-3 meals minimum. Resistance training is non-negotiable on this protocol.');
     flags.push('glp1_muscle_preservation');
+  }
+
+  // Per-meal protein target (leucine threshold)
+  const perMealTarget = Math.round(protein_g / 3);
+  reasoning.push(`Per meal target: ${perMealTarget}g (leucine threshold for your age group)`);
+  if (profile.age >= 35) {
+    flags.push('anabolic_resistance');
+    reasoning.push('35+ requires 35-40g per meal to trigger muscle protein synthesis');
   }
 
   // Fat: carnivore = high fat, others = moderate

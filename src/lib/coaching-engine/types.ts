@@ -59,6 +59,7 @@ export interface TrainingDay {
   focus: string;
   duration_min: number;
   exercises: Exercise[];
+  notes?: string;
 }
 
 export interface TrainingPlan {
