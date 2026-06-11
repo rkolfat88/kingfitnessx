@@ -1,0 +1,6 @@
+{
+  "name": "King AI Coach",
+  "description": "Premium mobile-first AI fitness coaching app providing adaptive workouts, wearable recovery tracking, live form analysis, and virtual AI trainer chat",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
