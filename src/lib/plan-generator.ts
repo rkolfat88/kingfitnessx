@@ -11,6 +11,7 @@ export async function generatePlans(userId: string): Promise<{ success: boolean;
       .maybeSingle();
 
     if (oErr || !onboarding) return { success: false, error: 'No onboarding data found' };
+    console.log('Raw onboarding data:', JSON.stringify(onboarding));
 
     const { data: mind } = await supabase
       .from('mind_profiles')
@@ -58,9 +59,13 @@ export async function generatePlans(userId: string): Promise<{ success: boolean;
         reasoning: macroOutput.reasoning,
         is_active: true,
         generated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' });
+      }, { onConflict: 'user_id', ignoreDuplicates: false });
 
-    if (nErr) return { success: false, error: nErr.message };
+    if (nErr) {
+      console.error('Nutrition plan upsert failed:', JSON.stringify(nErr));
+      return { success: false, error: `Nutrition: ${nErr.message}` };
+    }
+    console.log('Nutrition plan saved successfully');
 
     const { error: tErr } = await supabase
       .from('training_plans')
@@ -75,9 +80,13 @@ export async function generatePlans(userId: string): Promise<{ success: boolean;
         mesocycle_week: 1,
         is_active: true,
         generated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' });
+      }, { onConflict: 'user_id', ignoreDuplicates: false });
 
-    if (tErr) return { success: false, error: tErr.message };
+    if (tErr) {
+      console.error('Training plan upsert failed:', JSON.stringify(tErr));
+      return { success: false, error: `Training: ${tErr.message}` };
+    }
+    console.log('Training plan saved successfully');
 
     return { success: true };
   } catch (err: any) {
