@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import MindGym from '../components/mind/MindGym';
 import OnboardingChain from '../components/onboarding/OnboardingChain';
+import { generatePlans } from '../lib/plan-generator';
 
 export default function MindScreen() {
   const { user } = useAuth();
@@ -38,6 +39,20 @@ export default function MindScreen() {
       .select('onboarding_completed')
       .eq('user_id', user!.id)
       .maybeSingle();
+
+    // If onboarding is complete but no training plan exists, regenerate the plan
+    if (onboardingData?.onboarding_completed) {
+      const { data: existingPlan } = await supabase
+        .from('training_plans')
+        .select('id')
+        .eq('user_id', user!.id)
+        .maybeSingle();
+
+      if (!existingPlan) {
+        console.log('No plan found - regenerating...');
+        await generatePlans(user!.id);
+      }
+    }
 
     setOnboardingComplete(onboardingData?.onboarding_completed ?? false);
     setLoading(false);
