@@ -6,7 +6,11 @@ import MindGym from '../components/mind/MindGym';
 import OnboardingChain from '../components/onboarding/OnboardingChain';
 import { generatePlans } from '../lib/plan-generator';
 
-export default function MindScreen() {
+interface MindScreenProps {
+  onNavigateToCheckin?: () => void;
+}
+
+export default function MindScreen({ onNavigateToCheckin }: MindScreenProps) {
   const { user } = useAuth();
   const [mindProfile, setMindProfile] = useState<any>(null);
   const [onboardingComplete, setOnboardingComplete] = useState<boolean | null>(null);
@@ -81,5 +85,5 @@ export default function MindScreen() {
     );
   }
 
-  return <MindGym mindProfile={mindProfile} onRefresh={loadMindProfile} />;
+  return <MindGym mindProfile={mindProfile} onRefresh={loadMindProfile} onNavigateToCheckin={onNavigateToCheckin} />;
 }

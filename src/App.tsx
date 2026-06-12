@@ -16,6 +16,7 @@ import { INITIAL_WEARABLES, INITIAL_MESSAGES } from './mockData';
 
 import MindScreen from './screens/MindScreen';
 import TrainScreen from './screens/TrainScreen';
+import CheckinScreen from './screens/CheckinScreen';
 import FuelScreen from './screens/FuelScreen';
 import { Dashboard } from './components/Dashboard';
 import { FormAnalysis } from './components/FormAnalysis';
@@ -105,13 +106,13 @@ function AppContent() {
     { id: 'mind' as ScreenId,           icon: Brain,          label: 'Mind'    },
     { id: 'active-workout' as ScreenId, icon: Dumbbell,       label: 'Train'   },
     { id: 'nutrition' as ScreenId,      icon: Utensils,       label: 'Fuel'    },
-    { id: 'progress' as ScreenId,       icon: Activity,       label: 'Recover' },
+    { id: 'checkin' as ScreenId,         icon: Activity,       label: 'Check-in' },
     { id: 'coach-chat' as ScreenId,     icon: MessageSquare,  label: 'Coach'   },
   ];
 
   // Full-screen routes manage their own layout (pt-12 header, px-5, pb-24).
   // No app wordmark header or outer padding wrapper for these.
-  const isFullScreenRoute = activeScreen === 'mind' || activeScreen === 'active-workout' || activeScreen === 'nutrition';
+  const isFullScreenRoute = activeScreen === 'mind' || activeScreen === 'active-workout' || activeScreen === 'nutrition' || activeScreen === 'checkin';
 
   return (
     <div className="min-h-screen bg-[#080808] text-[#F0F0F0] font-sans antialiased">
@@ -140,9 +141,10 @@ function AppContent() {
         {isFullScreenRoute ? (
           /* Full-screen routes: no outer padding, fills flex-1 */
           <div className="flex-1 overflow-y-auto">
-            {activeScreen === 'mind' && <MindScreen />}
+            {activeScreen === 'mind' && <MindScreen onNavigateToCheckin={() => setActiveScreen('checkin')} />}
             {activeScreen === 'active-workout' && <TrainScreen />}
             {activeScreen === 'nutrition' && <FuelScreen />}
+            {activeScreen === 'checkin' && <CheckinScreen />}
           </div>
         ) : (
           /* All other screens: standard padded scroll container */

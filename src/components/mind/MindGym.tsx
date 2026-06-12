@@ -6,6 +6,7 @@ import { useAuth } from '../../contexts/AuthContext';
 interface MindGymProps {
   mindProfile: any;
   onRefresh: () => void;
+  onNavigateToCheckin?: () => void;
 }
 
 function getDailyPrimer(motivationLevel: number, identityStatement: string): string {
@@ -16,7 +17,7 @@ function getDailyPrimer(motivationLevel: number, identityStatement: string): str
   return `Peak state. This is the day for the hard thing — the weight you've been avoiding, the extra set, the thing that scares you slightly. "${identityStatement || 'The person you are becoming'}" remembers this day. Make it count.`;
 }
 
-export default function MindGym({ mindProfile, onRefresh }: MindGymProps) {
+export default function MindGym({ mindProfile, onRefresh, onNavigateToCheckin }: MindGymProps) {
   const { user } = useAuth();
   const [todayCheckin, setTodayCheckin] = useState<any>(null);
   const [motivationLevel, setMotivationLevel] = useState(5);
@@ -172,6 +173,20 @@ export default function MindGym({ mindProfile, onRefresh }: MindGymProps) {
             </div>
             <p className="text-sm text-[#F0F4FF] leading-relaxed">{aiPrimer}</p>
           </div>
+        )}
+
+        {/* Check-in prompt */}
+        {aiPrimer && (
+          <button
+            onClick={() => onNavigateToCheckin?.()}
+            className="w-full bg-[#111827] border border-[#C9A84C]/20 rounded-2xl p-4 flex items-center justify-between"
+          >
+            <div className="text-left">
+              <p className="text-sm font-bold text-[#F0F4FF]">Log today's readiness</p>
+              <p className="text-xs text-[#8899BB]">Adapts today's training session</p>
+            </div>
+            <ChevronRight className="w-4 h-4 text-[#C9A84C]" />
+          </button>
         )}
 
         {/* Identity Statement */}

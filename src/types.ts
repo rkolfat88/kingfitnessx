@@ -8,6 +8,7 @@ export type ScreenId =
   | 'active-workout'
   | 'nutrition'
   | 'progress'
+  | 'checkin'
   | 'paywall'
   | 'settings';
 
