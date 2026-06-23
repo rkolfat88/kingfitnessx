@@ -93,7 +93,7 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080808] flex items-center justify-center">
+      <div className="min-h-screen bg-[#070B14] flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin" />
       </div>
     );
@@ -115,7 +115,7 @@ function AppContent() {
   const isFullScreenRoute = activeScreen === 'mind' || activeScreen === 'active-workout' || activeScreen === 'nutrition' || activeScreen === 'checkin';
 
   return (
-    <div className="min-h-screen bg-[#080808] text-[#F0F0F0] font-sans antialiased">
+    <div className="min-h-screen bg-[#070B14] text-[#F0F0F0] font-sans antialiased">
       {/* Ambient background glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden select-none opacity-50">
         <div className="absolute top-16 left-1/4 w-80 h-80 bg-[#C9A84C]/4 rounded-full blur-[100px]" />
@@ -127,7 +127,7 @@ function AppContent() {
 
         {/* App wordmark header — hidden on full-screen routes */}
         {!isFullScreenRoute && (
-          <div className="shrink-0 text-center py-3 border-b border-[#C9A84C]/10 select-none bg-[#080808]/95 sticky top-0 z-30 backdrop-blur-sm">
+          <div className="shrink-0 text-center py-3 border-b border-[#C9A84C]/10 select-none bg-[#070B14]/95 sticky top-0 z-30 backdrop-blur-sm">
             <p className="text-[8px] tracking-[0.35em] text-[#C9A84C] font-extrabold uppercase font-mono leading-none">
               ULTIMATE AI PERSONAL TRAINER
             </p>

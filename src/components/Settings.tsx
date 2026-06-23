@@ -1,6 +1,8 @@
-import React from 'react';
-import { Shield, KeyRound, Radio, Sliders, ChevronRight, CheckCircle2, Circle, AlertTriangle, RefreshCcw } from 'lucide-react';
+import React, { useState } from 'react';
+import { Shield, KeyRound, Radio, Sliders, ChevronRight, CheckCircle2, Circle, AlertTriangle, RefreshCcw, LogOut, Trash2, Download } from 'lucide-react';
 import { WearableStats } from '../types';
+import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 interface SettingsProps {
   wearables: WearableStats;
@@ -29,6 +31,61 @@ export function Settings({
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = parseInt(e.target.value);
     onUpdateWearables({ whoopReadiness: val });
+  };
+
+  const { signOut } = useAuth();
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [accountError, setAccountError] = useState('');
+
+  const handleSignOut = async () => { await signOut(); };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirm !== 'DELETE') return;
+    setDeleteLoading(true);
+    setAccountError('');
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (!token) { setAccountError('Not authenticated'); setDeleteLoading(false); return; }
+    try {
+      const res = await fetch('http://localhost:3001/api/account/delete', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const b = await res.json();
+        setAccountError(b.error ?? 'Deletion failed');
+        setDeleteLoading(false);
+        return;
+      }
+      await signOut();
+    } catch {
+      setAccountError('Network error — try again');
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    setExportLoading(true);
+    setAccountError('');
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (!token) { setAccountError('Not authenticated'); setExportLoading(false); return; }
+    try {
+      const res = await fetch('http://localhost:3001/api/account/export', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) { setAccountError('Export failed'); setExportLoading(false); return; }
+      const blob = await res.blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'king-ai-data.json';
+      a.click();
+    } catch {
+      setAccountError('Network error — try again');
+    }
+    setExportLoading(false);
   };
 
   return (
@@ -157,6 +214,63 @@ export function Settings({
         <div className="text-right font-mono text-xs">
           <span className="text-[#909090]">LEVEL:</span>{' '}
           <span className="text-gold-base font-extrabold font-mono">4</span>
+        </div>
+      </div>
+
+      {/* Account Management */}
+      <div className="space-y-2">
+        <p className="text-[9px] tracking-[0.2em] font-mono text-[#445577] uppercase font-bold">
+          ACCOUNT
+        </p>
+
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center gap-3 bg-[#111827] border border-[#1E2D40] rounded-xl px-4 py-3 text-left hover:border-[#C9A84C]/30 transition"
+        >
+          <LogOut className="w-4 h-4 text-[#8899BB] shrink-0" />
+          <span className="text-sm font-semibold text-[#F0F4FF]">Sign Out</span>
+        </button>
+
+        <button
+          onClick={handleExportData}
+          disabled={exportLoading}
+          className="w-full flex items-center gap-3 bg-[#111827] border border-[#1E2D40] rounded-xl px-4 py-3 text-left hover:border-[#C9A84C]/30 transition disabled:opacity-60"
+        >
+          <Download className="w-4 h-4 text-[#8899BB] shrink-0" />
+          <div>
+            <span className="text-sm font-semibold text-[#F0F4FF] block">
+              {exportLoading ? 'Preparing export...' : 'Export My Data'}
+            </span>
+            <span className="text-xs text-[#445577]">Download all your data as JSON</span>
+          </div>
+        </button>
+
+        <div className="bg-[#111827] border border-[#EF4444]/20 rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <Trash2 className="w-4 h-4 text-[#EF4444] shrink-0" />
+            <span className="text-sm font-semibold text-[#EF4444]">Delete Account</span>
+          </div>
+          <p className="text-xs text-[#445577]">
+            Permanently deletes your account and all data. This cannot be undone.
+            Type DELETE to confirm.
+          </p>
+          <input
+            type="text"
+            value={deleteConfirm}
+            onChange={e => setDeleteConfirm(e.target.value)}
+            placeholder="Type DELETE to confirm"
+            className="w-full bg-[#0D1117] border border-[#1E2D40] rounded-lg px-3 py-2 text-sm text-[#F0F4FF] placeholder-[#445577] focus:outline-none focus:border-[#EF4444]/50"
+          />
+          <button
+            onClick={handleDeleteAccount}
+            disabled={deleteConfirm !== 'DELETE' || deleteLoading}
+            className="w-full py-2.5 bg-[#EF4444]/10 border border-[#EF4444]/30 text-[#EF4444] text-sm font-bold rounded-lg disabled:opacity-40 hover:bg-[#EF4444]/20 transition"
+          >
+            {deleteLoading ? 'Deleting...' : 'Delete My Account'}
+          </button>
+          {accountError && (
+            <p className="text-xs text-[#EF4444]">{accountError}</p>
+          )}
         </div>
       </div>
     </div>

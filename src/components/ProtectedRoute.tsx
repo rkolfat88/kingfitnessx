@@ -8,7 +8,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#080808] flex items-center justify-center">
+      <div className="min-h-screen bg-[#070B14] flex items-center justify-center">
         <Crown className="w-8 h-8 text-[#C9A84C] animate-spin" style={{ animationDuration: '1.5s' }} />
       </div>
     )

@@ -22,6 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check for existing session first (restores persisted login)
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
+      setSession(session)
       setLoading(false)
     })
 
@@ -29,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null)
+        setSession(session)
         setLoading(false)
       }
     )
