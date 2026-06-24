@@ -295,11 +295,20 @@ app.post('/api/webhooks/stripe', async (req, res) => {
 app.get('/api/health', (req, res) => res.json({ status: 'ok', model: 'gpt-4o-mini' }));
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`\n King AI Coach backend running on http://localhost:${PORT}`);
-  console.log(`   POST /api/chat              — Coach King AI (10/min, 30/day)`);
-  console.log(`   DELETE /api/account/delete  — GDPR account deletion`);
-  console.log(`   GET  /api/account/export    — GDPR data export`);
-  console.log(`   POST /api/webhooks/stripe   — Stripe subscription events`);
-  console.log(`   GET  /api/health\n`);
-});
+
+// Local dev / Node hosts run a long-lived server on PORT.
+// On Vercel, api/[...path].js imports this `app` and runs it as a serverless
+// function, so we must NOT call listen there.
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`\n King AI Coach backend running on http://localhost:${PORT}`);
+    console.log(`   POST /api/chat              — Coach King AI (10/min, 30/day)`);
+    console.log(`   DELETE /api/account/delete  — GDPR account deletion`);
+    console.log(`   GET  /api/account/export    — GDPR data export`);
+    console.log(`   POST /api/webhooks/stripe   — Stripe subscription events`);
+    console.log(`   GET  /api/health\n`);
+  });
+}
+
+// Exported so Vercel (api/[...path].js) can run the same app serverless.
+export default app;
