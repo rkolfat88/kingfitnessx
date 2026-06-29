@@ -1,4 +1,6 @@
 {
+  "include": ["src", "api"],
+  "exclude": ["node_modules", "dist", "bundle.js", "bundle2.js", "livebundle.js"],
   "compilerOptions": {
     "target": "ES2022",
     "experimentalDecorators": true,

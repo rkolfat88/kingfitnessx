@@ -43,6 +43,7 @@ interface ChainData {
 function Opt({
   label, sub, selected, onClick
 }: {
+  key?: React.Key;
   label: string;
   sub?: string;
   selected: boolean;
