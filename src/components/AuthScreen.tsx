@@ -44,10 +44,10 @@ export function AuthScreen() {
               <Crown className="w-7 h-7 text-[#C9A84C]" />
             </div>
             <h1 className="text-2xl font-black text-white tracking-tight font-display">
-              King AI Coach
+              KFX
             </h1>
             <p className="text-sm text-[#505050] mt-1">
-              {mode === 'login' ? 'Welcome back, King.' : 'Begin your reign.'}
+              {mode === 'login' ? 'Welcome back.' : 'Begin your reign.'}
             </p>
           </div>
 
