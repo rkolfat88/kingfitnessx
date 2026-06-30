@@ -38,9 +38,9 @@ app.use(express.json());
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 app.use((req, res, next) => {
   const origin = process.env.NODE_ENV === 'production'
-    ? process.env.ALLOWED_ORIGIN
+    ? (process.env.ALLOWED_ORIGIN ?? '*').trim()
     : '*';
-  res.setHeader('Access-Control-Allow-Origin', origin ?? '*');
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.sendStatus(200);
@@ -150,7 +150,7 @@ HRV: ${context.hrv ?? 'unknown'}ms | Readiness: ${context.readiness ?? 'unknown'
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${apiKey.trim()}`,
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
