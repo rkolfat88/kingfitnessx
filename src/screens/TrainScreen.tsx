@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Dumbbell, ChevronDown, BarChart3, Clock } from 'lucide-react';
+import { Dumbbell, ChevronDown, BarChart3, Clock, Play } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import type { TrainingPlan } from '../lib/coaching-engine/types';
+import type { TrainingPlan, TrainingDay } from '../lib/coaching-engine/types';
 
-export default function TrainScreen() {
+interface TrainScreenProps {
+  onStartWorkout: (day: TrainingDay, planId: string | null) => void;
+}
+
+export default function TrainScreen({ onStartWorkout }: TrainScreenProps) {
   const { user } = useAuth();
   const [plan, setPlan] = useState<TrainingPlan | null>(null);
+  const [planId, setPlanId] = useState<string | null>(null);
   const [reasoning, setReasoning] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedDay, setExpandedDay] = useState<number | null>(0);
@@ -26,6 +31,7 @@ export default function TrainScreen() {
 
     if (data) {
       setPlan(data.plan_data as TrainingPlan);
+      setPlanId(data.id ?? null);
       setReasoning(data.plan_data?.reasoning || []);
     }
     setLoading(false);
@@ -156,6 +162,14 @@ export default function TrainScreen() {
                         ↑ Hit the top of the rep range? Add 2.5kg next week.
                       </p>
                     </div>
+
+                    <button
+                      onClick={() => onStartWorkout(day, planId)}
+                      className="mt-3 w-full py-3 bg-[#C9A84C] hover:bg-[#E8C76A] text-[#070B14] font-black text-xs uppercase tracking-widest rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+                    >
+                      <Play className="w-3.5 h-3.5" />
+                      Start Workout
+                    </button>
                   </div>
                 )}
               </div>

@@ -4,4 +4,5 @@ export type ScreenId =
   | 'nutrition'
   | 'checkin'
   | 'coach-chat'
-  | 'settings';
+  | 'settings'
+  | 'workout-logger';

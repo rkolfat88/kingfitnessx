@@ -5,9 +5,11 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthScreen } from './components/AuthScreen';
 
 import { ScreenId } from './types';
+import type { TrainingDay } from './lib/coaching-engine/types';
 
 import MindScreen from './screens/MindScreen';
 import TrainScreen from './screens/TrainScreen';
+import WorkoutLoggerScreen from './screens/WorkoutLoggerScreen';
 import FuelScreen from './screens/FuelScreen';
 import CheckinScreen from './screens/CheckinScreen';
 import CoachChatScreen from './components/CoachChat';
@@ -24,6 +26,20 @@ export default function App() {
 function AppContent() {
   const { user, loading } = useAuth();
   const [activeScreen, setActiveScreen] = useState<ScreenId>('mind');
+  const [workoutDay, setWorkoutDay] = useState<TrainingDay | null>(null);
+  const [workoutPlanId, setWorkoutPlanId] = useState<string | null>(null);
+
+  const handleStartWorkout = (day: TrainingDay, planId: string | null) => {
+    setWorkoutDay(day);
+    setWorkoutPlanId(planId);
+    setActiveScreen('workout-logger');
+  };
+
+  const handleFinishWorkout = () => {
+    setWorkoutDay(null);
+    setWorkoutPlanId(null);
+    setActiveScreen('active-workout');
+  };
 
   if (loading) {
     return (
@@ -49,7 +65,8 @@ function AppContent() {
     activeScreen === 'active-workout' ||
     activeScreen === 'nutrition' ||
     activeScreen === 'checkin' ||
-    activeScreen === 'coach-chat'
+    activeScreen === 'coach-chat' ||
+    activeScreen === 'workout-logger'
   );
 
   return (
@@ -76,16 +93,23 @@ function AppContent() {
 
         {/* Screen content */}
         <div className={isFullScreen ? 'flex-1 overflow-y-auto' : 'flex-1 overflow-y-auto px-5 pt-5 pb-28'}>
-          {activeScreen === 'mind'          && <MindScreen onNavigateToCheckin={() => setActiveScreen('checkin')} />}
-          {activeScreen === 'active-workout'&& <TrainScreen />}
-          {activeScreen === 'nutrition'     && <FuelScreen />}
-          {activeScreen === 'checkin'       && <CheckinScreen />}
-          {activeScreen === 'coach-chat'    && <CoachChatScreen />}
-          {activeScreen === 'settings'      && <SettingsComponent />}
+          {activeScreen === 'mind'           && <MindScreen onNavigateToCheckin={() => setActiveScreen('checkin')} />}
+          {activeScreen === 'active-workout' && <TrainScreen onStartWorkout={handleStartWorkout} />}
+          {activeScreen === 'workout-logger' && workoutDay && (
+            <WorkoutLoggerScreen
+              trainingDay={workoutDay}
+              planId={workoutPlanId}
+              onFinish={handleFinishWorkout}
+            />
+          )}
+          {activeScreen === 'nutrition'      && <FuelScreen />}
+          {activeScreen === 'checkin'        && <CheckinScreen />}
+          {activeScreen === 'coach-chat'     && <CoachChatScreen />}
+          {activeScreen === 'settings'       && <SettingsComponent />}
         </div>
 
-        {/* Bottom navigation */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-[64px] bg-[#0A0A0A]/95 border-t border-[#C9A84C]/10 px-6 flex items-center justify-between z-40 backdrop-blur-sm">
+        {/* Bottom navigation — hidden during active workout */}
+        <div className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-[64px] bg-[#0A0A0A]/95 border-t border-[#C9A84C]/10 px-6 flex items-center justify-between z-40 backdrop-blur-sm transition-transform duration-200 ${activeScreen === 'workout-logger' ? 'translate-y-full' : ''}`}>
           {navItems.map(({ id, icon: Icon, label }) => {
             const active = activeScreen === id;
             return (
