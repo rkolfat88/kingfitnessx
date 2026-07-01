@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import rateLimit from 'express-rate-limit';
 import Stripe from 'stripe';
+import Anthropic from '@anthropic-ai/sdk';
 
 dotenv.config();
 
@@ -27,6 +28,9 @@ const supabaseAnon = createClient(
 
 // ─── Stripe client ────────────────────────────────────────────────────────────
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '');
+
+// ─── Anthropic client ─────────────────────────────────────────────────────────
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY?.trim() });
 
 // ─── Express app ──────────────────────────────────────────────────────────────
 const app = express();
@@ -124,9 +128,8 @@ app.post('/api/chat', chatBurstLimiter, chatDailyLimiter, async (req, res) => {
     return res.status(400).json({ error: 'message is required' });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'OPENAI_API_KEY not set in .env' });
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in .env' });
   }
 
   const contextBlock = `[ATHLETE BIOMETRICS — ${new Date().toLocaleTimeString()}]
@@ -139,38 +142,27 @@ HRV: ${context.hrv ?? 'unknown'}ms | Readiness: ${context.readiness ?? 'unknown'
     content: msg.text,
   }));
 
-  const openAIMessages = [
-    { role: 'system', content: COACH_KING_SYSTEM },
-    ...historyMessages,
-    { role: 'user', content: contextBlock + message },
-  ];
-
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey.trim()}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: openAIMessages,
-        max_tokens: 300,
-        temperature: 0.7,
-      }),
+    const response = await anthropic.messages.create({
+      model: 'claude-sonnet-5',
+      max_tokens: 300,
+      system: COACH_KING_SYSTEM,
+      messages: [...historyMessages, { role: 'user', content: contextBlock + message }],
     });
 
-    if (!response.ok) {
-      const err = await response.text();
-      console.error('OpenAI error:', err);
-      return res.status(502).json({ error: 'OpenAI API error', detail: err });
-    }
-
-    const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content?.trim() ?? "I couldn't generate a response.";
+    const reply = response.content.find(block => block.type === 'text')?.text?.trim()
+      ?? "I couldn't generate a response.";
 
     return res.json({ reply });
   } catch (err) {
+    if (err instanceof Anthropic.RateLimitError) {
+      console.error('Anthropic rate limit:', err.message);
+      return res.status(429).json({ error: 'Anthropic API rate limited', detail: err.message });
+    }
+    if (err instanceof Anthropic.APIError) {
+      console.error('Anthropic API error:', err.message);
+      return res.status(502).json({ error: 'Anthropic API error', detail: err.message });
+    }
     console.error('Server error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
@@ -292,7 +284,7 @@ app.post('/api/webhooks/stripe', async (req, res) => {
 });
 
 // ─── Health check ─────────────────────────────────────────────────────────────
-app.get('/api/health', (req, res) => res.json({ status: 'ok', model: 'gpt-4o-mini' }));
+app.get('/api/health', (req, res) => res.json({ status: 'ok', model: 'claude-sonnet-5' }));
 
 const PORT = process.env.PORT || 3001;
 

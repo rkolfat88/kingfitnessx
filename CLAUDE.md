@@ -12,7 +12,7 @@ Four pillars: MIND · TRAIN · FUEL · RECOVER (+ Coach chat).
 ## ARCHITECTURE
 
 ```
-Vite 3000 (React frontend) ←→ Express 3001 (Node backend) ←→ OpenAI API
+Vite 3000 (React frontend) ←→ Express 3001 (Node backend) ←→ Anthropic API
                                                           ←→ Supabase (auth + data)
 ```
 
@@ -28,7 +28,7 @@ Terminal 2: node server.js     (Express on port 3001)
 - **TRAIN** — Training plan generation and daily workout display.
 - **FUEL** — Nutrition plan (macros, meals).
 - **RECOVER** — Recovery tracking.
-- **COACH** — AI chat (wired to server.js /api/chat → OpenAI gpt-4o-mini).
+- **COACH** — AI chat (wired to server.js /api/chat → Anthropic claude-sonnet-5).
 
 Nav order: Mind · Train · Fuel · Recover · Coach (Mind is default/landing tab).
 
@@ -55,7 +55,7 @@ One-time psychological onboarding — 7 sections completed over time (not 7 lite
 - Motion (animation)
 - Express + dotenv (backend server.js)
 - @google/genai (Gemini SDK — installed but not yet used)
-- OpenAI API (gpt-4o-mini — wired in server.js for Coach chat)
+- Anthropic API (@anthropic-ai/sdk, claude-sonnet-5 — wired in server.js for Coach chat)
 - Supabase (auth + data — WIRED)
 - Stripe (NOT yet wired)
 
@@ -101,15 +101,15 @@ C:\king_ai_app\
 ├── vite.config.ts
 ├── tsconfig.json
 ├── package.json
-└── .env                            ← OPENAI_API_KEY, VITE_SUPABASE_*
+└── .env                            ← ANTHROPIC_API_KEY, VITE_SUPABASE_*
 ```
 
 ## SUPABASE — WIRED ✅
 
 - **Auth**: signup, login, session persistence via localStorage (`king-ai-coach-auth`)
 - **RLS**: enabled on all tables
-- **Project**: xvpmqdsllqtrhsyqhikh (EU West — Ireland)
-- **URL**: https://xvpmqdsllqtrhsyqhikh.supabase.co
+- **Project**: pdctqjrcsuldbgsijqpb
+- **URL**: https://pdctqjrcsuldbgsijqpb.supabase.co
 
 ### Live Tables
 
@@ -129,7 +129,7 @@ C:\king_ai_app\
 ## BACKEND (server.js) — WIRED ✅
 
 ```
-POST /api/chat   — Coach King AI (gpt-4o-mini)
+POST /api/chat   — Coach King AI (claude-sonnet-5)
 GET  /api/health — health check
 ```
 
@@ -228,9 +228,9 @@ Activity multiplier:
 ## ENVIRONMENT VARIABLES (.env)
 
 ```
-OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
 GEMINI_API_KEY=...             (installed, not yet used)
-VITE_SUPABASE_URL=https://xvpmqdsllqtrhsyqhikh.supabase.co
+VITE_SUPABASE_URL=https://pdctqjrcsuldbgsijqpb.supabase.co
 VITE_SUPABASE_ANON_KEY=...
 ```
 
