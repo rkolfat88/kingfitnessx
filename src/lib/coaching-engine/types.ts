@@ -21,6 +21,10 @@ export interface ClientProfile {
   // Nutrition preferences
   protocol: 'standard' | 'high_protein' | 'carnivore' | 'glp1';
   allergies: string[];
+
+  // Confirmation state (not yet collected in onboarding — undefined means unconfirmed)
+  trainingFrequencyConfirmed?: boolean;
+  confirmedFoods?: string[];
 }
 
 export interface DailyState {
@@ -31,11 +35,20 @@ export interface DailyState {
   mood: number;          // 1-10
 }
 
+// A plain-language ask for anything the engine had to assume rather than confirm
+export interface Verification {
+  field: string;            // e.g. "activity_multiplier"
+  assumption: string;       // what the engine assumed
+  message: string;          // plain-language ask, Richard's voice
+  severity: 'info' | 'important' | 'safety';
+}
+
 // Every engine output carries its reasoning
 export interface EngineOutput<T> {
   result: T;
-  reasoning: string[];   // the "show the math" lines
-  flags: string[];       // any special conditions triggered
+  reasoning: string[];         // the "show the math" lines
+  flags: string[];             // any special conditions triggered
+  verifications: Verification[]; // unconfirmed assumptions — never guess silently
 }
 
 export interface MacroTargets {

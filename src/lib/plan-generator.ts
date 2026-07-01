@@ -50,6 +50,7 @@ export async function generatePlans(userId: string): Promise<{ success: boolean;
           macros: macroOutput.result,
           reasoning: macroOutput.reasoning,
           flags: macroOutput.flags,
+          verifications: macroOutput.verifications,
         },
         protocol: profile.protocol,
         daily_calories: macroOutput.result.calories,
@@ -71,10 +72,11 @@ export async function generatePlans(userId: string): Promise<{ success: boolean;
       .from('training_plans')
       .upsert({
         user_id: userId,
-        // Include reasoning inside plan_data so TrainScreen can read it
+        // Include reasoning + verifications inside plan_data so TrainScreen can read them
         plan_data: {
           ...trainingOutput.result,
           reasoning: trainingOutput.reasoning,
+          verifications: trainingOutput.verifications,
         },
         split_type: trainingOutput.result.split_type,
         mesocycle_week: 1,

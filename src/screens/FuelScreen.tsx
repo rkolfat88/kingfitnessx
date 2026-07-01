@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Apple, BarChart3, ChevronDown } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import type { Verification } from '../lib/coaching-engine/types';
 
 interface MacroTargets {
   calories: number;
@@ -15,6 +16,7 @@ export default function FuelScreen() {
   const [macros, setMacros] = useState<MacroTargets | null>(null);
   const [protocol, setProtocol] = useState('');
   const [reasoning, setReasoning] = useState<string[]>([]);
+  const [verifications, setVerifications] = useState<Verification[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMath, setShowMath] = useState(false);
 
@@ -39,6 +41,7 @@ export default function FuelScreen() {
       });
       setProtocol(data.protocol || '');
       setReasoning(data.reasoning || []);
+      setVerifications(data.plan_data?.verifications || []);
     }
     setLoading(false);
   };
@@ -153,6 +156,19 @@ export default function FuelScreen() {
               <div key={i} className="flex gap-2">
                 <span className="text-[#C9A84C] text-xs mt-0.5">→</span>
                 <p className="text-xs text-[#8899BB] leading-relaxed font-mono">{r}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {verifications.length > 0 && (
+          <div className="rounded-2xl border border-[#C9A84C]/30 bg-[#111827] p-4">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#C9A84C] mb-2">
+              Confirm with your coach
+            </p>
+            {verifications.map((v, i) => (
+              <div key={i} className="mb-2 last:mb-0">
+                <p className="text-sm text-[#F0F4FF]">{v.message}</p>
               </div>
             ))}
           </div>

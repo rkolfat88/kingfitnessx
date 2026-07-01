@@ -24,6 +24,7 @@ export function calculateScores(
       result: { recovery: 50, readiness: 50, adherence: 0, momentum: 50, discipline: 0, mind: motivationBaseline * 10 },
       reasoning: ['No check-in data yet — scores will populate as you log days'],
       flags: ['no_data'],
+      verifications: [],
     };
   }
 
@@ -69,5 +70,6 @@ export function calculateScores(
     result: { recovery, readiness, adherence, momentum, discipline, mind },
     reasoning,
     flags,
+    verifications: [],
   };
 }

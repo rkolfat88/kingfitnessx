@@ -28,7 +28,7 @@ export function adaptSession(
         notes: `Just this. One set. "${identityStatement}" shows up even today.`,
       }],
     };
-    return { result: adapted, reasoning, flags };
+    return { result: adapted, reasoning, flags, verifications: [] };
   }
 
   // CNS PROTECTION: sleep < 6h AND soreness >= 8
@@ -39,7 +39,7 @@ export function adaptSession(
     adapted.exercises = adapted.exercises.slice(0, Math.ceil(adapted.exercises.length * 0.7));
     adapted.exercises = adapted.exercises.map(e => ({ ...e, sets: Math.max(2, e.sets - 1) }));
     adapted.duration_min = Math.round(adapted.duration_min * 0.7);
-    return { result: adapted, reasoning, flags };
+    return { result: adapted, reasoning, flags, verifications: [] };
   }
 
   // REDUCED VOLUME: motivation 4-6 OR energy <= 4
@@ -48,7 +48,7 @@ export function adaptSession(
     reasoning.push(`Consistency over intensity today. Showing up at 80% beats skipping at 100%.`);
     flags.push('reduced_volume');
     adapted.exercises = adapted.exercises.map(e => ({ ...e, sets: Math.max(2, e.sets - 1) }));
-    return { result: adapted, reasoning, flags };
+    return { result: adapted, reasoning, flags, verifications: [] };
   }
 
   // HIGH SORENESS: soreness >= 7 (but slept ok)
@@ -56,7 +56,7 @@ export function adaptSession(
     reasoning.push(`Soreness ${state.soreness}/10 → reduced loading, added warm-up focus`);
     flags.push('high_soreness');
     adapted.exercises = adapted.exercises.map(e => ({ ...e, rpe: Math.max(6, e.rpe - 1) }));
-    return { result: adapted, reasoning, flags };
+    return { result: adapted, reasoning, flags, verifications: [] };
   }
 
   // PEAK STATE: motivation >= 8 AND energy >= 7
@@ -67,10 +67,10 @@ export function adaptSession(
     if (adapted.exercises[0]) {
       adapted.exercises[0] = { ...adapted.exercises[0], sets: adapted.exercises[0].sets + 1 };
     }
-    return { result: adapted, reasoning, flags };
+    return { result: adapted, reasoning, flags, verifications: [] };
   }
 
   // NORMAL
   reasoning.push(`All systems normal. Execute the plan as written.`);
-  return { result: adapted, reasoning, flags };
+  return { result: adapted, reasoning, flags, verifications: [] };
 }

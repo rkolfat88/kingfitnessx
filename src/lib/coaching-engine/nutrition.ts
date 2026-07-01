@@ -1,4 +1,10 @@
-import type { ClientProfile, MacroTargets, EngineOutput } from './types';
+import type { ClientProfile, MacroTargets, EngineOutput, Verification } from './types';
+
+const FAT_SOURCE_KEYWORDS = ['olive oil', 'avocado', 'nuts', 'nut butter', 'butter', 'ghee', 'egg yolk', 'fatty fish', 'salmon'];
+function isFatSource(food: string): boolean {
+  const lower = food.toLowerCase();
+  return FAT_SOURCE_KEYWORDS.some(k => lower.includes(k));
+}
 
 // Lean body mass estimate (no DEXA, use formula)
 function estimateLeanMass(profile: ClientProfile): number {
@@ -26,14 +32,34 @@ function activityMultiplier(daysPerWeek: number): number {
 export function calculateMacros(profile: ClientProfile): EngineOutput<MacroTargets> {
   const reasoning: string[] = [];
   const flags: string[] = [];
+  const verifications: Verification[] = [];
 
   const leanMass = estimateLeanMass(profile);
   const bmr = calculateBMR(profile);
-  const tdee = bmr * activityMultiplier(profile.days_per_week);
+  const multiplier = activityMultiplier(profile.days_per_week);
+  const tdee = bmr * multiplier;
 
   reasoning.push(`Estimated lean mass: ${leanMass.toFixed(1)}kg`);
   reasoning.push(`BMR (Mifflin-St Jeor): ${Math.round(bmr)} cal`);
-  reasoning.push(`TDEE (×${activityMultiplier(profile.days_per_week)} for ${profile.days_per_week} days/week): ${Math.round(tdee)} cal`);
+  reasoning.push(`TDEE (×${multiplier} for ${profile.days_per_week} days/week): ${Math.round(tdee)} cal`);
+
+  if (!profile.trainingFrequencyConfirmed) {
+    verifications.push({
+      field: 'activity_multiplier',
+      assumption: `Assumed ×${multiplier} based on ${profile.days_per_week} days/week as entered at onboarding`,
+      message: `Training frequency wasn't confirmed. If you're not actually training ${profile.days_per_week}x/week, your calories are off — confirm so we can adjust.`,
+      severity: 'important',
+    });
+  }
+
+  if (profile.protocol !== 'carnivore' && !profile.confirmedFoods?.some(isFatSource)) {
+    verifications.push({
+      field: 'fat_source',
+      assumption: 'Defaulted to olive oil / mixed fat sources to hit the fat target',
+      message: "No fat source was in your confirmed foods, so this plan defaults to olive oil. Confirm you have no allergy or preference issue, or we'll substitute.",
+      severity: 'info',
+    });
+  }
 
   // Goal-based calorie adjustment
   let calories = tdee;
@@ -94,6 +120,7 @@ export function calculateMacros(profile: ClientProfile): EngineOutput<MacroTarge
       result: { calories: Math.round(calories), protein_g, carbs_g, fat_g },
       reasoning,
       flags,
+      verifications,
     };
   } else {
     // Standard: fat at 0.8g/kg bodyweight
@@ -111,5 +138,6 @@ export function calculateMacros(profile: ClientProfile): EngineOutput<MacroTarge
     result: { calories: Math.round(calories), protein_g, carbs_g, fat_g },
     reasoning,
     flags,
+    verifications,
   };
 }

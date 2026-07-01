@@ -1,4 +1,4 @@
-import type { ClientProfile, TrainingPlan, TrainingDay, Exercise, EngineOutput } from './types';
+import type { ClientProfile, TrainingPlan, TrainingDay, Exercise, EngineOutput, Verification } from './types';
 
 // Determine training split based on days and experience
 function getSplitType(daysPerWeek: number, experience: string): string {
@@ -99,9 +99,31 @@ function buildDay(
 export function buildTrainingPlan(profile: ClientProfile): EngineOutput<TrainingPlan> {
   const reasoning: string[] = [];
   const flags: string[] = [];
+  const verifications: Verification[] = [];
 
   const splitType = getSplitType(profile.days_per_week, profile.experience);
   reasoning.push(`${profile.days_per_week} days/week + ${profile.experience} → ${splitType}`);
+
+  if (!profile.trainingFrequencyConfirmed) {
+    verifications.push({
+      field: 'days_per_week',
+      assumption: `Built a ${splitType} split around ${profile.days_per_week} days/week from onboarding`,
+      message: `This split assumes you're training ${profile.days_per_week}x/week. If that's changed, confirm — the split and volume both depend on it.`,
+      severity: 'important',
+    });
+  }
+
+  if (profile.injuries.length > 0) {
+    const unhandled = profile.injuries.filter(i => !INJURY_SUBS[i.toLowerCase()]);
+    if (unhandled.length > 0) {
+      verifications.push({
+        field: 'injury_substitutions',
+        assumption: `No known substitution pattern for: ${unhandled.join(', ')} — those exercises were left as-is`,
+        message: `We don't have a substitution rule for "${unhandled.join(', ')}" yet. Flag any exercise below that aggravates it and we'll swap it.`,
+        severity: 'safety',
+      });
+    }
+  }
 
   // Floor Mode for low psychological readiness
   if (profile.psychological_stage === 'contemplation' || profile.psychological_stage === 'precontemplation') {
@@ -164,5 +186,6 @@ export function buildTrainingPlan(profile: ClientProfile): EngineOutput<Training
     },
     reasoning,
     flags,
+    verifications,
   };
 }
