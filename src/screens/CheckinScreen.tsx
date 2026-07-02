@@ -102,6 +102,7 @@ export default function CheckinScreen() {
         adaptation_flags: flags,
         counterfactual,
         completed: true,
+        updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id,checkin_date' });
 
     if (cErr) console.error('Checkin save error:', cErr);
