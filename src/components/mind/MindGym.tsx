@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Brain, Shield, Zap, Heart, ChevronRight, Target } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import ComebackProtocol from './tools/ComebackProtocol';
+import TwoMinuteDoorway from './tools/TwoMinuteDoorway';
+import FearAudit from './tools/FearAudit';
+import SelfCompassionReset from './tools/SelfCompassionReset';
 
 interface MindGymProps {
   mindProfile: any;
@@ -17,6 +21,8 @@ function getDailyPrimer(motivationLevel: number, identityStatement: string): str
   return `Peak state. This is the day for the hard thing — the weight you've been avoiding, the extra set, the thing that scares you slightly. "${identityStatement || 'The person you are becoming'}" remembers this day. Make it count.`;
 }
 
+type ActiveTool = 'comeback' | 'doorway' | 'fear' | 'compassion' | null;
+
 export default function MindGym({ mindProfile, onRefresh, onNavigateToCheckin }: MindGymProps) {
   const { user } = useAuth();
   const [todayCheckin, setTodayCheckin] = useState<any>(null);
@@ -24,6 +30,7 @@ export default function MindGym({ mindProfile, onRefresh, onNavigateToCheckin }:
   const [aiPrimer, setAiPrimer] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [activeTool, setActiveTool] = useState<ActiveTool>(null);
 
   useEffect(() => {
     loadTodayCheckin();
@@ -202,18 +209,22 @@ export default function MindGym({ mindProfile, onRefresh, onNavigateToCheckin }:
           <p className="text-xs font-semibold uppercase tracking-widest text-[#8899BB] mb-3">Mind Tools</p>
           <div className="space-y-2">
             {[
-              { icon: Shield, label: "Comeback Protocol", desc: "For the day after you miss", color: "#3B82F6" },
-              { icon: Zap, label: "2-Minute Doorway", desc: "When you can't start", color: "#22C55E" },
-              { icon: Target, label: "Fear Audit", desc: "Name it to manage it", color: "#F97316" },
-              { icon: Heart, label: "Self-Compassion Reset", desc: "Stop punishing, start building", color: "#C9A84C" },
-            ].map(tool => (
-              <button key={tool.label} className="w-full bg-[#111827] border border-[#1E2D40] hover:border-[#C9A84C]/30 rounded-xl p-4 flex items-center gap-3 transition-all text-left">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${tool.color}15` }}>
-                  <tool.icon className="w-4 h-4" style={{ color: tool.color }} />
+              { icon: Shield, label: "Comeback Protocol", desc: "For the day after you miss", color: "#3B82F6", tool: 'comeback' as ActiveTool },
+              { icon: Zap, label: "2-Minute Doorway", desc: "When you can't start", color: "#22C55E", tool: 'doorway' as ActiveTool },
+              { icon: Target, label: "Fear Audit", desc: "Name it to manage it", color: "#F97316", tool: 'fear' as ActiveTool },
+              { icon: Heart, label: "Self-Compassion Reset", desc: "Stop punishing, start building", color: "#C9A84C", tool: 'compassion' as ActiveTool },
+            ].map(item => (
+              <button
+                key={item.label}
+                onClick={() => setActiveTool(item.tool)}
+                className="w-full bg-[#111827] border border-[#1E2D40] hover:border-[#C9A84C]/30 rounded-xl p-4 flex items-center gap-3 transition-all text-left"
+              >
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${item.color}15` }}>
+                  <item.icon className="w-4 h-4" style={{ color: item.color }} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-[#F0F4FF]">{tool.label}</p>
-                  <p className="text-xs text-[#8899BB]">{tool.desc}</p>
+                  <p className="text-sm font-semibold text-[#F0F4FF]">{item.label}</p>
+                  <p className="text-xs text-[#8899BB]">{item.desc}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-[#445577]" />
               </button>
@@ -221,6 +232,11 @@ export default function MindGym({ mindProfile, onRefresh, onNavigateToCheckin }:
           </div>
         </div>
       </div>
+
+      {activeTool === 'comeback' && <ComebackProtocol onClose={() => setActiveTool(null)} />}
+      {activeTool === 'doorway' && <TwoMinuteDoorway onClose={() => setActiveTool(null)} />}
+      {activeTool === 'fear' && <FearAudit onClose={() => setActiveTool(null)} />}
+      {activeTool === 'compassion' && <SelfCompassionReset onClose={() => setActiveTool(null)} />}
     </div>
   );
 }
