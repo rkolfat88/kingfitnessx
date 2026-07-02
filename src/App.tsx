@@ -24,7 +24,7 @@ export default function App() {
 }
 
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { user, loading, isPasswordRecovery } = useAuth();
   const [activeScreen, setActiveScreen] = useState<ScreenId>('mind');
   const [workoutDay, setWorkoutDay] = useState<TrainingDay | null>(null);
   const [workoutPlanId, setWorkoutPlanId] = useState<string | null>(null);
@@ -49,7 +49,7 @@ function AppContent() {
     );
   }
 
-  if (!user) return <AuthScreen />;
+  if (!user || isPasswordRecovery) return <AuthScreen />;
 
   const navItems = [
     { id: 'mind'          as ScreenId, icon: Brain,          label: 'Mind'     },
