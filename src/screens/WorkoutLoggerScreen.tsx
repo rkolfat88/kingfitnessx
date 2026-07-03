@@ -40,6 +40,7 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
   const [restTimer, setRestTimer] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (restTimer === null || restTimer <= 0) {
@@ -104,6 +105,7 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
   const finishWorkout = async () => {
     if (!user) return;
     setSaving(true);
+    setSaveError(false);
 
     const exercises_logged = logs.map((log, i) => {
       const ex = trainingDay.exercises[i];
@@ -123,7 +125,7 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
       };
     });
 
-    await supabase.from('workout_logs').insert({
+    const { error } = await supabase.from('workout_logs').insert({
       user_id: user.id,
       training_plan_id: planId,
       exercises_logged: {
@@ -133,6 +135,13 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
         exercises: exercises_logged,
       },
     });
+
+    if (error) {
+      console.error('Workout log save error:', error);
+      setSaveError(true);
+      setSaving(false);
+      return;
+    }
 
     setSaving(false);
     setSaved(true);
@@ -312,6 +321,11 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
 
       {/* Fixed finish button */}
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] px-5 pb-6 pt-3 bg-[#070B14]/95 backdrop-blur-sm border-t border-[#1E2D40] z-50">
+        {saveError && (
+          <p className="text-[#8899BB] text-sm text-center mb-3">
+            Couldn't save your workout — tap below to retry.
+          </p>
+        )}
         <button
           onClick={finishWorkout}
           disabled={saving || saved}
@@ -321,6 +335,8 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
             ? '✓ Workout Saved'
             : saving
             ? 'Saving…'
+            : saveError
+            ? 'Tap to Retry'
             : `Finish · ${trainingDay.duration_min}min planned`}
         </button>
       </div>

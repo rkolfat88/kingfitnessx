@@ -22,6 +22,7 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
   const [saving, setSaving] = useState(false);
   const [showMath, setShowMath] = useState(false);
   const [milestone, setMilestone] = useState<{ title: string; message: string } | null>(null);
+  const [saveError, setSaveError] = useState(false);
 
   const [sleep, setSleep] = useState(3);
   const [energy, setEnergy] = useState(3);
@@ -77,6 +78,7 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
   const handleSubmit = async () => {
     if (!user) return;
     setSaving(true);
+    setSaveError(false);
 
     const state = checkinToDailyState(sleep, energy, soreness);
     const todaySession = getTodaySession();
@@ -111,7 +113,12 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id,checkin_date' });
 
-    if (cErr) console.error('Checkin save error:', cErr);
+    if (cErr) {
+      console.error('Checkin save error:', cErr);
+      setSaveError(true);
+      setSaving(false);
+      return;
+    }
 
     const { data: streakData } = await supabase
       .from('protocol_streaks')
@@ -128,7 +135,7 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
     const m = checkMilestone(newStreak);
     if (m) setMilestone(m);
 
-    await supabase
+    const { error: sErr } = await supabase
       .from('protocol_streaks')
       .upsert({
         user_id: user.id,
@@ -138,6 +145,13 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
         total_days_on_protocol: (streakData?.total_days_on_protocol || 0) + 1,
         updated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' });
+
+    if (sErr) {
+      console.error('Streak save error:', sErr);
+      setSaveError(true);
+      setSaving(false);
+      return;
+    }
 
     setStreak(newStreak);
     setTodayCheckin({
@@ -394,6 +408,18 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
             className="w-full bg-[#0D1117] border border-[#1E2D40] rounded-xl px-3 py-2 text-sm text-[#F0F4FF] placeholder:text-[#445577] focus:border-[#C9A84C]/50 focus:outline-none resize-none"
           />
         </div>
+
+        {saveError && (
+          <div className="text-center py-2">
+            <p className="text-[#8899BB] text-sm mb-3">Couldn't save your check-in — tap to retry.</p>
+            <button
+              onClick={handleSubmit}
+              className="text-[#C9A84C] font-semibold text-sm border border-[#C9A84C]/30 rounded-xl px-5 py-2.5"
+            >
+              Tap to retry
+            </button>
+          </div>
+        )}
 
       </div>
 
