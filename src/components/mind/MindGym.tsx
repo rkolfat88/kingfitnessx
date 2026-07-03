@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Brain, Shield, Zap, Heart, ChevronRight, Target } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import { getLocalDateString } from '../../lib/date';
 import ComebackProtocol from './tools/ComebackProtocol';
 import TwoMinuteDoorway from './tools/TwoMinuteDoorway';
 import FearAudit from './tools/FearAudit';
@@ -38,7 +39,7 @@ export default function MindGym({ mindProfile, onRefresh, onNavigateToCheckin }:
 
   const loadTodayCheckin = async () => {
     if (!user) return;
-    const today = new Date().toISOString().split('T')[0];
+    const today = getLocalDateString();
     const { data } = await supabase
       .from('mind_checkins')
       .select('*')
@@ -82,7 +83,7 @@ export default function MindGym({ mindProfile, onRefresh, onNavigateToCheckin }:
       setAiPrimer(response);
 
       // Still save the check-in to Supabase (no API needed)
-      const today = new Date().toISOString().split('T')[0];
+      const today = getLocalDateString();
       await supabase.from('mind_checkins').upsert({
         user_id: user.id,
         checkin_date: today,

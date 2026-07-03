@@ -5,8 +5,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { checkinToDailyState, generateCounterfactual, calculateNewStreak, checkMilestone } from '../lib/checkin-engine';
 import { adaptSession } from '../lib/coaching-engine/adapt';
 import type { TrainingDay } from '../lib/coaching-engine/types';
+import { HeaderBar } from '../components/HeaderBar';
+import { getLocalDateString } from '../lib/date';
 
-export default function CheckinScreen() {
+interface CheckinScreenProps {
+  onBack?: () => void;
+}
+
+export default function CheckinScreen({ onBack }: CheckinScreenProps) {
   const { user } = useAuth();
   const [alreadyDone, setAlreadyDone] = useState(false);
   const [todayCheckin, setTodayCheckin] = useState<any>(null);
@@ -22,7 +28,7 @@ export default function CheckinScreen() {
   const [soreness, setSoreness] = useState(2);
   const [notes, setNotes] = useState('');
 
-  const today = new Date().toISOString().split('T')[0];
+  const today = getLocalDateString();
 
   useEffect(() => {
     if (user) loadData();
@@ -209,7 +215,8 @@ export default function CheckinScreen() {
 
     return (
       <div className="min-h-screen bg-[#070B14] pb-24">
-        <div className="px-5 pt-12 pb-4">
+        <HeaderBar onBack={onBack} />
+        <div className="px-5 pb-4">
           <p className="text-xs font-bold uppercase tracking-widest text-[#8899BB] mb-1">
             Today's Readiness
           </p>
@@ -327,7 +334,8 @@ export default function CheckinScreen() {
 
   return (
     <div className="min-h-screen bg-[#070B14] pb-32">
-      <div className="px-5 pt-12 pb-6">
+      <HeaderBar onBack={onBack} />
+      <div className="px-5 pb-6">
         <div className="flex items-center gap-2 mb-1">
           <Flame className="w-4 h-4 text-[#C9A84C]" />
           <span className="text-xs font-bold text-[#C9A84C] uppercase tracking-widest">
