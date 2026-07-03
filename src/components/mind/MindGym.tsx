@@ -40,17 +40,26 @@ export default function MindGym({ mindProfile, onRefresh, onNavigateToCheckin }:
   const loadTodayCheckin = async () => {
     if (!user) return;
     const today = getLocalDateString();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('mind_checkins')
       .select('*')
       .eq('user_id', user.id)
       .eq('checkin_date', today)
-      .single();
+      .maybeSingle();
+
+    if (error) {
+      console.error('Failed to load today\'s check-in:', error);
+      return;
+    }
+
     if (data) {
       setTodayCheckin(data);
       setSubmitted(true);
       if (data.ai_response) setAiPrimer(data.ai_response);
     }
+    // No row yet (first-ever visit or hasn't checked in today) — data is null,
+    // which is the correct fresh/empty state: submitted stays false and the
+    // daily-motivation prompt renders as usual.
   };
 
   const getMindScore = () => mindProfile?.mind_score ?? 50;
