@@ -1,4 +1,5 @@
 export type ScreenId =
+  | 'today'
   | 'mind'
   | 'active-workout'
   | 'nutrition'

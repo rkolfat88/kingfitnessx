@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
-import { Brain, Dumbbell, Utensils, Activity, MessageSquare } from 'lucide-react';
+import {
+  Brain, Dumbbell, Utensils, MessageSquare, Home,
+  User, Settings as SettingsIcon, CreditCard, HelpCircle, LogOut,
+} from 'lucide-react';
 
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthScreen } from './components/AuthScreen';
+import OnboardingChain from './components/onboarding/OnboardingChain';
 
 import { ScreenId } from './types';
 import type { TrainingDay } from './lib/coaching-engine/types';
 
+import TodayScreen from './screens/TodayScreen';
 import MindScreen from './screens/MindScreen';
 import TrainScreen from './screens/TrainScreen';
 import WorkoutLoggerScreen from './screens/WorkoutLoggerScreen';
@@ -24,10 +29,15 @@ export default function App() {
 }
 
 function AppContent() {
-  const { user, loading, isPasswordRecovery } = useAuth();
-  const [activeScreen, setActiveScreen] = useState<ScreenId>('mind');
+  const { user, loading, isPasswordRecovery, signOut, onboardingCompleted, onboardingLoading, onboardingData, refreshOnboarding } = useAuth();
+  const [activeScreen, setActiveScreen] = useState<ScreenId>('today');
   const [workoutDay, setWorkoutDay] = useState<TrainingDay | null>(null);
   const [workoutPlanId, setWorkoutPlanId] = useState<string | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
+
+  const userInitials = user?.user_metadata?.full_name
+    ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+    : user?.email?.[0]?.toUpperCase() || 'K';
 
   const handleStartWorkout = (day: TrainingDay, planId: string | null) => {
     setWorkoutDay(day);
@@ -51,22 +61,36 @@ function AppContent() {
 
   if (!user || isPasswordRecovery) return <AuthScreen />;
 
+  if (onboardingLoading) {
+    return (
+      <div className="min-h-screen bg-[#070B14] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!onboardingCompleted) {
+    return <OnboardingChain onComplete={refreshOnboarding} savedData={onboardingData} />;
+  }
+
   const navItems = [
-    { id: 'mind'          as ScreenId, icon: Brain,          label: 'Mind'     },
-    { id: 'active-workout'as ScreenId, icon: Dumbbell,       label: 'Train'    },
-    { id: 'nutrition'     as ScreenId, icon: Utensils,       label: 'Fuel'     },
-    { id: 'checkin'       as ScreenId, icon: Activity,       label: 'Check-in' },
-    { id: 'coach-chat'    as ScreenId, icon: MessageSquare,  label: 'Coach'    },
+    { id: 'today'          as ScreenId, icon: Home,          label: 'Today'  },
+    { id: 'active-workout' as ScreenId, icon: Dumbbell,      label: 'Train'  },
+    { id: 'nutrition'      as ScreenId, icon: Utensils,      label: 'Fuel'   },
+    { id: 'mind'           as ScreenId, icon: Brain,         label: 'Mind'   },
+    { id: 'coach-chat'     as ScreenId, icon: MessageSquare, label: 'Coach'  },
   ];
 
   // These screens manage their own full-viewport layout
   const isFullScreen = (
+    activeScreen === 'today' ||
     activeScreen === 'mind' ||
     activeScreen === 'active-workout' ||
     activeScreen === 'nutrition' ||
     activeScreen === 'checkin' ||
     activeScreen === 'coach-chat' ||
-    activeScreen === 'workout-logger'
+    activeScreen === 'workout-logger' ||
+    activeScreen === 'settings'
   );
 
   return (
@@ -93,6 +117,14 @@ function AppContent() {
 
         {/* Screen content */}
         <div className={isFullScreen ? 'flex-1 overflow-y-auto' : 'flex-1 overflow-y-auto px-5 pt-5 pb-28'}>
+          {activeScreen === 'today' && (
+            <TodayScreen
+              onNavigateToCheckin={() => setActiveScreen('checkin')}
+              onNavigateToTrain={() => setActiveScreen('active-workout')}
+              onAvatarPress={() => setShowMenu(true)}
+              userInitials={userInitials}
+            />
+          )}
           {activeScreen === 'mind'           && <MindScreen onNavigateToCheckin={() => setActiveScreen('checkin')} />}
           {activeScreen === 'active-workout' && <TrainScreen onStartWorkout={handleStartWorkout} />}
           {activeScreen === 'workout-logger' && workoutDay && (
@@ -102,10 +134,12 @@ function AppContent() {
               onFinish={handleFinishWorkout}
             />
           )}
-          {activeScreen === 'nutrition'      && <FuelScreen />}
-          {activeScreen === 'checkin'        && <CheckinScreen />}
-          {activeScreen === 'coach-chat'     && <CoachChatScreen />}
-          {activeScreen === 'settings'       && <SettingsComponent />}
+          {activeScreen === 'nutrition'  && <FuelScreen />}
+          {activeScreen === 'checkin'    && (
+            <CheckinScreen onBack={() => setActiveScreen('today')} />
+          )}
+          {activeScreen === 'coach-chat' && <CoachChatScreen />}
+          {activeScreen === 'settings'   && <SettingsComponent onBack={() => setActiveScreen('today')} />}
         </div>
 
         {/* Bottom navigation — hidden during active workout */}
@@ -131,6 +165,67 @@ function AppContent() {
         <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-1 flex justify-center items-end pb-1 pointer-events-none z-50">
           <div className="w-28 h-1 bg-[#333] rounded-full" />
         </div>
+
+        {/* Header menu overlay */}
+        {showMenu && (
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+              onClick={() => setShowMenu(false)}
+            />
+            {/* Sheet */}
+            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-[#0F1420] border-t border-[#C9A84C]/15 rounded-t-3xl pb-10 pt-2">
+              {/* Handle */}
+              <div className="w-10 h-1 bg-[#2A3A50] rounded-full mx-auto mb-5" />
+
+              {/* User header */}
+              <div className="px-6 pb-4 border-b border-[#1E2D40]">
+                <div className="flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-full bg-[#C9A84C]/15 border border-[#C9A84C]/30 flex items-center justify-center">
+                    <span className="text-sm font-black text-[#C9A84C]">{userInitials}</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-[#F0F4FF]">
+                      {user?.user_metadata?.full_name || 'King'}
+                    </p>
+                    <p className="text-xs text-[#445577]">{user?.email}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Menu items */}
+              <div className="px-4 pt-2">
+                {[
+                  { icon: User,         label: 'Profile',      action: () => { setShowMenu(false); /* future */ } },
+                  { icon: SettingsIcon, label: 'Settings',     action: () => { setShowMenu(false); setActiveScreen('settings') } },
+                  { icon: CreditCard,   label: 'Subscription', action: () => { setShowMenu(false); /* future */ } },
+                  { icon: HelpCircle,   label: 'Help',         action: () => { setShowMenu(false); /* future */ } },
+                ].map(item => (
+                  <button
+                    key={item.label}
+                    onClick={item.action}
+                    className="w-full flex items-center gap-4 px-2 py-3.5 border-b border-[#1A2236] last:border-0 text-left transition-colors hover:text-[#C9A84C] active:opacity-70"
+                  >
+                    <item.icon className="w-4 h-4 text-[#445577]" />
+                    <span className="text-sm font-semibold text-[#F0F4FF]">{item.label}</span>
+                  </button>
+                ))}
+
+                {/* Sign Out — separated */}
+                <div className="mt-2 pt-2 border-t border-[#1A2236]">
+                  <button
+                    onClick={async () => { setShowMenu(false); await signOut() }}
+                    className="w-full flex items-center gap-4 px-2 py-3.5 text-left transition-colors active:opacity-70"
+                  >
+                    <LogOut className="w-4 h-4 text-[#EF4444]/70" />
+                    <span className="text-sm font-semibold text-[#EF4444]/80">Sign Out</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
 
       </div>
     </div>

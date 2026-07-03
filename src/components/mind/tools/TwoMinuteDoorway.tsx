@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Zap, Check } from 'lucide-react';
+import { ChevronLeft, Zap, Check } from 'lucide-react';
 
 interface Props {
   onClose: () => void;
@@ -42,19 +42,19 @@ export default function TwoMinuteDoorway({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 bg-[#070B14] flex flex-col">
-      <div className="flex items-center justify-between px-5 pt-12 pb-4">
+      <div className="flex items-center gap-3 px-5 pt-12 pb-4">
+        <button
+          onClick={onClose}
+          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95 flex-shrink-0"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
         <div className="flex items-center gap-2">
           <Zap className="w-4 h-4 text-[#22C55E]" />
           <span className="text-xs font-mono font-semibold uppercase tracking-widest text-[#22C55E]">
             2-Minute Doorway
           </span>
         </div>
-        <button
-          onClick={onClose}
-          className="w-8 h-8 rounded-full bg-[#111827] flex items-center justify-center"
-        >
-          <X className="w-4 h-4 text-[#8899BB]" />
-        </button>
       </div>
 
       <div className="flex flex-col items-center pt-4 pb-8">

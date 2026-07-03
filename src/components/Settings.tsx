@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { LogOut, Trash2, Download, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { HeaderBar } from './HeaderBar';
 
-export function Settings() {
+interface SettingsProps {
+  onBack?: () => void;
+}
+
+export function Settings({ onBack }: SettingsProps) {
   const { signOut } = useAuth();
   const [deleteConfirm, setDeleteConfirm]   = useState('');
   const [deleteLoading, setDeleteLoading]   = useState(false);
@@ -66,7 +71,9 @@ export function Settings() {
   };
 
   return (
-    <div className="space-y-6 pb-8">
+    <div className="min-h-screen bg-[#070B14] pb-24">
+      <HeaderBar onBack={onBack} />
+      <div className="px-5 space-y-6 pb-8">
       <div>
         <p className="text-[10px] tracking-[0.2em] uppercase text-[#C9A84C] font-semibold font-mono">KFX</p>
         <h2 className="text-3xl font-black text-[#F0F4FF] tracking-tight mt-1">Settings</h2>
@@ -132,6 +139,7 @@ export function Settings() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

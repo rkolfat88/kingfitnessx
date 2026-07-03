@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { ChevronRight, Shield } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Shield } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
+import type { OnboardingRecord } from '../../contexts/AuthContext';
 import { generatePlans } from '../../lib/plan-generator';
+import { PlanReadyScreen } from '../../screens/PlanReadyScreen';
+import type { GeneratedPlanData } from '../../lib/plan-generator';
 
 interface OnboardingChainProps {
   onComplete: () => void;
+  savedData?: OnboardingRecord | null;
 }
 
 // ─── Types ────────────────────────────────────────────────────
@@ -316,11 +320,12 @@ function Page1({
 // PAGE 2 — YOUR TRAINING RELATIONSHIP (Adaptive)
 // ═══════════════════════════════════════════════════════════════
 function Page2({
-  data, update, onNext
+  data, update, onNext, onPrev
 }: {
   data: ChainData;
   update: (k: keyof ChainData, v: any) => void;
   onNext: () => void;
+  onPrev: () => void;
 }) {
   // Adapt quit_reason options based on honest_start
   const getQuitReasonOptions = () => {
@@ -364,6 +369,12 @@ function Page2({
   return (
     <div className="min-h-screen bg-[#070B14] pb-32">
       <div className="px-5 pt-12 pb-6">
+        <button
+          onClick={onPrev}
+          className="w-10 h-10 -ml-2 mb-2 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
         <p className="text-xs font-bold uppercase tracking-widest text-[#C9A84C] mb-2">
           Step 2 of 3
         </p>
@@ -502,12 +513,13 @@ function Page2({
 // PAGE 3 — YOUR BODY + DETAILS (Physical data)
 // ═══════════════════════════════════════════════════════════════
 function Page3({
-  data, update, onSubmit, saving
+  data, update, onSubmit, saving, onPrev
 }: {
   data: ChainData;
   update: (k: keyof ChainData, v: any) => void;
   onSubmit: () => void;
   saving: boolean;
+  onPrev: () => void;
 }) {
   const toggleInjury = (injury: string) => {
     const current = data.injuries || [];
@@ -541,6 +553,12 @@ function Page3({
   return (
     <div className="min-h-screen bg-[#070B14] pb-32">
       <div className="px-5 pt-12 pb-6">
+        <button
+          onClick={onPrev}
+          className="w-10 h-10 -ml-2 mb-2 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
         <p className="text-xs font-bold uppercase tracking-widest text-[#C9A84C] mb-2">
           Step 3 of 3
         </p>
@@ -731,13 +749,32 @@ const EMPTY: ChainData = {
   height: '', goal: '', equipment: '', injuries: [], protocol: '',
 };
 
-export default function OnboardingChain({ onComplete }: OnboardingChainProps) {
+function savedToChain(saved: OnboardingRecord): Partial<ChainData> {
+  return {
+    age: saved.age != null ? String(saved.age) : '',
+    gender: saved.gender ?? '',
+    weight: saved.weight_kg != null ? String(saved.weight_kg) : '',
+    weight_unit: 'kg',
+    height: saved.height_cm != null ? String(saved.height_cm) : '',
+    goal: saved.goal ?? '',
+    experience_level: saved.experience ?? '',
+    days_available: saved.days_per_week ?? 0,
+    equipment: saved.equipment ?? '',
+    injuries: saved.injuries ?? [],
+    protocol: saved.protocol ?? '',
+  }
+}
+
+export default function OnboardingChain({ onComplete, savedData }: OnboardingChainProps) {
   const { user } = useAuth();
   const [page, setPage] = useState(1);
-  const [data, setData] = useState<ChainData>(EMPTY);
+  const [data, setData] = useState<ChainData>(() =>
+    savedData ? { ...EMPTY, ...savedToChain(savedData) } : EMPTY
+  );
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
+  const [planData, setPlanData] = useState<GeneratedPlanData | null>(null);
 
   const update = (key: keyof ChainData, value: any) => {
     setData(prev => ({ ...prev, [key]: value }));
@@ -800,9 +837,14 @@ export default function OnboardingChain({ onComplete }: OnboardingChainProps) {
       // Generate plans
       setSaving(false);
       setGenerating(true);
-      await generatePlans(user.id);
+      const result = await generatePlans(user.id);
       setGenerating(false);
-      onComplete();
+      if (result.success && result.data) {
+        setPlanData(result.data);
+        // Don't call onComplete yet — PlanReadyScreen does it
+      } else {
+        setError(result.error || 'Plan generation failed. Please try again.');
+      }
 
     } catch (err: any) {
       console.error('Submit error:', err);
@@ -833,6 +875,16 @@ export default function OnboardingChain({ onComplete }: OnboardingChainProps) {
     return Math.min(100, Math.max(20, score));
   }
 
+  if (planData) {
+    return (
+      <PlanReadyScreen
+        data={planData}
+        userName={data.name}
+        onStart={onComplete}
+      />
+    );
+  }
+
   if (generating) return <GeneratingScreen name={data.name} />;
 
   return (
@@ -846,10 +898,10 @@ export default function OnboardingChain({ onComplete }: OnboardingChainProps) {
         <Page1 data={data} update={update} onNext={() => setPage(2)} />
       )}
       {page === 2 && (
-        <Page2 data={data} update={update} onNext={() => setPage(3)} />
+        <Page2 data={data} update={update} onNext={() => setPage(3)} onPrev={() => setPage(1)} />
       )}
       {page === 3 && (
-        <Page3 data={data} update={update} onSubmit={handleSubmit} saving={saving} />
+        <Page3 data={data} update={update} onSubmit={handleSubmit} saving={saving} onPrev={() => setPage(2)} />
       )}
     </>
   );

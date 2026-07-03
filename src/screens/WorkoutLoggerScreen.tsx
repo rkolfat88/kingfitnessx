@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Check, Timer, ChevronDown, ChevronUp, Play } from 'lucide-react';
+import { ChevronLeft, Check, Timer, ChevronDown, ChevronUp, Play } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { TrainingDay } from '../lib/coaching-engine/types';
@@ -151,9 +151,9 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
         <div className="flex items-center gap-3 mb-3">
           <button
             onClick={onFinish}
-            className="w-9 h-9 rounded-xl bg-[#111827] border border-[#1E2D40] flex items-center justify-center flex-shrink-0"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95 flex-shrink-0 -ml-1"
           >
-            <ArrowLeft className="w-4 h-4 text-[#8899BB]" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
 
           <div className="flex-1 min-w-0">

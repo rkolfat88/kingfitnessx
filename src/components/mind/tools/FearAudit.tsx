@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Target } from 'lucide-react';
+import { ChevronLeft, Target } from 'lucide-react';
 
 interface Props {
   onClose: () => void;
@@ -34,20 +34,19 @@ export default function FearAudit({ onClose }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col" style={{ backgroundColor: '#0A0500' }}>
-      <div className="flex items-center justify-between px-5 pt-12 pb-4">
+      <div className="flex items-center gap-3 px-5 pt-12 pb-4">
+        <button
+          onClick={onClose}
+          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95 flex-shrink-0"
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </button>
         <div className="flex items-center gap-2">
           <Target className="w-4 h-4 text-[#F97316]" />
           <span className="text-xs font-mono font-semibold uppercase tracking-widest text-[#F97316]">
             Fear Audit
           </span>
         </div>
-        <button
-          onClick={onClose}
-          className="w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: '#1A0C00' }}
-        >
-          <X className="w-4 h-4 text-[#8899BB]" />
-        </button>
       </div>
 
       {!showReframe ? (

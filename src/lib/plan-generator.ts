@@ -2,7 +2,18 @@ import { supabase } from './supabase';
 import { calculateMacros, buildTrainingPlan } from './coaching-engine';
 import type { ClientProfile } from './coaching-engine/types';
 
-export async function generatePlans(userId: string): Promise<{ success: boolean; error?: string }> {
+export interface GeneratedPlanData {
+  trainingReasoning: string[]
+  splitType: string
+  daysPerWeek: number
+  calories: number
+  proteinG: number
+  carbsG: number
+  fatG: number
+  macroReasoning: string[]
+}
+
+export async function generatePlans(userId: string): Promise<{ success: boolean; error?: string; data: GeneratedPlanData | null }> {
   try {
     const { data: onboarding, error: oErr } = await supabase
       .from('onboarding_data')
@@ -10,7 +21,7 @@ export async function generatePlans(userId: string): Promise<{ success: boolean;
       .eq('user_id', userId)
       .maybeSingle();
 
-    if (oErr || !onboarding) return { success: false, error: 'No onboarding data found' };
+    if (oErr || !onboarding) return { success: false, error: 'No onboarding data found', data: null };
     console.log('Raw onboarding data:', JSON.stringify(onboarding));
 
     const { data: mind } = await supabase
@@ -64,7 +75,7 @@ export async function generatePlans(userId: string): Promise<{ success: boolean;
 
     if (nErr) {
       console.error('Nutrition plan upsert failed:', JSON.stringify(nErr));
-      return { success: false, error: `Nutrition: ${nErr.message}` };
+      return { success: false, error: `Nutrition: ${nErr.message}`, data: null };
     }
     console.log('Nutrition plan saved successfully');
 
@@ -86,12 +97,24 @@ export async function generatePlans(userId: string): Promise<{ success: boolean;
 
     if (tErr) {
       console.error('Training plan upsert failed:', JSON.stringify(tErr));
-      return { success: false, error: `Training: ${tErr.message}` };
+      return { success: false, error: `Training: ${tErr.message}`, data: null };
     }
     console.log('Training plan saved successfully');
 
-    return { success: true };
+    return {
+      success: true,
+      data: {
+        trainingReasoning: trainingOutput.reasoning,
+        splitType: trainingOutput.result.split_type,
+        daysPerWeek: trainingOutput.result.days_per_week,
+        calories: macroOutput.result.calories,
+        proteinG: macroOutput.result.protein_g,
+        carbsG: macroOutput.result.carbs_g,
+        fatG: macroOutput.result.fat_g,
+        macroReasoning: macroOutput.reasoning,
+      } as GeneratedPlanData,
+    };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message, data: null };
   }
 }
