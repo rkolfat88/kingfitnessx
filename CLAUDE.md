@@ -311,6 +311,7 @@ git push
 4. `/api/mind` is GONE — never add API calls for mind responses
 5. Supabase: always `.maybeSingle()` not `.single()`, always `.upsert()` not `.insert()`
 6. LIME (#CAFF40) is the ONLY brand accent color — no gold, no navy, no purple. Exception: the four sanctioned semantic state colors (green/orange/red/blue) may appear where they carry universal meaning (success/warning/error/sleep). They are not accent colors and must not be used decoratively.
+   Semantic state colors (green/orange/red/blue) are functional exceptions to this rule, not brand accents — they exist only where they carry universal meaning (success/warning/error/sleep).
 7. Black design system only — #000000 background, #0D0D0D cards
 8. Card style: bg-[#0D0D0D] border border-[#262626] rounded-2xl
 9. Every coaching engine output includes reasoning[] — always show it to the user
