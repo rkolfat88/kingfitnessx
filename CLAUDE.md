@@ -164,11 +164,17 @@ text-primary:     #FFFFFF   Headlines, card titles, active values
 text-secondary:   #A0A0A0   Body copy, descriptions
 text-muted:       #5C5C5C   Labels, placeholders, disabled
 
-── SEMANTIC STATES (retained, not brand colors) ─────────
-state-green:      #22C55E   Check-in complete, success
-state-orange:     #F97316   Soreness indicator, warning
-state-red:        #EF4444   Errors, floor-mode badge
-state-blue:       #3B82F6   Sleep quality indicator
+── SEMANTIC STATES — SANCTIONED EXCEPTIONS ──────────────
+These four colors are universal communication conventions (green=go,
+orange=caution, red=stop, blue=sleep/calm). They are NOT brand colors
+and NOT accent colors. They appear only where they carry that universal
+meaning — never as decoration. The "lime is the ONLY accent" rule does
+not apply to this group; it applies to brand accent decisions only.
+
+state-green:      #22C55E   Check-in complete, success states
+state-orange:     #F97316   Soreness indicator, physical warning
+state-red:        #EF4444   Errors, floor-mode badge, destructive actions
+state-blue:       #3B82F6   Sleep quality only (calm/rest convention)
 ```
 
 ### Card Patterns
@@ -304,7 +310,7 @@ git push
 3. Two processes: npm run dev (3000) + node server.js (3001)
 4. `/api/mind` is GONE — never add API calls for mind responses
 5. Supabase: always `.maybeSingle()` not `.single()`, always `.upsert()` not `.insert()`
-6. LIME (#CAFF40) is the ONLY accent color — no gold, no navy, no purple
+6. LIME (#CAFF40) is the ONLY brand accent color — no gold, no navy, no purple. Exception: the four sanctioned semantic state colors (green/orange/red/blue) may appear where they carry universal meaning (success/warning/error/sleep). They are not accent colors and must not be used decoratively.
 7. Black design system only — #000000 background, #0D0D0D cards
 8. Card style: bg-[#0D0D0D] border border-[#262626] rounded-2xl
 9. Every coaching engine output includes reasoning[] — always show it to the user
