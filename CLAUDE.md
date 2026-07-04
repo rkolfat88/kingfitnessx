@@ -135,33 +135,53 @@ GET  /api/health — health check
 
 The `/api/mind` endpoint has been **REMOVED** — all mind responses are now deterministic functions in the frontend. Do not re-add it.
 
-## DESIGN SYSTEM — NEVER BREAK
+## DESIGN SYSTEM v2 — LOCKED — NEVER BREAK
 
-> **Design system is Dark Navy + Gold. The old pure-black (#080808) system is DEPRECATED. All screens must use the navy palette.**
+> **Design system is BLACK + WHITE + LIME/NEON-GREEN.**
+> The old Dark Navy + Gold palette (#070B14 bg, #C9A84C accent) is FULLY DEPRECATED.
+> Do not use navy, do not use gold, do not reference the old palette in any new code.
 
 ### Colors
 
 ```
-Background:       #070B14   (was #080808 — DEPRECATED)
-Surface 1:        #0D1117
-Cards:            #111827
-Surface elevated: #1A2236
-Border default:   #1E2D40
-Gold base:        #C9A84C   (ONLY accent — no blue, no purple)
-Gold light:       #E8C76A
-Gold dark:        #9B7A2E
-Text primary:     #F0F4FF   (slight blue tint — was #F0F0F0)
-Text secondary:   #8899BB
-Text muted:       #445577
-Green:            #22C55E
-Orange:           #F97316
-Red:              #EF4444
+── BACKGROUNDS ──────────────────────────────────────────
+bg-base:          #000000   Page canvas, app background
+surface-1:        #0D0D0D   Cards, input fields
+surface-2:        #141414   Elevated cards, modals, drawers
+surface-3:        #1A1A1A   Hover states, selected rows
+border-default:   #262626   Default card / input borders
+border-strong:    #333333   Focused states, separators
+
+── ACCENT (LIME / NEON-GREEN) ───────────────────────────
+accent:           #CAFF40   CTAs, active nav, key metrics, section headers
+accent-dim:       #A8D930   Pressed / active button state
+accent-subtle:    #CAFF40   at 12% opacity — card tints, pill backgrounds
+accent-glow:      #CAFF40   at 25% opacity — box-shadow on milestone animations
+text-on-accent:   #000000   Text INSIDE lime buttons (WCAG AAA)
+
+── TEXT (WHITE STRUCTURE) ───────────────────────────────
+text-primary:     #FFFFFF   Headlines, card titles, active values
+text-secondary:   #A0A0A0   Body copy, descriptions
+text-muted:       #5C5C5C   Labels, placeholders, disabled
+
+── SEMANTIC STATES (retained, not brand colors) ─────────
+state-green:      #22C55E   Check-in complete, success
+state-orange:     #F97316   Soreness indicator, warning
+state-red:        #EF4444   Errors, floor-mode badge
+state-blue:       #3B82F6   Sleep quality indicator
 ```
 
-### Card Style
+### Card Patterns
 
 ```
-bg-[#111827] border border-[#C9A84C]/20 rounded-2xl
+Standard card:
+  bg-[#0D0D0D] border border-[#262626] rounded-2xl
+
+Accent-tinted card (check-in complete, streak, milestones):
+  bg-[#CAFF40]/[0.06] border border-[#CAFF40]/20 rounded-2xl
+
+Left-border accent (coach quote, philosophy block):
+  border-l-2 border-[#CAFF40] pl-4
 ```
 
 ### Fonts
@@ -194,12 +214,13 @@ Card padding: p-5
 ### Typography
 
 ```
-Page title:     text-4xl font-black text-[#F0F4FF] (Space Grotesk)
-Section header: text-xs font-semibold uppercase tracking-widest text-[#C9A84C]
-Card title:     text-base font-semibold text-[#F0F4FF]
-Body:           text-sm text-[#8899BB]
-Muted:          text-xs text-[#445577]
+Page title:     text-4xl font-black text-[#FFFFFF] (Space Grotesk)
+Section header: text-xs font-bold uppercase tracking-widest text-[#CAFF40]
+Card title:     text-base font-semibold text-[#FFFFFF]
+Body:           text-sm text-[#A0A0A0]
+Muted:          text-xs text-[#5C5C5C]
 Mono data:      font-mono (JetBrains Mono)
+CTA button:     bg-[#CAFF40] text-[#000000] font-black
 ```
 
 ## COACHING RULES ENGINE — RULE SET
@@ -241,7 +262,7 @@ VITE_SUPABASE_ANON_KEY=...
 - MIND pillar complete: Phase Zero (7 sections) + Mind Gym daily check-in
 - Deterministic mind responses (no API)
 - Coaching Rules Engine (nutrition, training, adapt, scores)
-- Design system: Dark Navy + Gold
+- Design system: Black + White + Lime (#CAFF40) — v2 LOCKED
 - ProtectedRoute, AuthScreen
 - Supabase tables: user_profiles, mind_profiles, phase_zero_progress, mind_checkins
 - Fixed bottom nav (z-40), CTA buttons z-50
@@ -283,9 +304,9 @@ git push
 3. Two processes: npm run dev (3000) + node server.js (3001)
 4. `/api/mind` is GONE — never add API calls for mind responses
 5. Supabase: always `.maybeSingle()` not `.single()`, always `.upsert()` not `.insert()`
-6. Gold is the ONLY accent color
-7. Navy design system only — #070B14 background, #111827 cards
-8. Card style: bg-[#111827] border border-[#C9A84C]/20 rounded-2xl
+6. LIME (#CAFF40) is the ONLY accent color — no gold, no navy, no purple
+7. Black design system only — #000000 background, #0D0D0D cards
+8. Card style: bg-[#0D0D0D] border border-[#262626] rounded-2xl
 9. Every coaching engine output includes reasoning[] — always show it to the user
 10. Coaching engine is pure TypeScript, zero API calls, zero external dependencies
 
