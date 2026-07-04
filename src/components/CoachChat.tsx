@@ -26,7 +26,7 @@ export default function CoachChatScreen() {
   const [messages, setMessages] = useState<Message[]>([{
     id: 'welcome',
     sender: 'coach',
-    text: "I'm Coach King. Tell me what's going on — training, nutrition, recovery, or anything on your mind.",
+    text: "I'm Coach Richard K. Tell me what's going on — training, nutrition, recovery, or anything on your mind.",
     timestamp: now(),
   }]);
   const [inputText, setInputText] = useState('');
@@ -85,12 +85,12 @@ export default function CoachChatScreen() {
       <div className="shrink-0 px-5 pt-12 pb-4 flex items-center gap-3 border-b border-[#262626]">
         <div className="relative">
           <div className="w-10 h-10 rounded-full bg-[#CAFF40]/10 border-2 border-[#CAFF40] flex items-center justify-center font-black text-[#CAFF40] text-lg shadow-[0_0_12px_rgba(201,168,76,0.25)]">
-            K
+            R
           </div>
           <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#22C55E] border-2 border-[#000000]" />
         </div>
         <div>
-          <h2 className="text-base font-black text-[#FFFFFF] leading-none">Coach King</h2>
+          <h2 className="text-base font-black text-[#FFFFFF] leading-none">Coach Richard K.</h2>
           <p className="text-[9px] font-bold text-[#22C55E] uppercase tracking-widest mt-0.5">● Online</p>
         </div>
       </div>
@@ -153,7 +153,7 @@ export default function CoachChatScreen() {
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             disabled={isThinking}
-            placeholder="Ask Coach King..."
+            placeholder="Ask Coach Richard K…"
             className="w-full pl-4 pr-10 py-3 bg-[#0D0D0D] border border-[#262626] text-[#FFFFFF] text-sm rounded-full placeholder:text-[#5C5C5C] focus:outline-none focus:border-[#CAFF40]/50 transition"
           />
           <Sparkles className="absolute right-3.5 top-3.5 w-4 h-4 text-[#CAFF40]/40" />

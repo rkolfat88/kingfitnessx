@@ -160,7 +160,7 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
         <div className="flex items-center gap-3 mb-3">
           <button
             onClick={onFinish}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95 flex-shrink-0 -ml-1"
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#141414] border border-[#262626] text-[#A0A0A0] hover:text-[#FFFFFF] hover:border-[#3A3A3A] transition-colors active:scale-95 flex-shrink-0"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>

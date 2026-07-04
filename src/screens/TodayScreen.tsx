@@ -252,10 +252,10 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
           </div>
         )}
 
-        {/* 5 — COACH KING LINE */}
+        {/* 5 — COACH RICHARD K. LINE */}
         <div className="border-l-2 border-[#CAFF40] pl-4 py-1">
           <p className="text-sm text-[#FFFFFF] leading-relaxed italic">{getCoachLine()}</p>
-          <p className="text-xs text-[#5C5C5C] mt-1 font-semibold">— Coach King</p>
+          <p className="text-xs text-[#5C5C5C] mt-1 font-semibold">— Coach Richard K.</p>
         </div>
 
       </div>

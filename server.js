@@ -92,8 +92,8 @@ async function requireAuth(req, res) {
   return user;
 }
 
-// ─── Coach King system prompt ─────────────────────────────────────────────────
-const COACH_KING_SYSTEM = `You are Coach King — the AI personal trainer inside King AI Coach, a premium dark-luxury fitness app.
+// ─── Coach Richard K. system prompt ────────────────────────────────────────────
+const COACH_SYSTEM = `You are Coach Richard K. — the AI personal trainer inside King AI Coach, a premium dark-luxury fitness app.
 
 ## Persona
 - Direct, confident, evidence-based. Never vague. Every recommendation has a "why."
@@ -146,7 +146,7 @@ HRV: ${context.hrv ?? 'unknown'}ms | Readiness: ${context.readiness ?? 'unknown'
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-5',
       max_tokens: 300,
-      system: COACH_KING_SYSTEM,
+      system: COACH_SYSTEM,
       messages: [...historyMessages, { role: 'user', content: contextBlock + message }],
     });
 
@@ -294,7 +294,7 @@ const PORT = process.env.PORT || 3001;
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`\n King AI Coach backend running on http://localhost:${PORT}`);
-    console.log(`   POST /api/chat              — Coach King AI (10/min, 30/day)`);
+    console.log(`   POST /api/chat              — Coach Richard K. AI (10/min, 30/day)`);
     console.log(`   DELETE /api/account/delete  — GDPR account deletion`);
     console.log(`   GET  /api/account/export    — GDPR data export`);
     console.log(`   POST /api/webhooks/stripe   — Stripe subscription events`);

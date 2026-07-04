@@ -47,7 +47,7 @@ export default function ComebackProtocol({ onClose }: Props) {
       <div className="flex items-center gap-3 px-5 pt-12 pb-4">
         <button
           onClick={onClose}
-          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95 flex-shrink-0"
+          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl bg-[#141414] border border-[#262626] text-[#A0A0A0] hover:text-[#FFFFFF] hover:border-[#3A3A3A] transition-colors active:scale-95 flex-shrink-0"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>

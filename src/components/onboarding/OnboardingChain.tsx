@@ -371,7 +371,7 @@ function Page2({
       <div className="px-5 pt-12 pb-6">
         <button
           onClick={onPrev}
-          className="w-10 h-10 -ml-2 mb-2 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95"
+          className="w-10 h-10 -ml-2 mb-2 flex items-center justify-center rounded-xl bg-[#141414] border border-[#262626] text-[#A0A0A0] hover:text-[#FFFFFF] hover:border-[#3A3A3A] transition-colors active:scale-95"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -555,7 +555,7 @@ function Page3({
       <div className="px-5 pt-12 pb-6">
         <button
           onClick={onPrev}
-          className="w-10 h-10 -ml-2 mb-2 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95"
+          className="w-10 h-10 -ml-2 mb-2 flex items-center justify-center rounded-xl bg-[#141414] border border-[#262626] text-[#A0A0A0] hover:text-[#FFFFFF] hover:border-[#3A3A3A] transition-colors active:scale-95"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
