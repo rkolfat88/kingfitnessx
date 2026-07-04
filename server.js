@@ -120,6 +120,91 @@ The user's current biometric context is passed as a JSON block at the start of e
 - If the user is in pain or mentions injury, always add: "If pain persists, consult a sports medicine professional."
 `;
 
+// ─── Client context for Coach Richard K. ──────────────────────────────────────
+// Reads the athlete's profile, active plans, and recent check-ins so the coach
+// knows who it's talking to. Returns null for brand-new users with no data yet.
+async function buildClientContext(user) {
+  const userId = user.id;
+
+  const [onboardingRes, trainingRes, nutritionRes, checkinsRes] = await Promise.all([
+    supabaseAdmin
+      .from('onboarding_data')
+      .select('goal, protocol, experience, age, weight_kg')
+      .eq('user_id', userId)
+      .maybeSingle(),
+    supabaseAdmin
+      .from('training_plans')
+      .select('split_type, mesocycle_week, plan_data')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .maybeSingle(),
+    supabaseAdmin
+      .from('nutrition_plans')
+      .select('daily_calories, protein_g, carbs_g, fat_g, protocol')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .maybeSingle(),
+    supabaseAdmin
+      .from('daily_checkins')
+      .select('checkin_date, sleep_quality, energy, soreness, adaptation_flags')
+      .eq('user_id', userId)
+      .order('checkin_date', { ascending: false })
+      .limit(3),
+  ]);
+
+  const onboarding = onboardingRes.data;
+  const training = trainingRes.data;
+  const nutrition = nutritionRes.data;
+  const checkins = checkinsRes.data ?? [];
+
+  if (!onboarding && !training && !nutrition) return null;
+
+  const parts = [];
+
+  const identity = [];
+  const name = user.user_metadata?.full_name;
+  if (name) identity.push(name);
+  if (onboarding?.goal) identity.push(`goal: ${onboarding.goal}`);
+  const protocol = onboarding?.protocol ?? nutrition?.protocol;
+  if (protocol) identity.push(`protocol: ${protocol}`);
+  if (onboarding?.experience) identity.push(`experience: ${onboarding.experience}`);
+  if (onboarding?.age) identity.push(`age ${onboarding.age}`);
+  if (onboarding?.weight_kg) identity.push(`${onboarding.weight_kg}kg`);
+  if (identity.length) parts.push(`Client context: ${identity.join(', ')}.`);
+
+  if (training) {
+    const days = training.plan_data?.days;
+    let todayLabel = '';
+    if (Array.isArray(days) && days.length > 0) {
+      // Same weekday → plan-day mapping used by the TRAIN and check-in screens
+      const dow = new Date().getDay();
+      const day = days[(dow === 0 ? 6 : dow - 1) % days.length];
+      if (day?.day_name) {
+        todayLabel = ` — today: ${day.day_name}${day.focus ? ` (${day.focus})` : ''}`;
+      }
+    }
+    parts.push(`Week ${training.mesocycle_week} of ${training.split_type}${todayLabel}.`);
+  }
+
+  if (checkins.length > 0) {
+    const lines = checkins.map((c) => {
+      const flags = Array.isArray(c.adaptation_flags) && c.adaptation_flags.length > 0
+        ? c.adaptation_flags.join('/')
+        : 'none';
+      return `[${c.checkin_date}] sleep ${c.sleep_quality}/5, energy ${c.energy}/5, soreness ${c.soreness}/5, flags: ${flags}`;
+    });
+    parts.push(`Last check-ins (most recent first): ${lines.join('; ')}.`);
+  }
+
+  if (nutrition) {
+    parts.push(
+      `Daily targets: ${nutrition.daily_calories} kcal, ${nutrition.protein_g}g protein, ${nutrition.carbs_g}g carbs, ${nutrition.fat_g}g fat.`
+    );
+  }
+
+  return parts.join(' ');
+}
+
 // ─── /api/chat ────────────────────────────────────────────────────────────────
 app.post('/api/chat', chatBurstLimiter, chatDailyLimiter, async (req, res) => {
   const { message, history = [], context = {} } = req.body;
@@ -130,6 +215,24 @@ app.post('/api/chat', chatBurstLimiter, chatDailyLimiter, async (req, res) => {
 
   if (!process.env.ANTHROPIC_API_KEY) {
     return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in .env' });
+  }
+
+  // Personalize the system prompt when the request carries a valid session token.
+  // Any failure here degrades to the base prompt — chat must never break on context.
+  let system = COACH_SYSTEM;
+  const authHeader = req.headers['authorization'];
+  if (authHeader?.startsWith('Bearer ')) {
+    try {
+      const { data: { user } } = await supabaseAnon.auth.getUser(authHeader.slice(7));
+      if (user) {
+        const clientContext = await buildClientContext(user);
+        system = clientContext
+          ? `${clientContext}\n\n${COACH_SYSTEM}`
+          : `New client — no onboarding data or plan yet. Introduce yourself briefly and ask what they need help with.\n\n${COACH_SYSTEM}`;
+      }
+    } catch (err) {
+      console.warn('Client context build failed, using base prompt:', err.message);
+    }
   }
 
   const contextBlock = `[ATHLETE BIOMETRICS — ${new Date().toLocaleTimeString()}]
@@ -146,7 +249,7 @@ HRV: ${context.hrv ?? 'unknown'}ms | Readiness: ${context.readiness ?? 'unknown'
     const response = await anthropic.messages.create({
       model: 'claude-sonnet-5',
       max_tokens: 300,
-      system: COACH_SYSTEM,
+      system,
       messages: [...historyMessages, { role: 'user', content: contextBlock + message }],
     });
 
