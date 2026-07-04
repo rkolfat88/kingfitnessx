@@ -105,13 +105,12 @@ function AppContent() {
 
         {/* Wordmark header — hidden on full-screen routes */}
         {!isFullScreen && (
-          <div className="shrink-0 text-center py-3 border-b border-[#CAFF40]/10 select-none bg-[#000000]/95 sticky top-0 z-30 backdrop-blur-sm">
-            <p className="text-[8px] tracking-[0.35em] text-[#CAFF40] font-extrabold uppercase font-mono leading-none">
-              PERFORMANCE OPERATING SYSTEM
-            </p>
-            <h1 className="text-lg font-extrabold italic text-white tracking-widest mt-0.5 leading-none font-display">
-              KFX
-            </h1>
+          <div className="shrink-0 text-center py-2 border-b border-[#CAFF40]/10 select-none bg-[#000000]/95 sticky top-0 z-30 backdrop-blur-sm">
+            <img
+              src="/logo.jpg"
+              alt="KFX — King Fitness Experience"
+              className="h-11 w-11 mx-auto"
+            />
           </div>
         )}
 

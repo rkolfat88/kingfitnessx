@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Crown, Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 type Mode = 'login' | 'signup' | 'forgot-password' | 'forgot-sent' | 'reset-password'
@@ -110,14 +110,13 @@ export function AuthScreen() {
 
       <div className="w-full max-w-[390px] animate-fade-in">
         <div className="bg-[#0D0D0D] border border-[#CAFF40]/20 rounded-2xl p-6">
-          {/* Crown + title */}
+          {/* Official logo + subtitle */}
           <div className="flex flex-col items-center mb-7">
-            <div className="w-14 h-14 rounded-2xl bg-[#CAFF40]/10 border border-[#CAFF40]/20 flex items-center justify-center mb-4">
-              <Crown className="w-7 h-7 text-[#CAFF40]" />
-            </div>
-            <h1 className="text-2xl font-black text-[#FFFFFF] tracking-tight font-display">
-              KFX
-            </h1>
+            <img
+              src="/logo.jpg"
+              alt="KFX — King Fitness Experience"
+              className="w-28 h-28 rounded-2xl border border-[#CAFF40]/20 mb-2"
+            />
             <p className="text-sm text-[#A0A0A0] mt-1">{subtitle}</p>
           </div>
 
