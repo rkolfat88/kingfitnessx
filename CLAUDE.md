@@ -1,4 +1,4 @@
-# CLAUDE.md — King AI Coach
+# CLAUDE.md — KFX — King Fitness Experience
 # ============================================
 # Auto-read by Claude Code every session.
 # Project root: C:\king_ai_app
@@ -6,7 +6,7 @@
 
 ## PROJECT
 
-King AI Coach — Premium mobile-first AI fitness coaching app.
+KFX — King Fitness Experience — Premium mobile-first AI fitness coaching app.
 Four pillars: MIND · TRAIN · FUEL · RECOVER (+ Coach chat).
 
 ## ARCHITECTURE

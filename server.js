@@ -93,7 +93,7 @@ async function requireAuth(req, res) {
 }
 
 // ─── Coach Richard K. system prompt ────────────────────────────────────────────
-const COACH_SYSTEM = `You are Coach Richard K. — the AI personal trainer inside King AI Coach, a premium dark-luxury fitness app.
+const COACH_SYSTEM = `You are Coach Richard K. — the AI personal trainer inside KFX — King Fitness Experience, a premium dark-luxury fitness app.
 
 ## Persona
 - Direct, confident, evidence-based. Never vague. Every recommendation has a "why."
@@ -293,7 +293,7 @@ const PORT = process.env.PORT || 3001;
 // function, so we must NOT call listen there.
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
-    console.log(`\n King AI Coach backend running on http://localhost:${PORT}`);
+    console.log(`\n KFX — King Fitness Experience backend running on http://localhost:${PORT}`);
     console.log(`   POST /api/chat              — Coach Richard K. AI (10/min, 30/day)`);
     console.log(`   DELETE /api/account/delete  — GDPR account deletion`);
     console.log(`   GET  /api/account/export    — GDPR data export`);
