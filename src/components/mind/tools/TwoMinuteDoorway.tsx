@@ -41,11 +41,11 @@ export default function TwoMinuteDoorway({ onClose }: Props) {
   const secs = seconds % 60;
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#070B14] flex flex-col">
+    <div className="fixed inset-0 z-50 bg-[#000000] flex flex-col">
       <div className="flex items-center gap-3 px-5 pt-12 pb-4">
         <button
           onClick={onClose}
-          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95 flex-shrink-0"
+          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95 flex-shrink-0"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -60,7 +60,7 @@ export default function TwoMinuteDoorway({ onClose }: Props) {
       <div className="flex flex-col items-center pt-4 pb-8">
         <div className="relative w-36 h-36">
           <svg className="w-36 h-36 -rotate-90" viewBox="0 0 120 120">
-            <circle cx="60" cy="60" r="52" fill="none" stroke="#0D1F0D" strokeWidth="8" />
+            <circle cx="60" cy="60" r="52" fill="none" stroke="#141414" strokeWidth="8" />
             <circle
               cx="60" cy="60" r="52" fill="none"
               stroke={seconds === 0 ? '#22C55E' : '#22C55E'}
@@ -75,7 +75,7 @@ export default function TwoMinuteDoorway({ onClose }: Props) {
             {seconds === 0 ? (
               <span className="font-mono text-lg font-black text-[#22C55E]">Done</span>
             ) : (
-              <span className="font-mono text-3xl font-black text-[#F0F4FF]">
+              <span className="font-mono text-3xl font-black text-[#FFFFFF]">
                 {mins}:{String(secs).padStart(2, '0')}
               </span>
             )}
@@ -83,7 +83,7 @@ export default function TwoMinuteDoorway({ onClose }: Props) {
         </div>
 
         {!started && (
-          <p className="text-sm text-[#8899BB] mt-4 text-center px-8">
+          <p className="text-sm text-[#A0A0A0] mt-4 text-center px-8">
             Stand where you are. No equipment. No warm-up.
           </p>
         )}
@@ -95,8 +95,8 @@ export default function TwoMinuteDoorway({ onClose }: Props) {
             key={i}
             onClick={() => toggleMove(i)}
             disabled={!started}
-            className="w-full bg-[#111827] rounded-xl p-4 flex items-center gap-3 text-left transition-all disabled:opacity-50"
-            style={{ border: `1px solid ${completed[i] ? '#22C55E' : '#1E2D40'}` }}
+            className="w-full bg-[#0D0D0D] rounded-xl p-4 flex items-center gap-3 text-left transition-all disabled:opacity-50"
+            style={{ border: `1px solid ${completed[i] ? '#22C55E' : '#262626'}` }}
           >
             <div
               className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
@@ -104,14 +104,14 @@ export default function TwoMinuteDoorway({ onClose }: Props) {
             >
               {completed[i]
                 ? <Check className="w-3.5 h-3.5 text-black" />
-                : <span className="text-xs font-mono font-bold text-[#8899BB]">{i + 1}</span>
+                : <span className="text-xs font-mono font-bold text-[#A0A0A0]">{i + 1}</span>
               }
             </div>
             <div>
-              <p className="text-sm font-bold" style={{ color: completed[i] ? '#22C55E' : '#F0F4FF' }}>
+              <p className="text-sm font-bold" style={{ color: completed[i] ? '#22C55E' : '#FFFFFF' }}>
                 {move.label}
               </p>
-              <p className="text-xs text-[#8899BB]">{move.detail}</p>
+              <p className="text-xs text-[#A0A0A0]">{move.detail}</p>
             </div>
           </button>
         ))}
@@ -133,7 +133,7 @@ export default function TwoMinuteDoorway({ onClose }: Props) {
             Start the 2 minutes
           </button>
         ) : (
-          <p className="text-center text-xs text-[#445577]">
+          <p className="text-center text-xs text-[#5C5C5C]">
             Tap each move as you complete it
           </p>
         )}

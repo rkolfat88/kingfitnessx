@@ -17,7 +17,7 @@ export function HeaderBar({ onBack, onAvatarPress, userInitials, title, transpar
         {onBack ? (
           <button
             onClick={onBack}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -26,7 +26,7 @@ export function HeaderBar({ onBack, onAvatarPress, userInitials, title, transpar
 
       {/* Center — optional title */}
       {title ? (
-        <p className="text-xs font-bold uppercase tracking-widest text-[#8899BB]">{title}</p>
+        <p className="text-xs font-bold uppercase tracking-widest text-[#A0A0A0]">{title}</p>
       ) : (
         <div />
       )}
@@ -36,9 +36,9 @@ export function HeaderBar({ onBack, onAvatarPress, userInitials, title, transpar
         {onAvatarPress ? (
           <button
             onClick={onAvatarPress}
-            className="w-9 h-9 rounded-full bg-[#C9A84C]/15 border border-[#C9A84C]/30 flex items-center justify-center transition-all active:scale-95 hover:bg-[#C9A84C]/25"
+            className="w-9 h-9 rounded-full bg-[#CAFF40]/15 border border-[#CAFF40]/30 flex items-center justify-center transition-all active:scale-95 hover:bg-[#CAFF40]/25"
           >
-            <span className="text-xs font-black text-[#C9A84C] tracking-tight">
+            <span className="text-xs font-black text-[#CAFF40] tracking-tight">
               {userInitials || 'K'}
             </span>
           </button>

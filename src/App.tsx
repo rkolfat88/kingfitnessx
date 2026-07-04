@@ -53,8 +53,8 @@ function AppContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070B14] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#CAFF40]/30 border-t-[#CAFF40] rounded-full animate-spin" />
       </div>
     );
   }
@@ -63,8 +63,8 @@ function AppContent() {
 
   if (onboardingLoading) {
     return (
-      <div className="min-h-screen bg-[#070B14] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#C9A84C]/30 border-t-[#C9A84C] rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#CAFF40]/30 border-t-[#CAFF40] rounded-full animate-spin" />
       </div>
     );
   }
@@ -94,19 +94,19 @@ function AppContent() {
   );
 
   return (
-    <div className="min-h-screen bg-[#070B14] text-[#F0F0F0] font-sans antialiased">
+    <div className="min-h-screen bg-[#000000] text-[#FFFFFF] font-sans antialiased">
       {/* Ambient background glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden select-none opacity-50">
-        <div className="absolute top-16 left-1/4 w-80 h-80 bg-[#C9A84C]/4 rounded-full blur-[100px]" />
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-[#C9A84C]/4 rounded-full blur-[120px]" />
+        <div className="absolute top-16 left-1/4 w-80 h-80 bg-[#CAFF40]/4 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-[#CAFF40]/4 rounded-full blur-[120px]" />
       </div>
 
       <div className="max-w-[430px] mx-auto min-h-screen flex flex-col relative">
 
         {/* Wordmark header — hidden on full-screen routes */}
         {!isFullScreen && (
-          <div className="shrink-0 text-center py-3 border-b border-[#C9A84C]/10 select-none bg-[#070B14]/95 sticky top-0 z-30 backdrop-blur-sm">
-            <p className="text-[8px] tracking-[0.35em] text-[#C9A84C] font-extrabold uppercase font-mono leading-none">
+          <div className="shrink-0 text-center py-3 border-b border-[#CAFF40]/10 select-none bg-[#000000]/95 sticky top-0 z-30 backdrop-blur-sm">
+            <p className="text-[8px] tracking-[0.35em] text-[#CAFF40] font-extrabold uppercase font-mono leading-none">
               PERFORMANCE OPERATING SYSTEM
             </p>
             <h1 className="text-lg font-extrabold italic text-white tracking-widest mt-0.5 leading-none font-display">
@@ -143,7 +143,7 @@ function AppContent() {
         </div>
 
         {/* Bottom navigation — hidden during active workout */}
-        <div className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-[64px] bg-[#0A0A0A]/95 border-t border-[#C9A84C]/10 px-6 flex items-center justify-between z-40 backdrop-blur-sm transition-transform duration-200 ${activeScreen === 'workout-logger' ? 'translate-y-full' : ''}`}>
+        <div className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] h-[64px] bg-[#000000]/95 border-t border-[#CAFF40]/10 px-6 flex items-center justify-between z-40 backdrop-blur-sm transition-transform duration-200 ${activeScreen === 'workout-logger' ? 'translate-y-full' : ''}`}>
           {navItems.map(({ id, icon: Icon, label }) => {
             const active = activeScreen === id;
             return (
@@ -151,7 +151,7 @@ function AppContent() {
                 key={id}
                 onClick={() => setActiveScreen(id)}
                 className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-150 ${
-                  active ? 'text-[#C9A84C] scale-110' : 'text-[#505050] hover:text-[#909090]'
+                  active ? 'text-[#CAFF40] scale-110' : 'text-[#5C5C5C] hover:text-[#A0A0A0]'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -175,21 +175,21 @@ function AppContent() {
               onClick={() => setShowMenu(false)}
             />
             {/* Sheet */}
-            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-[#0F1420] border-t border-[#C9A84C]/15 rounded-t-3xl pb-10 pt-2">
+            <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-[#141414] border-t border-[#CAFF40]/15 rounded-t-3xl pb-10 pt-2">
               {/* Handle */}
-              <div className="w-10 h-1 bg-[#2A3A50] rounded-full mx-auto mb-5" />
+              <div className="w-10 h-1 bg-[#262626] rounded-full mx-auto mb-5" />
 
               {/* User header */}
-              <div className="px-6 pb-4 border-b border-[#1E2D40]">
+              <div className="px-6 pb-4 border-b border-[#262626]">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-full bg-[#C9A84C]/15 border border-[#C9A84C]/30 flex items-center justify-center">
-                    <span className="text-sm font-black text-[#C9A84C]">{userInitials}</span>
+                  <div className="w-11 h-11 rounded-full bg-[#CAFF40]/15 border border-[#CAFF40]/30 flex items-center justify-center">
+                    <span className="text-sm font-black text-[#CAFF40]">{userInitials}</span>
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-[#F0F4FF]">
+                    <p className="text-sm font-bold text-[#FFFFFF]">
                       {user?.user_metadata?.full_name || 'King'}
                     </p>
-                    <p className="text-xs text-[#445577]">{user?.email}</p>
+                    <p className="text-xs text-[#5C5C5C]">{user?.email}</p>
                   </div>
                 </div>
               </div>
@@ -205,15 +205,15 @@ function AppContent() {
                   <button
                     key={item.label}
                     onClick={item.action}
-                    className="w-full flex items-center gap-4 px-2 py-3.5 border-b border-[#1A2236] last:border-0 text-left transition-colors hover:text-[#C9A84C] active:opacity-70"
+                    className="w-full flex items-center gap-4 px-2 py-3.5 border-b border-[#141414] last:border-0 text-left transition-colors hover:text-[#CAFF40] active:opacity-70"
                   >
-                    <item.icon className="w-4 h-4 text-[#445577]" />
-                    <span className="text-sm font-semibold text-[#F0F4FF]">{item.label}</span>
+                    <item.icon className="w-4 h-4 text-[#5C5C5C]" />
+                    <span className="text-sm font-semibold text-[#FFFFFF]">{item.label}</span>
                   </button>
                 ))}
 
                 {/* Sign Out — separated */}
-                <div className="mt-2 pt-2 border-t border-[#1A2236]">
+                <div className="mt-2 pt-2 border-t border-[#141414]">
                   <button
                     onClick={async () => { setShowMenu(false); await signOut() }}
                     className="w-full flex items-center gap-4 px-2 py-3.5 text-left transition-colors active:opacity-70"

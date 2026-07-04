@@ -48,17 +48,17 @@ export default function SelfCompassionReset({ onClose }: Props) {
   const progress = showProtocol ? BEATS.length : beat;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col" style={{ backgroundColor: '#080800' }}>
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ backgroundColor: '#000000' }}>
       <div className="flex items-center gap-3 px-5 pt-12 pb-4">
         <button
           onClick={onClose}
-          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95 flex-shrink-0"
+          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95 flex-shrink-0"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
         <div className="flex items-center gap-2">
-          <Heart className="w-4 h-4 text-[#C9A84C]" />
-          <span className="text-xs font-mono font-semibold uppercase tracking-widest text-[#C9A84C]">
+          <Heart className="w-4 h-4 text-[#CAFF40]" />
+          <span className="text-xs font-mono font-semibold uppercase tracking-widest text-[#CAFF40]">
             Self-Compassion Reset
           </span>
         </div>
@@ -69,7 +69,7 @@ export default function SelfCompassionReset({ onClose }: Props) {
           <div
             key={i}
             className="h-1 flex-1 rounded-full transition-all duration-500"
-            style={{ backgroundColor: i <= progress ? '#C9A84C' : '#2A2200' }}
+            style={{ backgroundColor: i <= progress ? '#CAFF40' : '#262626' }}
           />
         ))}
       </div>
@@ -79,18 +79,18 @@ export default function SelfCompassionReset({ onClose }: Props) {
           <div className="flex-1 px-5 flex flex-col justify-center">
             <h2
               className="font-display text-3xl font-black leading-tight mb-6 whitespace-pre-line"
-              style={{ color: '#FFF8E0' }}
+              style={{ color: '#FFFFFF' }}
             >
               {BEATS[beat].heading}
             </h2>
-            <p className="text-base leading-relaxed" style={{ color: '#887744' }}>
+            <p className="text-base leading-relaxed" style={{ color: '#A0A0A0' }}>
               {BEATS[beat].body}
             </p>
           </div>
           <div className="px-5 pb-10">
             <button
               onClick={advanceBeat}
-              className="w-full py-4 rounded-xl font-bold text-sm text-black active:opacity-80 bg-[#C9A84C]"
+              className="w-full py-4 rounded-xl font-bold text-sm text-black active:opacity-80 bg-[#CAFF40]"
             >
               {BEATS[beat].cta}
             </button>
@@ -99,7 +99,7 @@ export default function SelfCompassionReset({ onClose }: Props) {
       ) : (
         <>
           <div className="flex-1 px-5 flex flex-col justify-center">
-            <p className="font-mono text-xs font-bold tracking-widest text-[#C9A84C] mb-6">
+            <p className="font-mono text-xs font-bold tracking-widest text-[#CAFF40] mb-6">
               THE PROTOCOL
             </p>
             <div className="space-y-3">
@@ -108,21 +108,21 @@ export default function SelfCompassionReset({ onClose }: Props) {
                   key={i}
                   className="rounded-xl p-4 transition-all duration-300"
                   style={{
-                    backgroundColor: i <= protocolStep ? '#1A1500' : '#080800',
-                    border: `1px solid ${i <= protocolStep ? '#C9A84C40' : '#2A2200'}`,
+                    backgroundColor: i <= protocolStep ? '#0D0D0D' : '#000000',
+                    border: `1px solid ${i <= protocolStep ? '#CAFF4040' : '#262626'}`,
                     opacity: i > protocolStep ? 0.35 : 1,
                   }}
                 >
                   <div className="flex items-start gap-3">
                     <span
                       className="font-mono text-xs font-bold mt-0.5 flex-shrink-0"
-                      style={{ color: i <= protocolStep ? '#C9A84C' : '#554433' }}
+                      style={{ color: i <= protocolStep ? '#CAFF40' : '#5C5C5C' }}
                     >
                       {String(i + 1).padStart(2, '0')}
                     </span>
                     <p
                       className="text-sm leading-relaxed"
-                      style={{ color: i <= protocolStep ? '#FFF8E0' : '#554433' }}
+                      style={{ color: i <= protocolStep ? '#FFFFFF' : '#5C5C5C' }}
                     >
                       {step}
                     </p>
@@ -134,7 +134,7 @@ export default function SelfCompassionReset({ onClose }: Props) {
           <div className="px-5 pb-10">
             <button
               onClick={advanceProtocol}
-              className="w-full py-4 rounded-xl font-bold text-sm text-black active:opacity-80 bg-[#C9A84C]"
+              className="w-full py-4 rounded-xl font-bold text-sm text-black active:opacity-80 bg-[#CAFF40]"
             >
               {protocolStep < PROTOCOL_STEPS.length - 1 ? 'Done.' : 'Loop closed. Back to Mind Gym.'}
             </button>

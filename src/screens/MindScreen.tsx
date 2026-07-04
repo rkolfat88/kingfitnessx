@@ -64,10 +64,10 @@ export default function MindScreen({ onNavigateToCheckin }: MindScreenProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070B14] flex items-center justify-center">
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Brain className="w-10 h-10 text-[#C9A84C] animate-pulse" />
-          <p className="text-[#8899BB] text-sm">Loading your mind profile...</p>
+          <Brain className="w-10 h-10 text-[#CAFF40] animate-pulse" />
+          <p className="text-[#A0A0A0] text-sm">Loading your mind profile...</p>
         </div>
       </div>
     );

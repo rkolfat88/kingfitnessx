@@ -33,11 +33,11 @@ export default function FearAudit({ onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col" style={{ backgroundColor: '#0A0500' }}>
+    <div className="fixed inset-0 z-50 flex flex-col" style={{ backgroundColor: '#000000' }}>
       <div className="flex items-center gap-3 px-5 pt-12 pb-4">
         <button
           onClick={onClose}
-          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95 flex-shrink-0"
+          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95 flex-shrink-0"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -56,7 +56,7 @@ export default function FearAudit({ onClose }: Props) {
               <div
                 key={i}
                 className="h-1 flex-1 rounded-full transition-all duration-300"
-                style={{ backgroundColor: i <= step ? '#F97316' : '#2A1500' }}
+                style={{ backgroundColor: i <= step ? '#F97316' : '#262626' }}
               />
             ))}
           </div>
@@ -65,18 +65,18 @@ export default function FearAudit({ onClose }: Props) {
             <p className="font-mono text-xs font-bold tracking-widest mb-5 text-[#F97316]">
               QUESTION {step + 1} OF {QUESTIONS.length}
             </p>
-            <h2 className="font-display text-2xl font-black leading-tight mb-5" style={{ color: '#FFF0E8' }}>
+            <h2 className="font-display text-2xl font-black leading-tight mb-5" style={{ color: '#FFFFFF' }}>
               {QUESTIONS[step].q}
             </h2>
-            <p className="text-sm leading-relaxed mb-6" style={{ color: '#88664A' }}>
+            <p className="text-sm leading-relaxed mb-6" style={{ color: '#A0A0A0' }}>
               {QUESTIONS[step].sub}
             </p>
             <div
               className="rounded-xl p-4"
-              style={{ backgroundColor: '#1A0C00', border: '1px solid #F9731628' }}
+              style={{ backgroundColor: '#0D0D0D', border: '1px solid #F9731628' }}
             >
               <p className="text-xs text-[#F97316] mb-2">{QUESTIONS[step].prompt}</p>
-              <p className="text-sm" style={{ color: '#886644' }}>
+              <p className="text-sm" style={{ color: '#5C5C5C' }}>
                 Answer this honestly — aloud, in writing, or in your head. Take the time it needs.
               </p>
             </div>
@@ -97,22 +97,22 @@ export default function FearAudit({ onClose }: Props) {
           <div className="flex-1 px-5 flex flex-col justify-center gap-4">
             <div
               className="rounded-2xl p-6"
-              style={{ backgroundColor: '#1A0C00', border: '1px solid #F9731630' }}
+              style={{ backgroundColor: '#0D0D0D', border: '1px solid #F9731630' }}
             >
               <p className="font-mono text-xs font-bold tracking-widest text-[#F97316] mb-4">REFRAME</p>
-              <p className="text-base leading-relaxed" style={{ color: '#FFF0E8' }}>
+              <p className="text-base leading-relaxed" style={{ color: '#FFFFFF' }}>
                 Fear is always about the story, not the thing. The exercise, the session, the difficulty — all neutral. The story is what gives it power.
               </p>
-              <p className="text-base leading-relaxed mt-3" style={{ color: '#FFF0E8' }}>
+              <p className="text-base leading-relaxed mt-3" style={{ color: '#FFFFFF' }}>
                 You just identified the story. That means you can change it.
               </p>
             </div>
             <div
               className="rounded-2xl p-6"
-              style={{ backgroundColor: '#0A0500', border: '1px solid #F97316' }}
+              style={{ backgroundColor: '#000000', border: '1px solid #F97316' }}
             >
               <p className="font-mono text-xs font-bold tracking-widest text-[#F97316] mb-4">ACTION</p>
-              <p className="text-base leading-relaxed" style={{ color: '#FFF0E8' }}>
+              <p className="text-base leading-relaxed" style={{ color: '#FFFFFF' }}>
                 The specific thing you named in Question 1 goes{' '}
                 <span className="font-bold text-[#F97316]">first</span> in your next session.
                 Not last. Not when you feel ready. First.

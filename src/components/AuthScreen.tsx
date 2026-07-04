@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 type Mode = 'login' | 'signup' | 'forgot-password' | 'forgot-sent' | 'reset-password'
 
 const inputClass =
-  'w-full bg-[#0D1117] border border-[#1E2D40] rounded-xl px-4 py-3 text-[#F0F4FF] placeholder:text-[#445577] focus:border-[#C9A84C]/50 focus:outline-none transition-colors'
+  'w-full bg-[#0D0D0D] border border-[#262626] rounded-xl px-4 py-3 text-[#FFFFFF] placeholder:text-[#5C5C5C] focus:border-[#CAFF40]/50 focus:outline-none transition-colors'
 
 function PasswordInput({
   value,
@@ -20,7 +20,7 @@ function PasswordInput({
 
   return (
     <div className="relative">
-      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#445577]" />
+      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5C5C5C]" />
       <input
         type={showPassword ? 'text' : 'password'}
         placeholder={placeholder}
@@ -33,7 +33,7 @@ function PasswordInput({
       <button
         type="button"
         onClick={() => setShowPassword(!showPassword)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#445577] hover:text-[#8899BB] transition-colors"
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-[#5C5C5C] hover:text-[#A0A0A0] transition-colors"
         tabIndex={-1}
       >
         {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -102,34 +102,34 @@ export function AuthScreen() {
   }[mode]
 
   return (
-    <div className="min-h-screen bg-[#070B14] flex items-center justify-center px-5">
+    <div className="min-h-screen bg-[#000000] flex items-center justify-center px-5">
       {/* ambient glow */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#C9A84C]/5 rounded-full blur-[120px]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#CAFF40]/5 rounded-full blur-[120px]" />
       </div>
 
       <div className="w-full max-w-[390px] animate-fade-in">
-        <div className="bg-[#111827] border border-[#C9A84C]/20 rounded-2xl p-6">
+        <div className="bg-[#0D0D0D] border border-[#CAFF40]/20 rounded-2xl p-6">
           {/* Crown + title */}
           <div className="flex flex-col items-center mb-7">
-            <div className="w-14 h-14 rounded-2xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center mb-4">
-              <Crown className="w-7 h-7 text-[#C9A84C]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#CAFF40]/10 border border-[#CAFF40]/20 flex items-center justify-center mb-4">
+              <Crown className="w-7 h-7 text-[#CAFF40]" />
             </div>
-            <h1 className="text-2xl font-black text-[#F0F4FF] tracking-tight font-display">
+            <h1 className="text-2xl font-black text-[#FFFFFF] tracking-tight font-display">
               KFX
             </h1>
-            <p className="text-sm text-[#8899BB] mt-1">{subtitle}</p>
+            <p className="text-sm text-[#A0A0A0] mt-1">{subtitle}</p>
           </div>
 
           {mode === 'forgot-sent' ? (
             <div className="space-y-5">
-              <p className="text-sm text-[#8899BB] text-center leading-relaxed">
+              <p className="text-sm text-[#A0A0A0] text-center leading-relaxed">
                 If an account exists for that email, a reset link has been sent. Follow the
                 link to set a new password.
               </p>
               <button
                 onClick={() => switchMode('login')}
-                className="w-full bg-[#C9A84C] text-black font-bold text-sm rounded-2xl py-3.5 transition-all duration-150 hover:bg-[#E8C76A] active:scale-[0.98]"
+                className="w-full bg-[#CAFF40] text-black font-bold text-sm rounded-2xl py-3.5 transition-all duration-150 hover:bg-[#A8D930] active:scale-[0.98]"
               >
                 Back to Sign In
               </button>
@@ -139,7 +139,7 @@ export function AuthScreen() {
               {/* Full name — signup only */}
               {mode === 'signup' && (
                 <div className="relative">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#445577]" />
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5C5C5C]" />
                   <input
                     type="text"
                     placeholder="Full name"
@@ -154,7 +154,7 @@ export function AuthScreen() {
               {/* Email — every mode except reset-password */}
               {mode !== 'reset-password' && (
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#445577]" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#5C5C5C]" />
                   <input
                     type="email"
                     placeholder="Email address"
@@ -190,7 +190,7 @@ export function AuthScreen() {
                   <button
                     type="button"
                     onClick={() => switchMode('forgot-password')}
-                    className="text-xs text-[#8899BB] hover:text-[#C9A84C] transition-colors"
+                    className="text-xs text-[#A0A0A0] hover:text-[#CAFF40] transition-colors"
                   >
                     Forgot password?
                   </button>
@@ -206,7 +206,7 @@ export function AuthScreen() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#C9A84C] text-black font-bold text-sm rounded-2xl py-3.5 mt-2 transition-all duration-150 hover:bg-[#E8C76A] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full bg-[#CAFF40] text-black font-bold text-sm rounded-2xl py-3.5 mt-2 transition-all duration-150 hover:bg-[#A8D930] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {mode === 'login' && (loading ? 'Signing in…' : 'Sign In')}
                 {mode === 'signup' && (loading ? 'Creating account…' : 'Create Account')}
@@ -219,7 +219,7 @@ export function AuthScreen() {
                 <button
                   type="button"
                   onClick={() => switchMode('login')}
-                  className="w-full text-center text-sm text-[#8899BB] hover:text-[#C9A84C] transition-colors"
+                  className="w-full text-center text-sm text-[#A0A0A0] hover:text-[#CAFF40] transition-colors"
                 >
                   Back to Sign In
                 </button>
@@ -229,11 +229,11 @@ export function AuthScreen() {
 
           {/* Login / signup toggle */}
           {(mode === 'login' || mode === 'signup') && (
-            <p className="text-center text-sm text-[#8899BB] mt-5">
+            <p className="text-center text-sm text-[#A0A0A0] mt-5">
               {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
               <button
                 onClick={() => switchMode(mode === 'login' ? 'signup' : 'login')}
-                className="text-[#C9A84C] font-semibold hover:text-[#E8C76A] transition-colors"
+                className="text-[#CAFF40] font-semibold hover:text-[#A8D930] transition-colors"
               >
                 {mode === 'login' ? 'Create Account' : 'Sign In'}
               </button>

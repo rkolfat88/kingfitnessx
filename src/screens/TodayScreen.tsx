@@ -93,11 +93,11 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070B14]">
+      <div className="min-h-screen bg-[#000000]">
         <HeaderBar onAvatarPress={onAvatarPress} userInitials={userInitials} />
         <div className="px-5 space-y-4 mt-2">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="bg-[#111827] rounded-2xl h-20 animate-pulse" />
+            <div key={i} className="bg-[#0D0D0D] rounded-2xl h-20 animate-pulse" />
           ))}
         </div>
       </div>
@@ -106,13 +106,13 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#070B14]">
+      <div className="min-h-screen bg-[#000000]">
         <HeaderBar onAvatarPress={onAvatarPress} userInitials={userInitials} />
         <div className="px-5 flex flex-col items-center justify-center min-h-[50vh] text-center">
-          <p className="text-[#8899BB] text-sm mb-4">Couldn't load your plan.</p>
+          <p className="text-[#A0A0A0] text-sm mb-4">Couldn't load your plan.</p>
           <button
             onClick={loadData}
-            className="text-[#C9A84C] font-semibold text-sm border border-[#C9A84C]/30 rounded-xl px-5 py-2.5"
+            className="text-[#CAFF40] font-semibold text-sm border border-[#CAFF40]/30 rounded-xl px-5 py-2.5"
           >
             Tap to retry
           </button>
@@ -124,16 +124,16 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
   // No plan and no checkin data — user just finished onboarding or has no data yet
   if (!calories && !rawSession && !checkinDone) {
     return (
-      <div className="min-h-screen bg-[#070B14]">
+      <div className="min-h-screen bg-[#000000]">
         <HeaderBar onAvatarPress={onAvatarPress} userInitials={userInitials} />
         <div className="px-5 flex flex-col items-center justify-center min-h-[50vh] text-center">
-          <p className="text-3xl font-black text-[#F0F4FF] mb-2">Your plan is ready.</p>
-          <p className="text-sm text-[#8899BB] mb-6 leading-relaxed">
+          <p className="text-3xl font-black text-[#FFFFFF] mb-2">Your plan is ready.</p>
+          <p className="text-sm text-[#A0A0A0] mb-6 leading-relaxed">
             Complete your first check-in to unlock today's adapted session.
           </p>
           <button
             onClick={onNavigateToCheckin}
-            className="bg-[#C9A84C] text-black font-black py-4 px-8 rounded-2xl text-base flex items-center gap-2"
+            className="bg-[#CAFF40] text-black font-black py-4 px-8 rounded-2xl text-base flex items-center gap-2"
           >
             Start Check-in <ChevronRight className="w-5 h-5" />
           </button>
@@ -146,28 +146,28 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
   const isPeak = adaptationFlags.includes('peak_state')
   const sessionToShow = checkinDone ? adaptedSession : rawSession
   const adaptationBadge = isFloor ? 'Floor Mode' : isPeak ? 'Peak State' : checkinDone ? 'Adapted' : null
-  const badgeColor = isFloor ? '#EF4444' : isPeak ? '#22C55E' : '#C9A84C'
+  const badgeColor = isFloor ? '#EF4444' : isPeak ? '#22C55E' : '#CAFF40'
 
   return (
-    <div className="min-h-screen bg-[#070B14] pb-28">
+    <div className="min-h-screen bg-[#000000] pb-28">
       <HeaderBar onAvatarPress={onAvatarPress} userInitials={userInitials} />
 
       <div className="px-5 space-y-3">
 
         {/* 1 — STREAK STRIP */}
         <div className="flex items-center gap-2">
-          <Flame className="w-4 h-4 text-[#C9A84C] flex-shrink-0" />
-          <span className="text-sm font-bold text-[#C9A84C]">
+          <Flame className="w-4 h-4 text-[#CAFF40] flex-shrink-0" />
+          <span className="text-sm font-bold text-[#CAFF40]">
             {streak > 0 ? `${streak}-day streak` : 'Day 1'}
           </span>
           {totalDays > 0 && (
-            <span className="text-xs text-[#445577] ml-1">· Day {totalDays} on protocol</span>
+            <span className="text-xs text-[#5C5C5C] ml-1">· Day {totalDays} on protocol</span>
           )}
         </div>
 
         {/* 2 — CHECK-IN CARD */}
         {checkinDone ? (
-          <div className="bg-[#0A1020] border border-[#22C55E]/20 rounded-xl px-4 py-2.5 flex items-center gap-2">
+          <div className="bg-[#0D0D0D] border border-[#22C55E]/20 rounded-xl px-4 py-2.5 flex items-center gap-2">
             <Activity className="w-3.5 h-3.5 text-[#22C55E] flex-shrink-0" />
             <span className="text-xs font-semibold text-[#22C55E]">
               Check-in complete{checkinTime ? ` · ${checkinTime}` : ''}
@@ -176,18 +176,18 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
         ) : (
           <button
             onClick={onNavigateToCheckin}
-            className="w-full bg-[#111827] border border-[#C9A84C]/25 hover:border-[#C9A84C]/50 rounded-2xl p-4 flex items-center justify-between transition-all active:scale-[0.99]"
+            className="w-full bg-[#0D0D0D] border border-[#CAFF40]/25 hover:border-[#CAFF40]/50 rounded-2xl p-4 flex items-center justify-between transition-all active:scale-[0.99]"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center flex-shrink-0">
-                <Activity className="w-4 h-4 text-[#C9A84C]" />
+              <div className="w-9 h-9 rounded-xl bg-[#CAFF40]/10 flex items-center justify-center flex-shrink-0">
+                <Activity className="w-4 h-4 text-[#CAFF40]" />
               </div>
               <div className="text-left">
-                <p className="text-sm font-bold text-[#F0F4FF]">Complete today's check-in</p>
-                <p className="text-xs text-[#445577]">15 seconds · updates your session</p>
+                <p className="text-sm font-bold text-[#FFFFFF]">Complete today's check-in</p>
+                <p className="text-xs text-[#5C5C5C]">15 seconds · updates your session</p>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-[#445577]" />
+            <ChevronRight className="w-4 h-4 text-[#5C5C5C]" />
           </button>
         )}
 
@@ -195,10 +195,10 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
         {sessionToShow && (
           <button
             onClick={onNavigateToTrain}
-            className="w-full bg-[#111827] border border-[#1E2D40] hover:border-[#C9A84C]/30 rounded-2xl p-5 text-left transition-all active:scale-[0.99]"
+            className="w-full bg-[#0D0D0D] border border-[#262626] hover:border-[#CAFF40]/30 rounded-2xl p-5 text-left transition-all active:scale-[0.99]"
           >
             <div className="flex items-start justify-between mb-3">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#8899BB]">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#A0A0A0]">
                 Today's Session
               </p>
               {adaptationBadge && (
@@ -210,42 +210,42 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
                 </span>
               )}
             </div>
-            <h2 className="text-xl font-black text-[#F0F4FF] mb-0.5">{sessionToShow.focus}</h2>
-            <p className="text-sm text-[#8899BB] mb-3">
+            <h2 className="text-xl font-black text-[#FFFFFF] mb-0.5">{sessionToShow.focus}</h2>
+            <p className="text-sm text-[#A0A0A0] mb-3">
               {sessionToShow.duration_min} min · {sessionToShow.exercises?.length || 0} exercises
             </p>
             {sessionToShow.exercises?.slice(0, 3).map((ex: any, i: number) => (
-              <div key={i} className="flex items-center justify-between py-1.5 border-b border-[#1E2D40] last:border-0">
-                <span className="text-sm text-[#F0F4FF]">{ex.name}</span>
-                <span className="text-sm font-bold text-[#C9A84C]">{ex.sets}×{ex.reps}</span>
+              <div key={i} className="flex items-center justify-between py-1.5 border-b border-[#262626] last:border-0">
+                <span className="text-sm text-[#FFFFFF]">{ex.name}</span>
+                <span className="text-sm font-bold text-[#CAFF40]">{ex.sets}×{ex.reps}</span>
               </div>
             ))}
             {checkinDone && adaptationReasoning[0] && (
               <div className="mt-3 flex gap-2">
-                <BarChart3 className="w-3.5 h-3.5 text-[#C9A84C] flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-[#8899BB] leading-relaxed">{adaptationReasoning[0]}</p>
+                <BarChart3 className="w-3.5 h-3.5 text-[#CAFF40] flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-[#A0A0A0] leading-relaxed">{adaptationReasoning[0]}</p>
               </div>
             )}
             {!checkinDone && (
-              <p className="text-xs text-[#445577] mt-3 italic">Check in to get your adapted version</p>
+              <p className="text-xs text-[#5C5C5C] mt-3 italic">Check in to get your adapted version</p>
             )}
           </button>
         )}
 
         {/* 4 — MACRO PILLS */}
         {(calories || proteinG) && (
-          <div className="bg-[#111827] border border-[#1E2D40] rounded-2xl p-4">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#8899BB] mb-3">Today's Targets</p>
+          <div className="bg-[#0D0D0D] border border-[#262626] rounded-2xl p-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#A0A0A0] mb-3">Today's Targets</p>
             <div className="flex gap-2">
               {[
-                { label: 'Calories', value: calories, unit: 'kcal', color: '#F0F4FF' },
-                { label: 'Protein', value: proteinG, unit: 'g', color: '#C9A84C' },
+                { label: 'Calories', value: calories, unit: 'kcal', color: '#FFFFFF' },
+                { label: 'Protein', value: proteinG, unit: 'g', color: '#CAFF40' },
                 { label: 'Carbs', value: carbsG, unit: 'g', color: '#3B82F6' },
                 { label: 'Fat', value: fatG, unit: 'g', color: '#F97316' },
               ].map(item => item.value != null && (
-                <div key={item.label} className="flex-1 bg-[#0D1117] rounded-xl px-2 py-2.5 text-center">
+                <div key={item.label} className="flex-1 bg-[#0D0D0D] rounded-xl px-2 py-2.5 text-center">
                   <p className="text-sm font-black" style={{ color: item.color }}>{item.value}</p>
-                  <p className="text-[9px] text-[#445577] uppercase tracking-wider mt-0.5">{item.unit === 'kcal' ? 'cal' : `${item.unit} ${item.label}`}</p>
+                  <p className="text-[9px] text-[#5C5C5C] uppercase tracking-wider mt-0.5">{item.unit === 'kcal' ? 'cal' : `${item.unit} ${item.label}`}</p>
                 </div>
               ))}
             </div>
@@ -253,9 +253,9 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
         )}
 
         {/* 5 — COACH KING LINE */}
-        <div className="border-l-2 border-[#C9A84C] pl-4 py-1">
-          <p className="text-sm text-[#F0F4FF] leading-relaxed italic">{getCoachLine()}</p>
-          <p className="text-xs text-[#445577] mt-1 font-semibold">— Coach King</p>
+        <div className="border-l-2 border-[#CAFF40] pl-4 py-1">
+          <p className="text-sm text-[#FFFFFF] leading-relaxed italic">{getCoachLine()}</p>
+          <p className="text-xs text-[#5C5C5C] mt-1 font-semibold">— Coach King</p>
         </div>
 
       </div>

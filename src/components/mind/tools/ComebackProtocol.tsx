@@ -43,11 +43,11 @@ export default function ComebackProtocol({ onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#070B14] flex flex-col">
+    <div className="fixed inset-0 z-50 bg-[#000000] flex flex-col">
       <div className="flex items-center gap-3 px-5 pt-12 pb-4">
         <button
           onClick={onClose}
-          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95 flex-shrink-0"
+          className="w-10 h-10 -ml-2 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95 flex-shrink-0"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
@@ -64,7 +64,7 @@ export default function ComebackProtocol({ onClose }: Props) {
           <div
             key={i}
             className="h-1 flex-1 rounded-full transition-all duration-300"
-            style={{ backgroundColor: i <= step ? '#3B82F6' : '#1E2D40' }}
+            style={{ backgroundColor: i <= step ? '#3B82F6' : '#262626' }}
           />
         ))}
       </div>
@@ -73,10 +73,10 @@ export default function ComebackProtocol({ onClose }: Props) {
         <p className="font-mono text-xs font-bold tracking-widest mb-5 text-[#3B82F6]">
           {String(step + 1).padStart(2, '0')} — {current.tag}
         </p>
-        <h2 className="font-display text-2xl font-black text-[#F0F4FF] leading-tight mb-6">
+        <h2 className="font-display text-2xl font-black text-[#FFFFFF] leading-tight mb-6">
           {current.heading}
         </h2>
-        <p className="text-[#8899BB] text-base leading-relaxed whitespace-pre-line">
+        <p className="text-[#A0A0A0] text-base leading-relaxed whitespace-pre-line">
           {current.body}
         </p>
       </div>

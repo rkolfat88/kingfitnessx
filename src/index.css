@@ -6,24 +6,23 @@
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
   
-  --color-gold-base: #C9A84C;
-  --color-gold-light: #E8C76A;
-  --color-gold-dark: #A48430;
-  --color-dark-bg: #080808;
-  --color-card-bg: #1A1A1A;
+  --color-accent: #CAFF40;
+  --color-accent-dim: #A8D930;
+  --color-dark-bg: #000000;
+  --color-card-bg: #0D0D0D;
 }
 
 /* Custom glow effects and scrollbars */
-.gold-glow {
-  text-shadow: 0 0 10px rgba(232, 199, 106, 0.4);
+.accent-glow {
+  text-shadow: 0 0 10px rgba(202, 255, 64, 0.4);
 }
 
-.gold-glow-border {
-  box-shadow: 0 0 15px rgba(201, 168, 76, 0.15);
+.accent-glow-border {
+  box-shadow: 0 0 15px rgba(202, 255, 64, 0.15);
 }
 
-.gold-glow-ring {
-  filter: drop-shadow(0 0 8px rgba(232, 199, 106, 0.25));
+.accent-glow-ring {
+  filter: drop-shadow(0 0 8px rgba(202, 255, 64, 0.25));
 }
 
 ::-webkit-scrollbar {
@@ -32,16 +31,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #080808;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: #262626;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3a3a;
+  background: #333333;
 }
 
 /* Hidden scrollbar utility */

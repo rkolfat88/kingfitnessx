@@ -153,23 +153,23 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
   const progress = totalSets > 0 ? doneSets / totalSets : 0;
 
   return (
-    <div className="min-h-screen bg-[#070B14] pb-36">
+    <div className="min-h-screen bg-[#000000] pb-36">
 
       {/* Sticky header */}
-      <div className="sticky top-0 z-30 bg-[#070B14]/95 backdrop-blur-sm border-b border-[#1E2D40] px-5 pt-12 pb-4">
+      <div className="sticky top-0 z-30 bg-[#000000]/95 backdrop-blur-sm border-b border-[#262626] px-5 pt-12 pb-4">
         <div className="flex items-center gap-3 mb-3">
           <button
             onClick={onFinish}
-            className="w-10 h-10 flex items-center justify-center rounded-xl text-[#8899BB] hover:text-[#F0F4FF] transition-colors active:scale-95 flex-shrink-0 -ml-1"
+            className="w-10 h-10 flex items-center justify-center rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors active:scale-95 flex-shrink-0 -ml-1"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
 
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#C9A84C] truncate">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#CAFF40] truncate">
               {trainingDay.focus}
             </p>
-            <h1 className="text-xl font-black text-[#F0F4FF] truncate">{trainingDay.day_name}</h1>
+            <h1 className="text-xl font-black text-[#FFFFFF] truncate">{trainingDay.day_name}</h1>
           </div>
 
           {restTimer !== null && restTimer > 0 && (
@@ -180,7 +180,7 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
               </span>
               <button
                 onClick={() => setRestTimer(null)}
-                className="text-[10px] text-[#445577] ml-0.5 hover:text-[#8899BB]"
+                className="text-[10px] text-[#5C5C5C] ml-0.5 hover:text-[#A0A0A0]"
               >
                 skip
               </button>
@@ -189,13 +189,13 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
         </div>
 
         {/* Progress */}
-        <div className="h-1 bg-[#1E2D40] rounded-full overflow-hidden">
+        <div className="h-1 bg-[#262626] rounded-full overflow-hidden">
           <div
-            className="h-full bg-[#C9A84C] rounded-full transition-all duration-500"
+            className="h-full bg-[#CAFF40] rounded-full transition-all duration-500"
             style={{ width: `${progress * 100}%` }}
           />
         </div>
-        <p className="text-xs text-[#445577] mt-1.5 font-mono">
+        <p className="text-xs text-[#5C5C5C] mt-1.5 font-mono">
           {doneSets} / {totalSets} sets
         </p>
       </div>
@@ -210,8 +210,8 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
           return (
             <div
               key={exIdx}
-              className={`bg-[#111827] border rounded-2xl overflow-hidden transition-colors ${
-                isFullyDone ? 'border-[#22C55E]/40' : 'border-[#C9A84C]/20'
+              className={`bg-[#0D0D0D] border rounded-2xl overflow-hidden transition-colors ${
+                isFullyDone ? 'border-[#22C55E]/40' : 'border-[#CAFF40]/20'
               }`}
             >
               {/* Exercise header row */}
@@ -222,43 +222,43 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
                 <div className="flex items-center gap-3">
                   <div
                     className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                      isFullyDone ? 'bg-[#22C55E]/20' : 'bg-[#C9A84C]/10'
+                      isFullyDone ? 'bg-[#22C55E]/20' : 'bg-[#CAFF40]/10'
                     }`}
                   >
                     {isFullyDone ? (
                       <Check className="w-3.5 h-3.5 text-[#22C55E]" />
                     ) : (
-                      <span className="text-xs font-bold text-[#C9A84C]">{exIdx + 1}</span>
+                      <span className="text-xs font-bold text-[#CAFF40]">{exIdx + 1}</span>
                     )}
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-bold text-[#F0F4FF]">{ex.name}</p>
-                    <p className="text-xs text-[#8899BB]">
+                    <p className="text-sm font-bold text-[#FFFFFF]">{ex.name}</p>
+                    <p className="text-xs text-[#A0A0A0]">
                       {ex.sets} × {ex.reps} · RPE {ex.rpe} · {ex.rest_seconds}s rest
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-[#445577]">{doneCount}/{ex.sets}</span>
+                  <span className="text-xs font-mono text-[#5C5C5C]">{doneCount}/{ex.sets}</span>
                   {log.expanded ? (
-                    <ChevronUp className="w-4 h-4 text-[#445577]" />
+                    <ChevronUp className="w-4 h-4 text-[#5C5C5C]" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-[#445577]" />
+                    <ChevronDown className="w-4 h-4 text-[#5C5C5C]" />
                   )}
                 </div>
               </button>
 
               {log.expanded && (
-                <div className="border-t border-[#1E2D40] px-4 pb-4 pt-3">
+                <div className="border-t border-[#262626] px-4 pb-4 pt-3">
                   {ex.notes ? (
                     <p className="text-xs text-[#F97316] mb-3">{ex.notes}</p>
                   ) : null}
 
                   {/* Column headers */}
                   <div className="grid grid-cols-[28px_1fr_1fr_36px] gap-2 mb-2 px-0.5">
-                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#445577]">#</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#445577]">kg</span>
-                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#445577]">reps</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#5C5C5C]">#</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#5C5C5C]">kg</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wide text-[#5C5C5C]">reps</span>
                     <span />
                   </div>
 
@@ -270,7 +270,7 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
                           set.completed ? 'opacity-50' : ''
                         }`}
                       >
-                        <span className="text-xs font-mono font-bold text-[#C9A84C]">
+                        <span className="text-xs font-mono font-bold text-[#CAFF40]">
                           {setIdx + 1}
                         </span>
                         <input
@@ -280,7 +280,7 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
                           value={set.weight_kg}
                           onChange={e => updateSet(exIdx, setIdx, 'weight_kg', e.target.value)}
                           disabled={set.completed}
-                          className="bg-[#0D1117] border border-[#1E2D40] rounded-xl px-3 py-2 text-sm font-mono text-[#F0F4FF] placeholder:text-[#2A3A55] focus:border-[#C9A84C]/50 focus:outline-none disabled:cursor-default w-full"
+                          className="bg-[#0D0D0D] border border-[#262626] rounded-xl px-3 py-2 text-sm font-mono text-[#FFFFFF] placeholder:text-[#5C5C5C] focus:border-[#CAFF40]/50 focus:outline-none disabled:cursor-default w-full"
                         />
                         <input
                           type="number"
@@ -289,18 +289,18 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
                           value={set.reps_completed}
                           onChange={e => updateSet(exIdx, setIdx, 'reps_completed', e.target.value)}
                           disabled={set.completed}
-                          className="bg-[#0D1117] border border-[#1E2D40] rounded-xl px-3 py-2 text-sm font-mono text-[#F0F4FF] placeholder:text-[#2A3A55] focus:border-[#C9A84C]/50 focus:outline-none disabled:cursor-default w-full"
+                          className="bg-[#0D0D0D] border border-[#262626] rounded-xl px-3 py-2 text-sm font-mono text-[#FFFFFF] placeholder:text-[#5C5C5C] focus:border-[#CAFF40]/50 focus:outline-none disabled:cursor-default w-full"
                         />
                         <button
                           onClick={() => markSetComplete(exIdx, setIdx)}
                           className={`w-9 h-9 rounded-xl border flex items-center justify-center flex-shrink-0 transition-all ${
                             set.completed
                               ? 'bg-[#22C55E] border-[#22C55E]'
-                              : 'bg-transparent border-[#1E2D40] hover:border-[#C9A84C]/40'
+                              : 'bg-transparent border-[#262626] hover:border-[#CAFF40]/40'
                           }`}
                         >
                           <Check
-                            className={`w-4 h-4 ${set.completed ? 'text-white' : 'text-[#445577]'}`}
+                            className={`w-4 h-4 ${set.completed ? 'text-white' : 'text-[#5C5C5C]'}`}
                           />
                         </button>
                       </div>
@@ -320,16 +320,16 @@ export default function WorkoutLoggerScreen({ trainingDay, planId, onFinish }: W
       </div>
 
       {/* Fixed finish button */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] px-5 pb-6 pt-3 bg-[#070B14]/95 backdrop-blur-sm border-t border-[#1E2D40] z-50">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] px-5 pb-6 pt-3 bg-[#000000]/95 backdrop-blur-sm border-t border-[#262626] z-50">
         {saveError && (
-          <p className="text-[#8899BB] text-sm text-center mb-3">
+          <p className="text-[#A0A0A0] text-sm text-center mb-3">
             Couldn't save your workout — tap below to retry.
           </p>
         )}
         <button
           onClick={finishWorkout}
           disabled={saving || saved}
-          className="w-full py-4 bg-[#C9A84C] hover:bg-[#E8C76A] text-[#070B14] font-black text-sm uppercase tracking-widest rounded-2xl transition-all active:scale-[0.98] disabled:opacity-60"
+          className="w-full py-4 bg-[#CAFF40] hover:bg-[#A8D930] text-[#000000] font-black text-sm uppercase tracking-widest rounded-2xl transition-all active:scale-[0.98] disabled:opacity-60"
         >
           {saved
             ? '✓ Workout Saved'

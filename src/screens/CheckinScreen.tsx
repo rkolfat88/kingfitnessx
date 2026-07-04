@@ -184,10 +184,10 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
     lowLabel: string;
     highLabel: string;
   }) => (
-    <div className="bg-[#111827] border border-[#1E2D40] rounded-2xl p-4">
+    <div className="bg-[#0D0D0D] border border-[#262626] rounded-2xl p-4">
       <div className="flex items-center gap-2 mb-3">
         <Icon className="w-4 h-4" style={{ color }} />
-        <span className="text-sm font-semibold text-[#F0F4FF]">{label}</span>
+        <span className="text-sm font-semibold text-[#FFFFFF]">{label}</span>
       </div>
       <div className="flex gap-2 mb-2">
         {[1, 2, 3, 4, 5].map(v => (
@@ -196,9 +196,9 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
             onClick={() => onChange(v)}
             className="flex-1 py-3 rounded-xl border text-sm font-black transition-all"
             style={{
-              backgroundColor: value === v ? `${color}20` : '#0D1117',
-              borderColor: value === v ? `${color}80` : '#1E2D40',
-              color: value === v ? color : '#445577',
+              backgroundColor: value === v ? `${color}20` : '#0D0D0D',
+              borderColor: value === v ? `${color}80` : '#262626',
+              color: value === v ? color : '#5C5C5C',
             }}
           >
             {v}
@@ -206,16 +206,16 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
         ))}
       </div>
       <div className="flex justify-between">
-        <span className="text-xs text-[#445577]">{lowLabel}</span>
-        <span className="text-xs text-[#445577]">{highLabel}</span>
+        <span className="text-xs text-[#5C5C5C]">{lowLabel}</span>
+        <span className="text-xs text-[#5C5C5C]">{highLabel}</span>
       </div>
     </div>
   );
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070B14] flex items-center justify-center">
-        <Activity className="w-8 h-8 text-[#C9A84C] animate-pulse" />
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+        <Activity className="w-8 h-8 text-[#CAFF40] animate-pulse" />
       </div>
     );
   }
@@ -228,35 +228,35 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
     const isPeak = flags.includes('peak_state');
 
     return (
-      <div className="min-h-screen bg-[#070B14] pb-24">
+      <div className="min-h-screen bg-[#000000] pb-24">
         <HeaderBar onBack={onBack} />
         <div className="px-5 pb-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#8899BB] mb-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#A0A0A0] mb-1">
             Today's Readiness
           </p>
-          <h1 className="text-3xl font-black text-[#F0F4FF] mb-1">
+          <h1 className="text-3xl font-black text-[#FFFFFF] mb-1">
             Check-in Complete
           </h1>
           <div className="flex items-center gap-2 mt-1">
-            <Flame className="w-4 h-4 text-[#C9A84C]" />
-            <span className="text-sm font-bold text-[#C9A84C]">
+            <Flame className="w-4 h-4 text-[#CAFF40]" />
+            <span className="text-sm font-bold text-[#CAFF40]">
               {streak} day{streak !== 1 ? 's' : ''} on protocol
             </span>
           </div>
         </div>
 
         {milestone && (
-          <div className="mx-5 mb-4 bg-[#C9A84C]/10 border border-[#C9A84C]/40 rounded-2xl p-5 text-center">
+          <div className="mx-5 mb-4 bg-[#CAFF40]/10 border border-[#CAFF40]/40 rounded-2xl p-5 text-center">
             <div className="text-3xl mb-2">👑</div>
-            <p className="text-base font-black text-[#C9A84C] mb-1">{milestone.title}</p>
-            <p className="text-sm text-[#8899BB] leading-relaxed">{milestone.message}</p>
+            <p className="text-base font-black text-[#CAFF40] mb-1">{milestone.title}</p>
+            <p className="text-sm text-[#A0A0A0] leading-relaxed">{milestone.message}</p>
           </div>
         )}
 
         <div className="px-5 space-y-4">
 
-          <div className="bg-[#111827] border border-[#C9A84C]/20 rounded-2xl p-5">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#8899BB] mb-3">
+          <div className="bg-[#0D0D0D] border border-[#CAFF40]/20 rounded-2xl p-5">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#A0A0A0] mb-3">
               Readiness Signal
             </p>
             <div className="grid grid-cols-3 gap-3">
@@ -265,42 +265,42 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
                 { label: 'Energy', value: todayCheckin.energy, color: '#22C55E', icon: Zap },
                 { label: 'Soreness', value: todayCheckin.soreness, color: '#F97316', icon: Activity },
               ].map(item => (
-                <div key={item.label} className="bg-[#0D1117] rounded-xl p-3 text-center">
+                <div key={item.label} className="bg-[#0D0D0D] rounded-xl p-3 text-center">
                   <item.icon className="w-4 h-4 mx-auto mb-1" style={{ color: item.color }} />
                   <p className="text-xl font-black" style={{ color: item.color }}>
                     {item.value}/5
                   </p>
-                  <p className="text-xs text-[#445577]">{item.label}</p>
+                  <p className="text-xs text-[#5C5C5C]">{item.label}</p>
                 </div>
               ))}
             </div>
           </div>
 
           {adapted && (
-            <div className={`bg-[#111827] border rounded-2xl p-5 ${
+            <div className={`bg-[#0D0D0D] border rounded-2xl p-5 ${
               isFloor ? 'border-[#EF4444]/30' :
               isPeak ? 'border-[#22C55E]/30' :
-              'border-[#C9A84C]/20'
+              'border-[#CAFF40]/20'
             }`}>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#8899BB]">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#A0A0A0]">
                   Today's Session
                 </p>
                 <span className={`text-xs font-bold px-2 py-1 rounded-lg ${
                   isFloor ? 'bg-[#EF4444]/10 text-[#EF4444]' :
                   isPeak ? 'bg-[#22C55E]/10 text-[#22C55E]' :
-                  'bg-[#C9A84C]/10 text-[#C9A84C]'
+                  'bg-[#CAFF40]/10 text-[#CAFF40]'
                 }`}>
                   {isFloor ? 'Floor Mode' : isPeak ? 'Peak State' : 'Adapted'}
                 </span>
               </div>
-              <h3 className="text-lg font-black text-[#F0F4FF] mb-1">{adapted.focus}</h3>
-              <p className="text-sm text-[#8899BB] mb-4">{adapted.duration_min} min · {adapted.exercises?.length} exercises</p>
+              <h3 className="text-lg font-black text-[#FFFFFF] mb-1">{adapted.focus}</h3>
+              <p className="text-sm text-[#A0A0A0] mb-4">{adapted.duration_min} min · {adapted.exercises?.length} exercises</p>
 
               {adapted.exercises?.slice(0, 3).map((ex: any, i: number) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-[#1E2D40] last:border-0">
-                  <span className="text-sm text-[#F0F4FF]">{ex.name}</span>
-                  <span className="text-sm font-bold text-[#C9A84C]">{ex.sets}×{ex.reps}</span>
+                <div key={i} className="flex items-center justify-between py-2 border-b border-[#262626] last:border-0">
+                  <span className="text-sm text-[#FFFFFF]">{ex.name}</span>
+                  <span className="text-sm font-bold text-[#CAFF40]">{ex.sets}×{ex.reps}</span>
                 </div>
               ))}
 
@@ -309,20 +309,20 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
                 className="w-full mt-4 flex items-center justify-between py-2"
               >
                 <div className="flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-[#C9A84C]" />
-                  <span className="text-xs font-semibold text-[#C9A84C]">
+                  <BarChart3 className="w-4 h-4 text-[#CAFF40]" />
+                  <span className="text-xs font-semibold text-[#CAFF40]">
                     Why was today adapted?
                   </span>
                 </div>
-                <ChevronDown className={`w-4 h-4 text-[#445577] transition-transform ${showMath ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-4 h-4 text-[#5C5C5C] transition-transform ${showMath ? 'rotate-180' : ''}`} />
               </button>
 
               {showMath && (
                 <div className="mt-3 space-y-1">
                   {reasoning.map((r: string, i: number) => (
                     <div key={i} className="flex gap-2">
-                      <span className="text-[#C9A84C] text-xs">→</span>
-                      <p className="text-xs text-[#8899BB] leading-relaxed">{r}</p>
+                      <span className="text-[#CAFF40] text-xs">→</span>
+                      <p className="text-xs text-[#A0A0A0] leading-relaxed">{r}</p>
                     </div>
                   ))}
                 </div>
@@ -331,11 +331,11 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
           )}
 
           {todayCheckin.counterfactual && (
-            <div className="bg-[#0D1117] border border-[#1E2D40] rounded-2xl p-4">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#445577] mb-2">
+            <div className="bg-[#0D0D0D] border border-[#262626] rounded-2xl p-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#5C5C5C] mb-2">
                 Without today's check-in
               </p>
-              <p className="text-xs text-[#8899BB] leading-relaxed italic">
+              <p className="text-xs text-[#A0A0A0] leading-relaxed italic">
                 {todayCheckin.counterfactual}
               </p>
             </div>
@@ -347,19 +347,19 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#070B14] pb-32">
+    <div className="min-h-screen bg-[#000000] pb-32">
       <HeaderBar onBack={onBack} />
       <div className="px-5 pb-6">
         <div className="flex items-center gap-2 mb-1">
-          <Flame className="w-4 h-4 text-[#C9A84C]" />
-          <span className="text-xs font-bold text-[#C9A84C] uppercase tracking-widest">
+          <Flame className="w-4 h-4 text-[#CAFF40]" />
+          <span className="text-xs font-bold text-[#CAFF40] uppercase tracking-widest">
             {streak > 0 ? `${streak} day streak` : 'Day 1'}
           </span>
         </div>
-        <h1 className="text-3xl font-black text-[#F0F4FF] mb-1">
+        <h1 className="text-3xl font-black text-[#FFFFFF] mb-1">
           Readiness Signal
         </h1>
-        <p className="text-sm text-[#8899BB]">
+        <p className="text-sm text-[#A0A0A0]">
           15 seconds. Honest answers change today's plan.
         </p>
       </div>
@@ -396,8 +396,8 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
           highLabel="Fresh"
         />
 
-        <div className="bg-[#111827] border border-[#1E2D40] rounded-2xl p-4">
-          <p className="text-xs text-[#445577] mb-2">
+        <div className="bg-[#0D0D0D] border border-[#262626] rounded-2xl p-4">
+          <p className="text-xs text-[#5C5C5C] mb-2">
             Anything the coach should know? (optional)
           </p>
           <textarea
@@ -405,16 +405,16 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
             onChange={e => setNotes(e.target.value)}
             placeholder="e.g. knee felt off yesterday, bad sleep week, stressed at work..."
             rows={2}
-            className="w-full bg-[#0D1117] border border-[#1E2D40] rounded-xl px-3 py-2 text-sm text-[#F0F4FF] placeholder:text-[#445577] focus:border-[#C9A84C]/50 focus:outline-none resize-none"
+            className="w-full bg-[#0D0D0D] border border-[#262626] rounded-xl px-3 py-2 text-sm text-[#FFFFFF] placeholder:text-[#5C5C5C] focus:border-[#CAFF40]/50 focus:outline-none resize-none"
           />
         </div>
 
         {saveError && (
           <div className="text-center py-2">
-            <p className="text-[#8899BB] text-sm mb-3">Couldn't save your check-in — tap to retry.</p>
+            <p className="text-[#A0A0A0] text-sm mb-3">Couldn't save your check-in — tap to retry.</p>
             <button
               onClick={handleSubmit}
-              className="text-[#C9A84C] font-semibold text-sm border border-[#C9A84C]/30 rounded-xl px-5 py-2.5"
+              className="text-[#CAFF40] font-semibold text-sm border border-[#CAFF40]/30 rounded-xl px-5 py-2.5"
             >
               Tap to retry
             </button>
@@ -423,11 +423,11 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
 
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-[#070B14]/95 backdrop-blur border-t border-[#1E2D40] px-5 py-4 z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-[#000000]/95 backdrop-blur border-t border-[#262626] px-5 py-4 z-50">
         <button
           onClick={handleSubmit}
           disabled={saving}
-          className="w-full bg-[#C9A84C] hover:bg-[#E8C76A] disabled:opacity-40 text-black font-black py-4 rounded-2xl text-base transition-all flex items-center justify-center gap-2"
+          className="w-full bg-[#CAFF40] hover:bg-[#A8D930] disabled:opacity-40 text-black font-black py-4 rounded-2xl text-base transition-all flex items-center justify-center gap-2"
         >
           {saving ? (
             <span>Reading your signals...</span>
@@ -438,7 +438,7 @@ export default function CheckinScreen({ onBack }: CheckinScreenProps) {
             </>
           )}
         </button>
-        <p className="text-xs text-[#445577] text-center mt-2">
+        <p className="text-xs text-[#5C5C5C] text-center mt-2">
           Every check-in is a vote for your protocol
         </p>
       </div>

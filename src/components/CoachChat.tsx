@@ -80,17 +80,17 @@ export default function CoachChatScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070B14] pb-24 flex flex-col">
+    <div className="min-h-screen bg-[#000000] pb-24 flex flex-col">
       {/* Header */}
-      <div className="shrink-0 px-5 pt-12 pb-4 flex items-center gap-3 border-b border-[#1E2D40]">
+      <div className="shrink-0 px-5 pt-12 pb-4 flex items-center gap-3 border-b border-[#262626]">
         <div className="relative">
-          <div className="w-10 h-10 rounded-full bg-[#C9A84C]/10 border-2 border-[#C9A84C] flex items-center justify-center font-black text-[#C9A84C] text-lg shadow-[0_0_12px_rgba(201,168,76,0.25)]">
+          <div className="w-10 h-10 rounded-full bg-[#CAFF40]/10 border-2 border-[#CAFF40] flex items-center justify-center font-black text-[#CAFF40] text-lg shadow-[0_0_12px_rgba(201,168,76,0.25)]">
             K
           </div>
-          <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#22C55E] border-2 border-[#070B14]" />
+          <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-[#22C55E] border-2 border-[#000000]" />
         </div>
         <div>
-          <h2 className="text-base font-black text-[#F0F4FF] leading-none">Coach King</h2>
+          <h2 className="text-base font-black text-[#FFFFFF] leading-none">Coach King</h2>
           <p className="text-[9px] font-bold text-[#22C55E] uppercase tracking-widest mt-0.5">● Online</p>
         </div>
       </div>
@@ -102,15 +102,15 @@ export default function CoachChatScreen() {
           return (
             <div key={msg.id} className={`flex flex-col ${isUser ? 'items-end ml-auto' : 'items-start mr-auto'} max-w-[85%]`}>
               <div className="flex items-center gap-1.5 mb-1">
-                <span className={`text-[8px] font-mono tracking-wider font-extrabold uppercase ${isUser ? 'text-[#8899BB]' : 'text-[#C9A84C]'}`}>
+                <span className={`text-[8px] font-mono tracking-wider font-extrabold uppercase ${isUser ? 'text-[#A0A0A0]' : 'text-[#CAFF40]'}`}>
                   {isUser ? 'YOU' : 'COACH KING'}
                 </span>
-                <span className="text-[8px] font-mono text-[#445577]">{msg.timestamp}</span>
+                <span className="text-[8px] font-mono text-[#5C5C5C]">{msg.timestamp}</span>
               </div>
               <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                 isUser
-                  ? 'bg-[#C9A84C] text-[#080808] font-bold rounded-tr-none'
-                  : 'bg-[#111827] text-[#F0F4FF] border border-[#1E2D40] rounded-tl-none'
+                  ? 'bg-[#CAFF40] text-[#000000] font-bold rounded-tr-none'
+                  : 'bg-[#0D0D0D] text-[#FFFFFF] border border-[#262626] rounded-tl-none'
               }`}>
                 <p className="whitespace-pre-line">{msg.text}</p>
               </div>
@@ -120,8 +120,8 @@ export default function CoachChatScreen() {
 
         {isThinking && (
           <div className="flex flex-col items-start max-w-[85%] mr-auto">
-            <span className="text-[8px] font-mono tracking-wider font-extrabold text-[#C9A84C] uppercase mb-1">COACH KING</span>
-            <div className="bg-[#111827] border border-[#1E2D40] rounded-2xl rounded-tl-none px-4 py-3 text-xs text-[#C9A84C]/80 font-mono flex items-center gap-2">
+            <span className="text-[8px] font-mono tracking-wider font-extrabold text-[#CAFF40] uppercase mb-1">COACH KING</span>
+            <div className="bg-[#0D0D0D] border border-[#262626] rounded-2xl rounded-tl-none px-4 py-3 text-xs text-[#CAFF40]/80 font-mono flex items-center gap-2">
               <Brain className="w-3.5 h-3.5 animate-spin" />
               <span>Reading your signals...</span>
             </div>
@@ -132,13 +132,13 @@ export default function CoachChatScreen() {
       </div>
 
       {/* Quick replies */}
-      <div className="shrink-0 px-3 py-2 flex gap-2 overflow-x-auto border-t border-[#1E2D40]">
+      <div className="shrink-0 px-3 py-2 flex gap-2 overflow-x-auto border-t border-[#262626]">
         {QUICK_REPLIES.map((reply, i) => (
           <button
             key={i}
             onClick={() => sendMessage(reply)}
             disabled={isThinking}
-            className="shrink-0 px-3 py-1.5 bg-[#111827] hover:bg-[#1A2236] border border-[#1E2D40] text-[10px] text-[#8899BB] hover:text-[#C9A84C] rounded-full transition font-bold tracking-wide disabled:opacity-40"
+            className="shrink-0 px-3 py-1.5 bg-[#0D0D0D] hover:bg-[#141414] border border-[#262626] text-[10px] text-[#A0A0A0] hover:text-[#CAFF40] rounded-full transition font-bold tracking-wide disabled:opacity-40"
           >
             {reply}
           </button>
@@ -146,7 +146,7 @@ export default function CoachChatScreen() {
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSend} className="shrink-0 px-5 py-3 border-t border-[#1E2D40] flex items-center gap-2 bg-[#070B14]">
+      <form onSubmit={handleSend} className="shrink-0 px-5 py-3 border-t border-[#262626] flex items-center gap-2 bg-[#000000]">
         <div className="relative flex-1">
           <input
             type="text"
@@ -154,14 +154,14 @@ export default function CoachChatScreen() {
             onChange={e => setInputText(e.target.value)}
             disabled={isThinking}
             placeholder="Ask Coach King..."
-            className="w-full pl-4 pr-10 py-3 bg-[#111827] border border-[#1E2D40] text-[#F0F4FF] text-sm rounded-full placeholder:text-[#445577] focus:outline-none focus:border-[#C9A84C]/50 transition"
+            className="w-full pl-4 pr-10 py-3 bg-[#0D0D0D] border border-[#262626] text-[#FFFFFF] text-sm rounded-full placeholder:text-[#5C5C5C] focus:outline-none focus:border-[#CAFF40]/50 transition"
           />
-          <Sparkles className="absolute right-3.5 top-3.5 w-4 h-4 text-[#C9A84C]/40" />
+          <Sparkles className="absolute right-3.5 top-3.5 w-4 h-4 text-[#CAFF40]/40" />
         </div>
         <button
           type="submit"
           disabled={isThinking || !inputText.trim()}
-          className="w-10 h-10 rounded-full bg-[#C9A84C] hover:bg-[#E8C76A] disabled:bg-[#1E2D40] disabled:text-[#445577] text-black flex items-center justify-center transition shrink-0"
+          className="w-10 h-10 rounded-full bg-[#CAFF40] hover:bg-[#A8D930] disabled:bg-[#262626] disabled:text-[#5C5C5C] text-black flex items-center justify-center transition shrink-0"
         >
           <Send className="w-4 h-4" />
         </button>
