@@ -19,8 +19,13 @@ Vite 3000 (React frontend) ←→ Express 3001 (Node backend) ←→ Anthropic A
 Two processes to run:
 ```
 Terminal 1: npm run dev        (Vite on port 3000)
-Terminal 2: node server.js     (Express on port 3001)
+Terminal 2: npm run server     (tsx server.js — Express on port 3001)
 ```
+
+Terminal 2 runs via `tsx`, not plain `node`, because server.js imports TypeScript
+modules directly (src/lib/agents/, src/lib/coaching-rules/). Vercel's Node
+builder compiles those transitively at deploy time, so production is
+unaffected — this only matters for local dev.
 
 ### Four Pillars
 
@@ -41,11 +46,12 @@ One-time psychological onboarding — 7 sections completed over time (not 7 lite
 - Mind responses (Phase Zero + Mind Gym daily primer) are **pre-written deterministic functions** — no API, no latency, no cost. Logic lives in `PhaseZero.tsx` and `MindGym.tsx`.
 - **Coaching Rules Engine** at `src/lib/coaching-engine/` — pure TypeScript, zero API calls, every output includes `reasoning[]` array ("show the math"). Modules:
   - `types.ts` — ClientProfile, DailyState, EngineOutput<T>, MacroTargets, TrainingPlan
-  - `nutrition.ts` — Mifflin-St Jeor BMR → TDEE → goal adjustment → macro split
+  - `nutrition.ts` — Mifflin-St Jeor BMR → TDEE → goal adjustment → macro split. `calculateMacros(profile, tdeeOverride?)` accepts an optional adaptive TDEE override; omit it and behavior is 100% unchanged from before adaptive-tdee existed.
   - `training.ts` — split selection, exercise library, injury substitutions
   - `adapt.ts` — daily session adaptation based on morning check-in state
   - `scores.ts` — recovery, readiness, adherence, momentum, discipline, mind scores
   - `index.ts` — single export point
+- **Adaptive TDEE** at `src/lib/coaching-rules/adaptive-tdee.ts` — deliberately a *separate* directory from coaching-engine, because unlike the pure engine above, this module does Supabase I/O (reads food_logs/daily_checkins, upserts metabolic_state). Deterministic math, no LLM calls. Learns estimated TDEE from logged intake + trend body weight, blended with the static Mifflin-St Jeor prior until there's enough data (see HARD RULES below). Recomputes at most weekly; `getAdaptiveMacros()` is the integration point that decides adaptive vs. static per user.
 
 ## STACK
 
@@ -58,6 +64,38 @@ One-time psychological onboarding — 7 sections completed over time (not 7 lite
 - Anthropic API (@anthropic-ai/sdk, claude-sonnet-5 — wired in server.js for Coach chat)
 - Supabase (auth + data — WIRED)
 - Stripe (NOT yet wired)
+
+## AI AGENT PIPELINE
+
+There is no historical "N specialists" pipeline to track here — this section
+was written from scratch alongside the orchestrator itself; there was no
+prior orchestrator, agents/ directory, or Safety Agent in the codebase before
+it. Two real LLM-calling paths exist today:
+
+1. **Coach Richard K.** (`server.js` → `POST /api/chat`) — the one existing
+   persona/agent. Freeform chat, personalized via `buildClientContext()`.
+2. **Intake + Metabolic pipeline** (`src/lib/agents/orchestrator.ts` →
+   `POST /api/agents/intake`, `GET /api/agents/metabolic`):
+   ```
+   intake-agent → coaching-rules (adaptive-tdee via nutrition.ts)
+                → metabolic-agent → safety-check → response
+   ```
+   - `intake-agent.ts` — claude-sonnet-5, vision (photo) or text. Turns a
+     meal description/photo into `{items[], totals, confidence_note}`. Reads
+     `agent_memory` for personal food-memory bias and "your usual?" matching;
+     writes `food_logs`. Confidence-gated auto-log is the one path that
+     writes without explicit confirmation — see HARD RULES.
+   - `adaptive-tdee.ts` — see above; not itself LLM-calling.
+   - `metabolic-agent.ts` — claude-sonnet-5, explains `metabolic_state` in
+     plain language. Never calculates — all math stays in adaptive-tdee.ts.
+   - `safety-check` — deterministic, inline in orchestrator.ts (no separate
+     agent/service exists for this). Flags allergen conflicts between logged
+     items and `onboarding_data.allergies`; re-affirms adaptive-tdee's hard
+     bounds defensively. Not an LLM call.
+
+If this pipeline grows a genuine multi-agent orchestrator or a standalone
+Safety Agent later, update this section to match — don't let it go stale
+the way the pre-existing sections of this file had.
 
 ## FILE STRUCTURE
 
@@ -77,25 +115,34 @@ C:\king_ai_app\
 │   │   ├── Nutrition.tsx
 │   │   ├── Progress.tsx
 │   │   ├── CoachChat.tsx
-│   │   ├── Paywall.tsx
+│   │   ├── TrialSoftPrompt.tsx     ← day-14/day-19 soft upgrade nudge
 │   │   ├── Settings.tsx
 │   │   ├── FormAnalysis.tsx
 │   │   ├── AuthScreen.tsx
-│   │   └── ProtectedRoute.tsx
+│   │   └── ProtectedRoute.tsx      ← currently unused (App.tsx gates inline)
 │   ├── screens\
-│   │   └── MindScreen.tsx          ← routes to PhaseZero or MindGym
+│   │   ├── MindScreen.tsx          ← routes to PhaseZero or MindGym
+│   │   └── UpgradeScreen.tsx       ← paywall, Stripe Checkout CTA
 │   ├── contexts\
-│   │   └── AuthContext.tsx
+│   │   └── AuthContext.tsx         ← also owns accessState/trialDaysLeft
 │   └── lib\
 │       ├── supabase.ts
-│       └── coaching-engine\        ← deterministic rules engine
+│       ├── feature-gate.ts         ← getAccessState/daysLeftInTrial (pure)
+│       ├── coaching-engine\        ← deterministic rules engine, zero I/O
+│       │   ├── types.ts
+│       │   ├── nutrition.ts
+│       │   ├── training.ts
+│       │   ├── adapt.ts
+│       │   ├── scores.ts
+│       │   ├── index.ts
+│       │   └── test.ts
+│       ├── coaching-rules\         ← deterministic but DOES Supabase I/O
+│       │   └── adaptive-tdee.ts
+│       └── agents\                 ← the two LLM-calling agents + orchestrator
 │           ├── types.ts
-│           ├── nutrition.ts
-│           ├── training.ts
-│           ├── adapt.ts
-│           ├── scores.ts
-│           ├── index.ts
-│           └── test.ts
+│           ├── orchestrator.ts
+│           ├── intake-agent.ts
+│           └── metabolic-agent.ts
 ├── server.js                       ← Express API (port 3001)
 ├── index.html
 ├── vite.config.ts
@@ -113,12 +160,22 @@ C:\king_ai_app\
 
 ### Live Tables
 
+Not exhaustive — several tables already in production (training_plans,
+nutrition_plans, daily_checkins, protocol_streaks, onboarding_data,
+workout_logs, performance_scores, insights, weekly_debriefs, training_blocks)
+predate this list and aren't all documented here yet. The rows below are the
+ones this file has tracked plus what this session added.
+
 | Table | Purpose |
 |---|---|
-| `user_profiles` | Basic user info, onboarding_completed flag |
+| `user_profiles` | Basic user info, onboarding_completed flag, `is_pro`, `stripe_customer_id`, `trial_ends_at` (21-day no-card trial — set server-side only, see PRICING) |
 | `mind_profiles` | Phase Zero state, identity_statement, phase_zero_completed, mind_score |
 | `phase_zero_progress` | Per-section responses and completion (user_id + day_number unique) |
 | `mind_checkins` | Daily motivation check-ins + ai_response (user_id + checkin_date unique) |
+| `food_logs` | Intake-agent output: user_id, logged_at, meal_type, items (jsonb), kcal/protein_g/carbs_g/fat_g, confidence_note, `source` ('manual'\|'auto'), `verified`. Written by intake-agent.ts — see AI AGENT PIPELINE. |
+| `metabolic_state` | One row per user: estimated_tdee, trend_weight_kg, confidence, data_days, delta_explanation, updated_at. Upserted by adaptive-tdee.ts, recomputed at most weekly. |
+| `agent_memory` | Per-user recurring-meal patterns for intake-agent: pattern_key, pattern_data (jsonb), confirm_count, correction_variance, last_seen_at. Drives confidence-gated auto-log — see HARD RULES. |
+| `training_blocks` | Pre-existing — not touched by this session's work. |
 
 ### Supabase Patterns
 
@@ -252,6 +309,29 @@ Activity multiplier:
   5+ days/week  → ×1.725
 ```
 
+## PRICING
+
+- **21-day no-card trial**, app-gated via `user_profiles.trial_ends_at` — no
+  Stripe involvement until conversion (no `trial_period_days` on the Stripe
+  side).
+- `trial_ends_at` is set exactly once, server-side only, by
+  `POST /api/account/start-trial` (idempotent — a user who already has a
+  trial or is already `is_pro` gets their existing state back unchanged).
+  Never set client-side.
+- Access state (`src/lib/feature-gate.ts` → `getAccessState()`): `subscribed`
+  (is_pro) > `trialing` (trial_ends_at in the future) > `expired`.
+- **Expired = read-only**, not locked out: dashboard/progress/history stay
+  visible; logging, Coach chat, plan generation, and check-ins redirect to
+  `UpgradeScreen` (`gateOrRun()` in App.tsx).
+- Days-left badge in the Today header during `trialing`. Soft upgrade
+  banners at 7 days left (day 14) and 2 days left (day 19) —
+  `TrialSoftPrompt.tsx`, dismissible per-session.
+- Checkout: `POST /api/stripe/create-checkout-session` (plan: `monthly` $49
+  or `annual` $399) → Stripe Checkout → `checkout.session.completed` webhook
+  links `stripe_customer_id` via `client_reference_id` and sets `is_pro`.
+  Requires `STRIPE_PRICE_ID_MONTHLY` / `STRIPE_PRICE_ID_ANNUAL` env vars
+  (not yet in `.env` — add the real Stripe Price IDs before this goes live).
+
 ## ENVIRONMENT VARIABLES (.env)
 
 ```
@@ -259,7 +339,16 @@ ANTHROPIC_API_KEY=sk-ant-...
 GEMINI_API_KEY=...             (installed, not yet used)
 VITE_SUPABASE_URL=https://pdctqjrcsuldbgsijqpb.supabase.co
 VITE_SUPABASE_ANON_KEY=...
+STRIPE_PRICE_ID_MONTHLY=...    (needed for /api/stripe/create-checkout-session — not yet set)
+STRIPE_PRICE_ID_ANNUAL=...     (needed for /api/stripe/create-checkout-session — not yet set)
 ```
+
+Also present in `.env` but undocumented until now: `SUPABASE_URL`,
+`SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+`ALLOWED_ORIGIN`. The service role key currently in `.env` looks like a
+placeholder (too short to be a real Supabase service-role JWT) — server-side
+admin operations (GDPR export/delete, the new trial/intake/metabolic routes)
+will fail against it until it's replaced with the real key.
 
 ## CURRENT STATE
 
@@ -269,30 +358,31 @@ VITE_SUPABASE_ANON_KEY=...
 - Deterministic mind responses (no API)
 - Coaching Rules Engine (nutrition, training, adapt, scores)
 - Design system: Black + White + Lime (#CAFF40) — v2 LOCKED
-- ProtectedRoute, AuthScreen
-- Supabase tables: user_profiles, mind_profiles, phase_zero_progress, mind_checkins
-- Fixed bottom nav (z-40), CTA buttons z-50
+- AuthScreen; ProtectedRoute exists but is unused (App.tsx gates inline instead)
+- TRAIN/FUEL plan generation wired (plan-generator.ts), daily check-in + adaptation loop, Stripe webhook (subscription created/deleted), GDPR export/delete, deployed to Vercel — all pre-existing, undocumented until this pass
+- Adaptive TDEE learner (coaching-rules/adaptive-tdee.ts) blending onboarding prior with logged intake + trend weight
+- Intake agent (photo/text food logging, personal food memory, confidence-gated auto-log) + metabolic agent (plain-language TDEE explainer) + orchestrator wiring them together — `POST /api/agents/intake(/confirm|/correct|/verify)`, `GET /api/agents/metabolic`
+- Trial system: 21-day no-card trial, server-set `trial_ends_at`, read-only-on-expiry gating, days-left badge, day-14/day-19 soft prompts, Stripe Checkout CTA (`UpgradeScreen`)
 
 ### Not Done ❌
-- TRAIN tab: wire coaching engine → generate + save + display training plans
-- FUEL tab: wire coaching engine → generate + save + display nutrition plans
 - RECOVER tab: build recovery tracking UI
-- Daily adaptation loop (adaptSession in adapt.ts → modify today's workout)
 - Performance scores display (calculateScores in scores.ts)
-- Read real ClientProfile from Supabase to feed the engine
-- Stripe payments
-- Deploy to Vercel
+- A logging UI for the intake agent (API + agent logic exist; FUEL tab doesn't yet call `/api/agents/intake` from a photo/text input screen)
+- Set real `STRIPE_PRICE_ID_MONTHLY` / `STRIPE_PRICE_ID_ANNUAL` — checkout route will 500 without them
+- Replace the placeholder-looking `SUPABASE_SERVICE_ROLE_KEY` in `.env`
+- Confirm `daily_checkins.weight_kg` is the actual column adaptive-tdee should read for trend weight (assumed — see adaptive-tdee.ts comment)
 
 ## WIRING PRIORITY (next sessions)
 
-1. Read ClientProfile from Supabase (onboarding_data or user_profiles)
-2. Run coaching engine → generate TrainingPlan + MacroTargets
-3. Save generated plans to Supabase (workout_plans, nutrition_plans tables)
-4. Display in TRAIN and FUEL tabs with reasoning[] shown to user
-5. Daily adaptation: morning check-in → adaptSession → show modified workout
-6. Performance scores dashboard
-7. Stripe
-8. Deploy
+Steps 1–5 and 7–8 below were already done before this file caught up to
+documenting them (see CURRENT STATE). What's actually next:
+
+1. Build a photo/text logging UI in the FUEL tab that calls
+   `POST /api/agents/intake` — the agent + API exist, there's no screen yet
+2. RECOVER tab UI
+3. Performance scores dashboard (calculateScores in scores.ts)
+4. Set real Stripe Price IDs and confirm the `daily_checkins.weight_kg`
+   assumption in adaptive-tdee.ts (see CURRENT STATE → Not Done)
 
 ## GIT WORKFLOW
 
@@ -316,6 +406,8 @@ git push
 8. Card style: bg-[#0D0D0D] border border-[#262626] rounded-2xl
 9. Every coaching engine output includes reasoning[] — always show it to the user
 10. Coaching engine is pure TypeScript, zero API calls, zero external dependencies
+11. Adaptive TDEE never overrides safety gating or macro floors — the learner (`src/lib/coaching-rules/adaptive-tdee.ts`) adjusts calories only, within engine bounds (protein floor, 25% fat floor, ~18% recovery/injury deficit cap). Existing refeed and mass-gain rules in the engine always take precedence over the adaptive delta.
+12. The engine's `verifications[]` pattern means "never guess silently" — confidence-gated auto-log (intake-agent) is the one sanctioned exception. It only auto-writes to `food_logs` when `agent_memory.confirm_count >= 5 AND correction_variance < 0.10` for that meal pattern, and even then the entry is written `verified=false` until the user taps to confirm or 48h pass with no edit. Every other intake path stays unverified until explicit confirmation.
 
 ## COMMON ISSUES
 
