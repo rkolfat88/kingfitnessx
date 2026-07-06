@@ -3,18 +3,20 @@ import { Flame, ChevronRight, Activity, BarChart3 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../contexts/AuthContext'
 import { HeaderBar } from '../components/HeaderBar'
+import { TrialSoftPrompt } from '../components/TrialSoftPrompt'
 import type { TrainingDay } from '../lib/coaching-engine/types'
 import { getLocalDateString } from '../lib/date'
 
 interface TodayScreenProps {
   onNavigateToCheckin: () => void
   onNavigateToTrain: () => void
+  onNavigateToUpgrade?: () => void
   onAvatarPress: () => void
   userInitials: string
 }
 
-export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, onAvatarPress, userInitials }: TodayScreenProps) {
-  const { user } = useAuth()
+export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, onNavigateToUpgrade, onAvatarPress, userInitials }: TodayScreenProps) {
+  const { user, accessState, trialDaysLeft } = useAuth()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [streak, setStreak] = useState(0)
@@ -150,9 +152,16 @@ export default function TodayScreen({ onNavigateToCheckin, onNavigateToTrain, on
 
   return (
     <div className="min-h-screen bg-[#000000] pb-28">
-      <HeaderBar onAvatarPress={onAvatarPress} userInitials={userInitials} />
+      <HeaderBar
+        onAvatarPress={onAvatarPress}
+        userInitials={userInitials}
+        trialDaysLeft={accessState === 'trialing' ? trialDaysLeft : null}
+      />
 
       <div className="px-5 space-y-3">
+        {accessState === 'trialing' && (trialDaysLeft === 7 || trialDaysLeft === 2) && (
+          <TrialSoftPrompt daysLeft={trialDaysLeft} onUpgrade={onNavigateToUpgrade} />
+        )}
 
         {/* 1 — STREAK STRIP */}
         <div className="flex items-center gap-2">

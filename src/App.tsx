@@ -19,6 +19,7 @@ import FuelScreen from './screens/FuelScreen';
 import CheckinScreen from './screens/CheckinScreen';
 import CoachChatScreen from './components/CoachChat';
 import { Settings as SettingsComponent } from './components/Settings';
+import UpgradeScreen from './screens/UpgradeScreen';
 
 export default function App() {
   return (
@@ -29,7 +30,7 @@ export default function App() {
 }
 
 function AppContent() {
-  const { user, loading, isPasswordRecovery, signOut, onboardingCompleted, onboardingLoading, onboardingData, refreshOnboarding } = useAuth();
+  const { user, loading, isPasswordRecovery, signOut, onboardingCompleted, onboardingLoading, onboardingData, refreshOnboarding, accessState } = useAuth();
   const [activeScreen, setActiveScreen] = useState<ScreenId>('today');
   const [workoutDay, setWorkoutDay] = useState<TrainingDay | null>(null);
   const [workoutPlanId, setWorkoutPlanId] = useState<string | null>(null);
@@ -39,10 +40,23 @@ function AppContent() {
     ? user.user_metadata.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
     : user?.email?.[0]?.toUpperCase() || 'K';
 
+  // Expired trial/subscription: dashboard, progress, and history stay
+  // read-only, but logging, chat, plan generation, and check-ins redirect
+  // to the paywall instead of running.
+  const gateOrRun = (screen: ScreenId, run: () => void) => {
+    if (accessState === 'expired') {
+      setActiveScreen('upgrade');
+      return;
+    }
+    run();
+  };
+
   const handleStartWorkout = (day: TrainingDay, planId: string | null) => {
-    setWorkoutDay(day);
-    setWorkoutPlanId(planId);
-    setActiveScreen('workout-logger');
+    gateOrRun('workout-logger', () => {
+      setWorkoutDay(day);
+      setWorkoutPlanId(planId);
+      setActiveScreen('workout-logger');
+    });
   };
 
   const handleFinishWorkout = () => {
@@ -90,7 +104,8 @@ function AppContent() {
     activeScreen === 'checkin' ||
     activeScreen === 'coach-chat' ||
     activeScreen === 'workout-logger' ||
-    activeScreen === 'settings'
+    activeScreen === 'settings' ||
+    activeScreen === 'upgrade'
   );
 
   return (
@@ -118,13 +133,14 @@ function AppContent() {
         <div className={isFullScreen ? 'flex-1 overflow-y-auto' : 'flex-1 overflow-y-auto px-5 pt-5 pb-28'}>
           {activeScreen === 'today' && (
             <TodayScreen
-              onNavigateToCheckin={() => setActiveScreen('checkin')}
+              onNavigateToCheckin={() => gateOrRun('checkin', () => setActiveScreen('checkin'))}
               onNavigateToTrain={() => setActiveScreen('active-workout')}
+              onNavigateToUpgrade={() => setActiveScreen('upgrade')}
               onAvatarPress={() => setShowMenu(true)}
               userInitials={userInitials}
             />
           )}
-          {activeScreen === 'mind'           && <MindScreen onNavigateToCheckin={() => setActiveScreen('checkin')} />}
+          {activeScreen === 'mind'           && <MindScreen onNavigateToCheckin={() => gateOrRun('checkin', () => setActiveScreen('checkin'))} />}
           {activeScreen === 'active-workout' && <TrainScreen onStartWorkout={handleStartWorkout} />}
           {activeScreen === 'workout-logger' && workoutDay && (
             <WorkoutLoggerScreen
@@ -139,6 +155,7 @@ function AppContent() {
           )}
           {activeScreen === 'coach-chat' && <CoachChatScreen />}
           {activeScreen === 'settings'   && <SettingsComponent onBack={() => setActiveScreen('today')} />}
+          {activeScreen === 'upgrade'    && <UpgradeScreen onBack={() => setActiveScreen('today')} />}
         </div>
 
         {/* Bottom navigation — hidden during active workout */}
@@ -148,7 +165,7 @@ function AppContent() {
             return (
               <button
                 key={id}
-                onClick={() => setActiveScreen(id)}
+                onClick={() => id === 'coach-chat' ? gateOrRun(id, () => setActiveScreen(id)) : setActiveScreen(id)}
                 className={`flex flex-col items-center justify-center gap-0.5 transition-all duration-150 ${
                   active ? 'text-[#CAFF40] scale-110' : 'text-[#5C5C5C] hover:text-[#A0A0A0]'
                 }`}
@@ -198,7 +215,7 @@ function AppContent() {
                 {[
                   { icon: User,         label: 'Profile',      action: () => { setShowMenu(false); /* future */ } },
                   { icon: SettingsIcon, label: 'Settings',     action: () => { setShowMenu(false); setActiveScreen('settings') } },
-                  { icon: CreditCard,   label: 'Subscription', action: () => { setShowMenu(false); /* future */ } },
+                  { icon: CreditCard,   label: 'Subscription', action: () => { setShowMenu(false); setActiveScreen('upgrade') } },
                   { icon: HelpCircle,   label: 'Help',         action: () => { setShowMenu(false); /* future */ } },
                 ].map(item => (
                   <button

@@ -7,9 +7,10 @@ interface HeaderBarProps {
   userInitials?: string
   title?: string
   transparent?: boolean
+  trialDaysLeft?: number | null
 }
 
-export function HeaderBar({ onBack, onAvatarPress, userInitials, title, transparent }: HeaderBarProps) {
+export function HeaderBar({ onBack, onAvatarPress, userInitials, title, transparent, trialDaysLeft }: HeaderBarProps) {
   return (
     <div className={`flex items-center justify-between px-5 pt-12 pb-4 ${transparent ? '' : ''}`}>
       {/* Left — back or spacer */}
@@ -24,9 +25,13 @@ export function HeaderBar({ onBack, onAvatarPress, userInitials, title, transpar
         ) : null}
       </div>
 
-      {/* Center — optional title */}
+      {/* Center — title, or trial days-left badge */}
       {title ? (
         <p className="text-xs font-bold uppercase tracking-widest text-[#A0A0A0]">{title}</p>
+      ) : trialDaysLeft != null ? (
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[#CAFF40] bg-[#CAFF40]/10 border border-[#CAFF40]/25 rounded-full px-3 py-1">
+          {trialDaysLeft} day{trialDaysLeft === 1 ? '' : 's'} left in trial
+        </span>
       ) : (
         <div />
       )}

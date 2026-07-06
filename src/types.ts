@@ -6,4 +6,5 @@ export type ScreenId =
   | 'checkin'
   | 'coach-chat'
   | 'settings'
-  | 'workout-logger';
+  | 'workout-logger'
+  | 'upgrade';
