@@ -17,31 +17,47 @@ function estimateLeanMass(profile: ClientProfile): number {
 }
 
 // Mifflin-St Jeor BMR
-function calculateBMR(profile: ClientProfile): number {
+export function calculateBMR(profile: ClientProfile): number {
   const { weight_kg, height_cm, age, gender } = profile;
   const base = 10 * weight_kg + 6.25 * height_cm - 5 * age;
   return gender === 'male' ? base + 5 : base - 161;
 }
 
-function activityMultiplier(daysPerWeek: number): number {
+export function activityMultiplier(daysPerWeek: number): number {
   if (daysPerWeek <= 2) return 1.375;
   if (daysPerWeek <= 4) return 1.55;
   return 1.725;
 }
 
-export function calculateMacros(profile: ClientProfile): EngineOutput<MacroTargets> {
+// Supplied by coaching-rules/adaptive-tdee.ts when a learned estimate is confident
+// enough to use in place of the static Mifflin-St Jeor baseline. Everything
+// downstream (goal adjustment, protein/fat floors) is unchanged either way.
+export interface TDEEOverride {
+  value: number;
+  source: 'adaptive';
+  reasoning: string[];
+}
+
+export function calculateMacros(profile: ClientProfile, tdeeOverride?: TDEEOverride): EngineOutput<MacroTargets> {
   const reasoning: string[] = [];
   const flags: string[] = [];
   const verifications: Verification[] = [];
 
   const leanMass = estimateLeanMass(profile);
-  const bmr = calculateBMR(profile);
-  const multiplier = activityMultiplier(profile.days_per_week);
-  const tdee = bmr * multiplier;
-
   reasoning.push(`Estimated lean mass: ${leanMass.toFixed(1)}kg`);
-  reasoning.push(`BMR (Mifflin-St Jeor): ${Math.round(bmr)} cal`);
-  reasoning.push(`TDEE (×${multiplier} for ${profile.days_per_week} days/week): ${Math.round(tdee)} cal`);
+
+  const multiplier = activityMultiplier(profile.days_per_week);
+
+  let tdee: number;
+  if (tdeeOverride) {
+    tdee = tdeeOverride.value;
+    reasoning.push(...tdeeOverride.reasoning);
+  } else {
+    const bmr = calculateBMR(profile);
+    tdee = bmr * multiplier;
+    reasoning.push(`BMR (Mifflin-St Jeor): ${Math.round(bmr)} cal`);
+    reasoning.push(`TDEE (×${multiplier} for ${profile.days_per_week} days/week): ${Math.round(tdee)} cal`);
+  }
 
   if (!profile.trainingFrequencyConfirmed) {
     verifications.push({

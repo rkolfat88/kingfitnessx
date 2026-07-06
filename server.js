@@ -4,6 +4,10 @@ import { createClient } from '@supabase/supabase-js';
 import rateLimit from 'express-rate-limit';
 import Stripe from 'stripe';
 import Anthropic from '@anthropic-ai/sdk';
+import { runIntakePipeline, loadClientProfile } from './src/lib/agents/orchestrator.ts';
+import { confirmIntake, correctIntake, verifyAutoLog } from './src/lib/agents/intake-agent.ts';
+import { getOrRecomputeMetabolicState } from './src/lib/coaching-rules/adaptive-tdee.ts';
+import { explainMetabolicState } from './src/lib/agents/metabolic-agent.ts';
 
 dotenv.config();
 
@@ -37,7 +41,7 @@ const app = express();
 
 // MUST be before express.json() — Stripe signature verification needs raw bytes
 app.use('/api/webhooks/stripe', express.raw({ type: 'application/json' }));
-app.use(express.json());
+app.use(express.json({ limit: '8mb' })); // 8mb headroom for base64-encoded meal photos
 
 // ─── CORS ─────────────────────────────────────────────────────────────────────
 app.use((req, res, next) => {
@@ -90,6 +94,25 @@ async function requireAuth(req, res) {
     return null;
   }
   return user;
+}
+
+// user_profiles is keyed inconsistently across the existing codebase — the
+// signup upsert in AuthContext sets `id`, while account delete/export and the
+// Stripe webhook match on `user_id`. Try `user_id` first (majority
+// convention), fall back to `id` so this works against either row shape.
+async function updateUserProfileByUser(userId, fields) {
+  const byUserId = await supabaseAdmin
+    .from('user_profiles')
+    .update(fields)
+    .eq('user_id', userId)
+    .select('id');
+  if (byUserId.data && byUserId.data.length > 0) return byUserId;
+
+  return supabaseAdmin
+    .from('user_profiles')
+    .update(fields)
+    .eq('id', userId)
+    .select('id');
 }
 
 // ─── Coach Richard K. system prompt ────────────────────────────────────────────
@@ -271,6 +294,188 @@ HRV: ${context.hrv ?? 'unknown'}ms | Readiness: ${context.readiness ?? 'unknown'
   }
 });
 
+// ─── Intake agent + metabolic agent routes ────────────────────────────────────
+// Photos arrive as base64 in the JSON body rather than multipart — this repo
+// has no multipart middleware, and base64-in-JSON covers the same need
+// (client-side compression keeps images well under the 8mb body limit above)
+// without adding a new dependency.
+
+app.post('/api/agents/intake', async (req, res) => {
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  const { mode, text, imageBase64, mediaType, mealType } = req.body ?? {};
+  let input;
+  if (mode === 'photo') {
+    if (!imageBase64 || !mediaType) {
+      return res.status(400).json({ error: 'photo mode requires imageBase64 and mediaType' });
+    }
+    input = { mode: 'photo', imageBase64, mediaType };
+  } else if (mode === 'text') {
+    if (!text) return res.status(400).json({ error: 'text mode requires text' });
+    input = { mode: 'text', text };
+  } else {
+    return res.status(400).json({ error: 'mode must be "photo" or "text"' });
+  }
+
+  try {
+    const result = await runIntakePipeline({ supabase: supabaseAdmin, anthropic }, user.id, input, mealType);
+    return res.json(result);
+  } catch (err) {
+    console.error('Intake agent error:', err);
+    return res.status(500).json({ error: 'Intake agent failed', detail: err.message });
+  }
+});
+
+app.post('/api/agents/intake/confirm', async (req, res) => {
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  const { estimate, mealType, patternKey } = req.body ?? {};
+  if (!estimate || !patternKey) {
+    return res.status(400).json({ error: 'estimate and patternKey are required' });
+  }
+  try {
+    const logId = await confirmIntake(supabaseAdmin, user.id, estimate, mealType, patternKey);
+    return res.json({ logId });
+  } catch (err) {
+    console.error('Intake confirm error:', err);
+    return res.status(500).json({ error: 'Confirm failed', detail: err.message });
+  }
+});
+
+app.post('/api/agents/intake/correct', async (req, res) => {
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  const { aiEstimate, correctedEstimate, mealType, patternKey } = req.body ?? {};
+  if (!aiEstimate || !correctedEstimate || !patternKey) {
+    return res.status(400).json({ error: 'aiEstimate, correctedEstimate, and patternKey are required' });
+  }
+  try {
+    const logId = await correctIntake(supabaseAdmin, user.id, aiEstimate, correctedEstimate, mealType, patternKey);
+    return res.json({ logId });
+  } catch (err) {
+    console.error('Intake correct error:', err);
+    return res.status(500).json({ error: 'Correction failed', detail: err.message });
+  }
+});
+
+app.post('/api/agents/intake/verify', async (req, res) => {
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  const { logId } = req.body ?? {};
+  if (!logId) return res.status(400).json({ error: 'logId is required' });
+  try {
+    await verifyAutoLog(supabaseAdmin, user.id, logId);
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('Intake verify error:', err);
+    return res.status(500).json({ error: 'Verify failed', detail: err.message });
+  }
+});
+
+app.get('/api/agents/metabolic', async (req, res) => {
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  try {
+    const profile = await loadClientProfile(supabaseAdmin, user.id);
+    if (!profile) return res.status(404).json({ error: 'No onboarding data yet' });
+
+    const state = await getOrRecomputeMetabolicState(supabaseAdmin, user.id, profile);
+    const note = await explainMetabolicState(anthropic, state);
+    return res.json({ state, note });
+  } catch (err) {
+    console.error('Metabolic agent error:', err);
+    return res.status(500).json({ error: 'Metabolic agent failed', detail: err.message });
+  }
+});
+
+// ─── Trial system ──────────────────────────────────────────────────────────────
+const TRIAL_DAYS = 21;
+
+// trial_ends_at is set here and only here — never client-side. Idempotent:
+// a user who already has a trial (or is already a paying subscriber) gets
+// their existing state back unchanged.
+app.post('/api/account/start-trial', async (req, res) => {
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  try {
+    let { data: existing } = await supabaseAdmin
+      .from('user_profiles')
+      .select('id, trial_ends_at, is_pro')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    // Pre-existing signup path upserts by `id`, not `user_id` — fall back to
+    // that key so this doesn't create a duplicate row for older accounts.
+    if (!existing) {
+      const byId = await supabaseAdmin
+        .from('user_profiles')
+        .select('id, trial_ends_at, is_pro')
+        .eq('id', user.id)
+        .maybeSingle();
+      existing = byId.data;
+    }
+
+    if (existing?.trial_ends_at || existing?.is_pro) {
+      return res.json({ trial_ends_at: existing.trial_ends_at ?? null, already_set: true });
+    }
+
+    const trialEndsAt = new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000).toISOString();
+
+    if (existing) {
+      const { error } = await supabaseAdmin
+        .from('user_profiles')
+        .update({ trial_ends_at: trialEndsAt })
+        .eq('id', existing.id);
+      if (error) throw error;
+    } else {
+      const { error } = await supabaseAdmin
+        .from('user_profiles')
+        .upsert({ id: user.id, user_id: user.id, email: user.email, trial_ends_at: trialEndsAt });
+      if (error) throw error;
+    }
+
+    return res.json({ trial_ends_at: trialEndsAt, already_set: false });
+  } catch (err) {
+    console.error('start-trial error:', err);
+    return res.status(500).json({ error: 'Failed to start trial' });
+  }
+});
+
+// ─── POST /api/stripe/create-checkout-session ─────────────────────────────────
+app.post('/api/stripe/create-checkout-session', async (req, res) => {
+  const user = await requireAuth(req, res);
+  if (!user) return;
+
+  const { plan } = req.body ?? {};
+  const priceId = plan === 'annual' ? process.env.STRIPE_PRICE_ID_ANNUAL : process.env.STRIPE_PRICE_ID_MONTHLY;
+  if (!priceId) {
+    return res.status(500).json({ error: `Stripe price ID not configured for plan "${plan}"` });
+  }
+
+  try {
+    const origin = req.headers.origin || process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      line_items: [{ price: priceId, quantity: 1 }],
+      customer_email: user.email,
+      client_reference_id: user.id,
+      success_url: `${origin}/?checkout=success`,
+      cancel_url: `${origin}/?checkout=cancelled`,
+      metadata: { user_id: user.id },
+    });
+    return res.json({ url: session.url });
+  } catch (err) {
+    console.error('create-checkout-session error:', err);
+    return res.status(500).json({ error: 'Failed to create checkout session' });
+  }
+});
+
 // ─── DELETE /api/account/delete ───────────────────────────────────────────────
 app.delete('/api/account/delete', async (req, res) => {
   const user = await requireAuth(req, res);
@@ -368,7 +573,14 @@ app.post('/api/webhooks/stripe', async (req, res) => {
   const customerId = event.data.object.customer;
 
   try {
-    if (event.type === 'customer.subscription.created') {
+    if (event.type === 'checkout.session.completed') {
+      // First time we see this customer for this user — link stripe_customer_id
+      // (subsequent subscription.created/deleted events match on it directly).
+      const userId = event.data.object.client_reference_id;
+      if (userId) {
+        await updateUserProfileByUser(userId, { stripe_customer_id: customerId, is_pro: true });
+      }
+    } else if (event.type === 'customer.subscription.created') {
       await supabaseAdmin
         .from('user_profiles')
         .update({ is_pro: true })
@@ -398,6 +610,11 @@ if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`\n KFX — King Fitness Experience backend running on http://localhost:${PORT}`);
     console.log(`   POST /api/chat              — Coach Richard K. AI (10/min, 30/day)`);
+    console.log(`   POST /api/agents/intake        — food intake agent (photo/text)`);
+    console.log(`   POST /api/agents/intake/confirm — confirm a pending food log`);
+    console.log(`   POST /api/agents/intake/correct — log a correction to an estimate`);
+    console.log(`   POST /api/agents/intake/verify  — tap-to-verify an auto-log`);
+    console.log(`   GET  /api/agents/metabolic      — adaptive TDEE state + coaching note`);
     console.log(`   DELETE /api/account/delete  — GDPR account deletion`);
     console.log(`   GET  /api/account/export    — GDPR data export`);
     console.log(`   POST /api/webhooks/stripe   — Stripe subscription events`);
