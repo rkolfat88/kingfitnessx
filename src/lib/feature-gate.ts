@@ -9,6 +9,11 @@ export interface AccessProfile {
 }
 
 export function getAccessState(profile: AccessProfile | null): AccessState {
+  // Build-time kill switch — set VITE_DISABLE_TRIAL_GATE=true while Stripe
+  // checkout isn't fully wired (no real price IDs yet, see CLAUDE.md) so
+  // trial expiry doesn't strand users on a paywall that 500s. Flip off once
+  // Stripe is ready to actually charge.
+  if (import.meta.env.VITE_DISABLE_TRIAL_GATE === 'true') return 'subscribed';
   if (!profile) return 'expired';
   if (profile.is_pro) return 'subscribed';
   if (profile.trial_ends_at && new Date(profile.trial_ends_at).getTime() > Date.now()) {
