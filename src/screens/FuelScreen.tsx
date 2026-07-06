@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Apple, BarChart3, ChevronDown } from 'lucide-react';
+import { Apple, BarChart3, ChevronDown, Plus } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { Verification } from '../lib/coaching-engine/types';
+import { LogMealSheet } from '../components/LogMealSheet';
+import { TodayFoodLog } from '../components/TodayFoodLog';
+
+interface FuelScreenProps {
+  onNavigateToUpgrade?: () => void;
+}
 
 interface MacroTargets {
   calories: number;
@@ -11,14 +17,24 @@ interface MacroTargets {
   fat_g: number;
 }
 
-export default function FuelScreen() {
-  const { user } = useAuth();
+export default function FuelScreen({ onNavigateToUpgrade }: FuelScreenProps) {
+  const { user, accessState } = useAuth();
   const [macros, setMacros] = useState<MacroTargets | null>(null);
   const [protocol, setProtocol] = useState('');
   const [reasoning, setReasoning] = useState<string[]>([]);
   const [verifications, setVerifications] = useState<Verification[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMath, setShowMath] = useState(false);
+  const [showLogSheet, setShowLogSheet] = useState(false);
+  const [logRefreshKey, setLogRefreshKey] = useState(0);
+
+  const handleLogPress = () => {
+    if (accessState === 'expired') {
+      onNavigateToUpgrade?.();
+      return;
+    }
+    setShowLogSheet(true);
+  };
 
   useEffect(() => {
     if (user) loadPlan();
@@ -91,6 +107,15 @@ export default function FuelScreen() {
       </div>
 
       <div className="px-5 space-y-4">
+
+        <button
+          onClick={handleLogPress}
+          className="w-full bg-[#CAFF40] text-[#000000] font-black rounded-2xl py-3.5 flex items-center justify-center gap-2"
+        >
+          <Plus className="w-4 h-4" /> Log a Meal
+        </button>
+
+        <TodayFoodLog refreshKey={logRefreshKey} />
 
         <div className="bg-[#0D0D0D] border border-[#CAFF40]/20 rounded-2xl p-5">
           <p className="text-xs font-bold uppercase tracking-widest text-[#A0A0A0] mb-4">
@@ -219,6 +244,13 @@ export default function FuelScreen() {
         </div>
 
       </div>
+
+      {showLogSheet && (
+        <LogMealSheet
+          onClose={() => setShowLogSheet(false)}
+          onLogged={() => setLogRefreshKey(k => k + 1)}
+        />
+      )}
     </div>
   );
 }

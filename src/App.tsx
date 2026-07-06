@@ -149,7 +149,7 @@ function AppContent() {
               onFinish={handleFinishWorkout}
             />
           )}
-          {activeScreen === 'nutrition'  && <FuelScreen />}
+          {activeScreen === 'nutrition'  && <FuelScreen onNavigateToUpgrade={() => setActiveScreen('upgrade')} />}
           {activeScreen === 'checkin'    && (
             <CheckinScreen onBack={() => setActiveScreen('today')} />
           )}

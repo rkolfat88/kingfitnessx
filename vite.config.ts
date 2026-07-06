@@ -17,6 +17,11 @@ export default defineConfig(() => {
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      // Dev-only: forward /api/* to the Express backend (npm run server, port 3001).
+      // Production doesn't use this file for routing — vercel.json's rewrite handles it there.
+      proxy: {
+        '/api': 'http://localhost:3001',
+      },
     },
   };
 });
