@@ -23,9 +23,22 @@ Terminal 2: npm run server     (tsx server.js — Express on port 3001)
 ```
 
 Terminal 2 runs via `tsx`, not plain `node`, because server.js imports TypeScript
-modules directly (src/lib/agents/, src/lib/coaching-rules/). Vercel's Node
-builder compiles those transitively at deploy time, so production is
-unaffected — this only matters for local dev.
+modules directly (src/lib/agents/, src/lib/coaching-rules/) with literal `.ts`
+extensions — only `tsx` resolves those. Production does NOT get this for free:
+plain Node on Vercel can't resolve `.ts` imports either, so `npm run build`
+also runs `build:server`, which esbuilds server.js + its TS deps into a single
+`server.bundle.js` (git-ignored, rebuilt every deploy). `api/[...path].js`
+imports that bundle, not server.js directly. Without this step every `/api/*`
+route 500s in production with `ERR_MODULE_NOT_FOUND` — this happened for real
+on 2026-07-06 and took down `/api/health`, `/api/chat`, and everything else.
+
+Also: Vercel's zero-config routing for `api/[...path].js` only auto-matches a
+single path segment under `/api/` (confirmed via `vercel build`'s generated
+routes manifest — it's `^/api/([^/]+)$` then a hard 404 for anything deeper).
+`vercel.json` has an explicit `{ "source": "/api/:path*", "destination":
+"/api/[...path]" }` rewrite to override that — do not remove it, or any
+multi-segment route (`/api/agents/intake`, `/api/stripe/create-checkout-session`,
+etc.) goes back to 404ing before it ever reaches Express.
 
 ### Four Pillars
 
@@ -144,6 +157,8 @@ C:\king_ai_app\
 │           ├── intake-agent.ts
 │           └── metabolic-agent.ts
 ├── server.js                       ← Express API (port 3001)
+├── server.bundle.js                ← git-ignored; esbuild output of server.js
+│                                      for prod, rebuilt every `npm run build`
 ├── index.html
 ├── vite.config.ts
 ├── tsconfig.json
@@ -417,3 +432,9 @@ git push
 - Supabase 409 conflict: use `.upsert()` not `.insert()`
 - Supabase timeout: project is EU West, should be fast from EU
 - Vite path alias: @/* maps to project root (./)
+- Prod `/api/*` 500s with `ERR_MODULE_NOT_FOUND`: `build:server` didn't run,
+  or `api/[...path].js` got pointed back at `server.js` instead of
+  `server.bundle.js`. See ARCHITECTURE.
+- Prod `/api/agents/...` or any nested `/api/x/y` path 404s (but `/api/health`
+  works): the explicit `/api/:path*` rewrite got removed from `vercel.json`.
+  Vercel's zero-config routing only matches one path segment — see ARCHITECTURE.
