@@ -11,3 +11,4 @@ coverage/
 bundle.js
 bundle2.js
 livebundle.js
+server.bundle.js
