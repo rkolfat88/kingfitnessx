@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, Camera, Type, Loader2, Check, Sparkles } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import type { FoodItem, IntakeEstimate, IntakeResult, IntakeTotals } from '../lib/agents/types';
+import type { FoodItem, IntakeEstimate, IntakeResult, IntakeTotals, OrchestratorIntakeResponse } from '../lib/agents/types';
 
 // An existing food_logs row (e.g. a quiet auto-log) opened for review/edit,
 // as opposed to a brand-new meal being estimated from scratch.
@@ -95,7 +95,7 @@ export function LogMealSheet({ onClose, onLogged, reviewEntry }: LogMealSheetPro
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? 'Estimate failed');
 
-      const intake = json as IntakeResult;
+      const intake = (json as OrchestratorIntakeResponse).intake;
       setResult(intake);
       setEditedTotals(intake.estimate.totals);
     } catch (err: any) {
